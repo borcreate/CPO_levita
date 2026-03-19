@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEVITA — Дашборд</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --green: #4caf7d;
+      --yellow: #f0b429;
+      --red: #e05252;
+      --border: #2a2a2a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--gold);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .last-update {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .refresh-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* NAV TABS */
+    nav {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* MAIN CONTENT */
+    main {
+      padding: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* KFU GRID */
+    .kfu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .kfu-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .kfu-card:hover { border-color: var(--gold); transform: translateY(-1px); }
+    .kfu-card.expanded { border-color: var(--gold); }
+
+    .kfu-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .kfu-card.green::before { background: var(--green); }
+    .kfu-card.yellow::before { background: var(--yellow); }
+    .kfu-card.red::before { background: var(--red); }
+
+    .kfu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .kfu-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+    .status-dot.red { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+    .kfu-value {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .kfu-card.green .kfu-value { color: var(--green); }
+    .kfu-card.yellow .kfu-value { color: var(--yellow); }
+    .kfu-card.red .kfu-value { color: var(--red); }
+
+    .kfu-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .kfu-trend {
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .kfu-trend.up { color: var(--green); }
+    .kfu-trend.down { color: var(--red); }
+    .kfu-trend.flat { color: var(--text-muted); }
+
+    /* EXPANDED METRICS */
+    .kfu-metrics {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .kfu-metrics.open { display: block; }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .metric-row:last-child { border-bottom: none; }
+
+    .metric-name { color: var(--text-muted); }
+    .metric-values { display: flex; gap: 16px; text-align: right; }
+    .metric-plan { color: var(--text-muted); font-size: 11px; }
+    .metric-fact { font-weight: 600; }
+    .metric-pct {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      min-width: 42px;
+      text-align: center;
+    }
+    .metric-pct.green { background: rgba(76,175,125,0.15); color: var(--green); }
+    .metric-pct.yellow { background: rgba(240,180,41,0.15); color: var(--yellow); }
+    .metric-pct.red { background: rgba(224,82,82,0.15); color: var(--red); }
+
+    /* ALERT BLOCK */
+    .alert-block {
+      background: rgba(224,82,82,0.08);
+      border: 1px solid rgba(224,82,82,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+
+    .alert-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(224,82,82,0.1);
+    }
+    .alert-item:last-child { border-bottom: none; }
+    .alert-icon { color: var(--red); font-size: 14px; }
+
+    /* DETAILS TABLE */
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .dept-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .dept-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .dept-metric {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 8px 16px;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .dept-metric:last-child { border-bottom: none; }
+    .dept-metric-name { color: var(--text-muted); }
+    .dept-metric-plan { color: var(--text-muted); text-align: right; }
+    .dept-metric-fact { font-weight: 600; text-align: right; }
+
+    /* MAP section */
+    .map-placeholder {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 60px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    /* LOADING */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      flex-direction: column;
+      gap: 16px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* CACHE NOTICE */
+    .cache-notice {
+      font-size: 11px;
+      color: var(--yellow);
+      padding: 8px 16px;
+      background: rgba(240,180,41,0.08);
+      border-radius: 6px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .kfu-grid { grid-template-columns: repeat(2, 1fr); }
+      .dept-grid { grid-template-columns: 1fr; }
+      main { padding: 16px; }
+    }
+    @media (max-width: 600px) {
+      .kfu-grid { grid-template-columns: 1fr; }
+      header { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">LEVITA</div>
+  <div class="header-right">
+    <div class="last-update" id="lastUpdate">Загрузка...</div>
+    <button class="refresh-btn" onclick="loadData(true)">↻ Обновить</button>
+  </div>
+</header>
+
+<nav>
+  <div class="tab active" onclick="showTab('overview')">Обзор</div>
+  <div class="tab" onclick="showTab('details')">Детали по отделам</div>
+  <div class="tab" onclick="showTab('map')">Карта франчайзи</div>
+</nav>
+
+<main>
+  <div class="cache-notice" id="cacheNotice">⚠ Данные из кэша — нет подключения к таблице</div>
+
+  <!-- OVERVIEW -->
+  <div class="section active" id="tab-overview">
+    <div class="loading" id="loadingIndicator">
+      <div class="spinner"></div>
+      <span>Загрузка данных...</span>
+    </div>
+    <div id="overviewContent" style="display:none">
+      <div id="alertBlock"></div>
+      <div class="kfu-grid" id="kfuGrid"></div>
+    </div>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="section" id="tab-details">
+    <div class="dept-grid" id="deptGrid"></div>
+  </div>
+
+  <!-- MAP -->
+  <div class="section" id="tab-map">
+    <div class="map-placeholder">
+      🗺 Карта франчайзи<br><br>
+      <span style="font-size:13px">Подключается отдельно</span>
+    </div>
+  </div>
+</main>
+
+<script>
+const SHEET_ID = '1yCNQZ3GLeA5H9l10Jhi9IrUWVTiTR4RbP4CgYn1DHlA';
+const CACHE_KEY = 'levita_data_cache';
+const CACHE_TTL = 5 * 60 * 1000; // 5 минут
+
+// ─── DATA LAYER ───────────────────────────────────────────────
+async function fetchSheet(sheetName) {
+  const enc = encodeURIComponent(sheetName);
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${enc}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+  return json.table;
+}
+
+function tableToRows(table) {
+  return table.rows.map(r =>
+    r.c.map(cell => cell ? (cell.f || cell.v) : '')
+  );
+}
+
+function pct(fact, plan) {
+  if (!plan || plan === 0) return null;
+  return Math.round((fact / plan) * 100);
+}
+
+function status(p) {
+  if (p === null) return 'flat';
+  if (p >= 85) return 'green';
+  if (p >= 60) return 'yellow';
+  return 'red';
+}
+
+function fmtNum(v) {
+  if (!v || v === '') return '—';
+  const n = parseFloat(String(v).replace(/[^\d.-]/g, ''));
+  if (isNaN(n)) return v;
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(0) + 'K';
+  return String(Math.round(n));
+}
+
+// ─── BUILD KFU DATA ───────────────────────────────────────────
+function buildKFU(rows) {
+  // Ищем ключевые метрики по названиям строк
+  const find = (name) => rows.find(r => r[0] && r[0].toString().toLowerCase().includes(name.toLowerCase()));
+
+  const kfuList = [
+    {
+      title: 'Бизнес-модель',
+      key: 'business',
+      metrics: []
+    },
+    {
+      title: 'Выручка сети',
+      key: 'revenue',
+      metrics: []
+    },
+    {
+      title: 'Отдел открытий',
+      key: 'openings',
+      metrics: []
+    },
+    {
+      title: 'ШМП / Продукт',
+      key: 'shmp',
+      metrics: []
+    },
+    {
+      title: 'Команда',
+      key: 'team',
+      metrics: []
+    },
+    {
+      title: 'Качество / NPS',
+      key: 'nps',
+      metrics: []
+    }
+  ];
+
+  // Парсим строки — ищем план/факт пары
+  let currentSection = '';
+  const parsed = {};
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const name = (row[0] || '').toString().trim();
+    if (!name) continue;
+
+    // Значение за март (индекс 3) или последнее доступное
+    const getVal = (r) => {
+      for (let j = 3; j >= 1; j--) {
+        const v = r[j];
+        if (v && v !== '' && v !== '0' && v !== 'р.0') return v;
+      }
+      return null;
+    };
+
+    if (name.includes('Выручка сети')) currentSection = 'revenue';
+    else if (name.includes('Роялти')) currentSection = 'royalty';
+    else if (name.includes('NPS партнеров')) currentSection = 'nps_partners';
+    else if (name.includes('ENPS клиентов')) currentSection = 'nps_clients';
+    else if (name.includes('Отдел открытий')) currentSection = 'openings';
+    else if (name.includes('Отдел ШМП')) currentSection = 'shmp';
+    else if (name.includes('Общий штат')) currentSection = 'team';
+
+    if (name === 'План' || name === 'Факт') {
+      if (!parsed[currentSection]) parsed[currentSection] = {};
+      parsed[currentSection][name] = getVal(row);
+    } else if (!['План','Факт'].includes(name)) {
+      parsed[name] = getVal(row);
+    }
+  }
+
+  // Собираем KFU карточки
+  const results = [
+    {
+      title: 'Выручка сети',
+      plan: parsed['revenue']?.['План'],
+      fact: parsed['revenue']?.['Факт'],
+      unit: '₽'
+    },
+    {
+      title: 'Роялти',
+      plan: parsed['royalty']?.['План'],
+      fact: parsed['royalty']?.['Факт'],
+      unit: '₽'
+    },
+    {
+      title: 'Открытия студий',
+      plan: null,
+      fact: parsed['Кол-во открытий студий (новых/перепродаж)'],
+      unit: 'студий',
+      noPercent: true
+    },
+    {
+      title: 'ШМП — выручка',
+      plan: parsed['shmp']?.['План'],
+      fact: parsed['shmp']?.['Факт'],
+      unit: '₽'
+    },
+    {
+      title: 'Команда',
+      plan: null,
+      fact: parsed['Общий штат '] || parsed['Общий штат'],
+      unit: 'чел.',
+      noPercent: true
+    },
+    {
+      title: 'NPS клиентов',
+      plan: null,
+      fact: parsed['ENPS клиентов студий'],
+      unit: '',
+      noPercent: true
+    }
+  ];
+
+  return results;
+}
+
+// ─── RENDER ───────────────────────────────────────────────────
+function renderOverview(data) {
+  const kfus = buildKFU(data);
+  const alerts = [];
+  let html = '';
+
+  kfus.forEach((k, i) => {
+    const factN = k.fact ? parseFloat(String(k.fact).replace(/[^\d.-]/g,'')) : null;
+    const planN = k.plan ? parseFloat(String(k.plan).replace(/[^\d.-]/g,'')) : null;
+    const p = k.noPercent ? null : pct(factN, planN);
+    const s = p !== null ? status(p) : (factN ? 'green' : 'flat');
+
+    if (s === 'red') alerts.push({ title: k.title, pct: p });
+
+    const trend = p !== null
+      ? (p >= 100 ? '<span class="kfu-trend up">↑ план выполнен</span>'
+        : p >= 85 ? '<span class="kfu-trend up">↑ близко к плану</span>'
+        : p >= 60 ? '<span class="kfu-trend flat">→ ниже плана</span>'
+        : '<span class="kfu-trend down">↓ критически низко</span>')
+      : '';
+
+    const pctBadge = p !== null ? `<span class="metric-pct ${s}">${p}%</span>` : '';
+
+    html += `
+      <div class="kfu-card ${s}" onclick="toggleKFU(${i})">
+        <div class="kfu-header">
+          <div class="kfu-title">${k.title}</div>
+          <div class="status-dot ${s}"></div>
+        </div>
+        <div class="kfu-value">${fmtNum(k.fact)}${k.unit ? ' <span style="font-size:16px;color:var(--text-muted)">' + k.unit + '</span>' : ''}</div>
+        ${k.plan ? `<div class="kfu-label" style="margin-top:4px">план: ${fmtNum(k.plan)} ${k.unit}</div>` : ''}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          ${trend}
+          ${pctBadge}
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('kfuGrid').innerHTML = html;
+
+  // Алерты
+  const alertBlock = document.getElementById('alertBlock');
+  if (alerts.length > 0) {
+    alertBlock.innerHTML = `
+      <div class="alert-block">
+        <div class="alert-title">⚠ Требует внимания</div>
+        ${alerts.map(a => `
+          <div class="alert-item">
+            <span class="alert-icon">▼</span>
+            <span>${a.title} — выполнение ${a.pct}%</span>
+          </div>`).join('')}
+      </div>`;
+  }
+}
+
+function renderDetails(data) {
+  // Группируем по отделам
+  const sections = {};
+  let current = 'Общее';
+
+  data.forEach(row => {
+    const name = (row[0] || '').toString().trim();
+    if (!name) return;
+
+    if (name.includes('Отдел') || name === 'Департамент продукта') {
+      current = name;
+      if (!sections[current]) sections[current] = [];
+    } else if (['План','Факт'].includes(name)) {
+      if (!sections[current]) sections[current] = [];
+      const last = sections[current][sections[current].length - 1];
+      if (last && !last.plan) last.plan = row[3] || row[2] || row[1];
+      else if (last && !last.fact) last.fact = row[3] || row[2] || row[1];
+    } else if (name && !name.includes('Ограничитель')) {
+      if (!sections[current]) sections[current] = [];
+      sections[current].push({ name, fact: row[3] || row[2] || row[1], plan: null });
+    }
+  });
+
+  let html = '';
+  Object.entries(sections).slice(0, 6).forEach(([dept, metrics]) => {
+    if (metrics.length === 0) return;
+    html += `
+      <div class="dept-card">
+        <div class="dept-name">${dept}</div>
+        ${metrics.slice(0, 8).map(m => {
+          const factN = m.fact ? parseFloat(String(m.fact).replace(/[^\d.-]/g,'')) : null;
+          const planN = m.plan ? parseFloat(String(m.plan).replace(/[^\d.-]/g,'')) : null;
+          const p = pct(factN, planN);
+          const s = p !== null ? status(p) : '';
+          return `
+            <div class="dept-metric">
+              <span class="dept-metric-name">${m.name.length > 40 ? m.name.slice(0,40)+'…' : m.name}</span>
+              ${m.plan ? `<span class="dept-metric-plan">${fmtNum(m.plan)}</span>` : '<span></span>'}
+              <span class="dept-metric-fact">${fmtNum(m.fact)}</span>
+              ${p !== null ? `<span class="metric-pct ${s}">${p}%</span>` : '<span></span>'}
+            </div>`;
+        }).join('')}
+      </div>`;
+  });
+
+  document.getElementById('deptGrid').innerHTML = html || '<div style="color:var(--text-muted)">Нет данных</div>';
+}
+
+// ─── LOAD ─────────────────────────────────────────────────────
+let cachedData = null;
+
+async function loadData(force = false) {
+  // Try cache
+  if (!force) {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const { data, ts } = JSON.parse(cached);
+        if (Date.now() - ts < CACHE_TTL) {
+          cachedData = data;
+          render(data);
+          return;
+        }
+      } catch(e) {}
+    }
+  }
+
+  try {
+    const table = await fetchSheet('Аналитика года');
+    const rows = tableToRows(table);
+    cachedData = rows;
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ data: rows, ts: Date.now() }));
+    document.getElementById('cacheNotice').style.display = 'none';
+    render(rows);
+  } catch(e) {
+    console.error(e);
+    // Fallback to cache
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const { data } = JSON.parse(cached);
+        document.getElementById('cacheNotice').style.display = 'block';
+        render(data);
+        return;
+      } catch(e2) {}
+    }
+    document.getElementById('loadingIndicator').innerHTML =
+      '<div style="color:var(--red)">Не удалось загрузить данные<br><span style="font-size:12px;color:var(--text-muted)">Проверьте доступ к таблице</span></div>';
+  }
+}
+
+function render(data) {
+  document.getElementById('loadingIndicator').style.display = 'none';
+  document.getElementById('overviewContent').style.display = 'block';
+  renderOverview(data);
+  renderDetails(data);
+
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent =
+    `Обновлено: ${now.toLocaleDateString('ru', {day:'numeric',month:'short'})} в ${now.toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'})}`;
+}
+
+// ─── TABS ─────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleKFU(i) {
+  const cards = document.querySelectorAll('.kfu-card');
+  const card = cards[i];
+  const metrics = card.querySelector('.kfu-metrics');
+  if (metrics) {
+    metrics.classList.toggle('open');
+    card.classList.toggle('expanded');
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+loadData();
+// Auto-refresh every 5 min
+setInterval(() => loadData(), 5 * 60 * 1000);
+</script>
+</body>
+</html>
