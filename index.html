@@ -1058,8 +1058,9 @@ function initAnalyticsChartsFiltered(){
 // ── LIVE DATA LOADER ──────────────────────────────────────────────
 const SHEET_ID = '1yCNQZ3GLeA5H9l10Jhi9IrUWVTiTR4RbP4CgYn1DHlA';
 
-async function fetchSheet(sheetName){
-  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+async function fetchSheet(sheetName, range){
+  let url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  if(range) url+=`&range=${range}`;
   const text=await(await fetch(url)).text();
   const m=text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);
   if(!m) throw new Error('parse');
@@ -1089,7 +1090,7 @@ async function loadLiveData(){
   try{
     // ── Грузим сводный раздел напрямую по диапазону (надёжнее чем поиск по всему листу) ──
     const [svodRows, fullRows] = await Promise.all([
-      fetchSheet('Аналитика года&range=A245:M310'),
+      fetchSheet('Аналитика года', 'A245:M310'),
       fetchSheet('Аналитика года'),
     ]);
 
