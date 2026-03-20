@@ -155,7 +155,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <div class="hdr-date" id="hdrDate"></div>
-    <button onclick="location.reload(true)" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻ Обновить</button>
+    <button onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻ Обновить</button>
   </div>
 </div>
 
@@ -966,6 +966,16 @@ function initAnalyticsChartsFiltered(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:{...gridOpts(),y:{min:70,max:100,ticks:{font:{size:10}}}}}});
   mkChart('a-brand2',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(BRAND_F),C.gold,true),lineDs('План',getFiltered(BRAND_P),C.gray,false,[5,3])]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+}
+
+// ── REFRESH (не перезагружать страницу) ──────────────────────────────────────────────
+function refreshData(){
+  // Перерисовываю всё БЕЗ перезагрузки
+  renderKFU();
+  renderDepts();
+  initKFUCharts();
+  loadMap();
+  redrawCharts();
 }
 
 // ── INIT ──────────────────────────────────────────────
