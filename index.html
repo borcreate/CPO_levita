@@ -969,14 +969,112 @@ function initAnalyticsChartsFiltered(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
 }
 
+// ── LIVE DATA LOADER ──────────────────────────────────────────────
+const SHEET_ID = '1yCNQZ3GLeA5H9l10Jhi9IrUWVTiTR4RbP4CgYn1DHlA';
+
+async function fetchSheet(sheetName){
+  const url=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  const text=await(await fetch(url)).text();
+  const m=text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);
+  if(!m) throw new Error('parse');
+  const d=JSON.parse(m[1]);
+  return d.table.rows.map(r=>r.c?r.c.map(c=>c?(c.v!==undefined?c.v:null):null):[]);
+}
+
+function rowMonths(row){
+  return Array.from({length:12},(_,i)=>{const v=row[i+1];return(v!==null&&v!==undefined)?v:null;});
+}
+
+function updateArr(target,src,fn){
+  if(!src)return;
+  src.forEach((v,i)=>{
+    if(v===null||v===undefined)return;
+    const val=fn?fn(v):v;
+    if(val!==null&&val!==0)target[i]=val;
+  });
+}
+
+function lastNonZero(arr){
+  for(let i=arr.length-1;i>=0;i--){if(arr[i]!==null&&arr[i]!==undefined&&arr[i]!==0)return{v:arr[i],i};}
+  return{v:arr[0],i:0};
+}
+
+async function loadLiveData(){
+  try{
+    const rows=await fetchSheet('Аналитика года');
+
+    const findRow=label=>rows.find(r=>r[0]&&String(r[0]).trim().startsWith(label));
+    const findAfter=(label,nextLabel)=>{
+      for(let i=0;i<rows.length;i++){
+        if(rows[i][0]&&String(rows[i][0]).includes(label)){
+          for(let j=i+1;j<Math.min(i+4,rows.length);j++){
+            if(rows[j][0]&&String(rows[j][0]).trim()===nextLabel)return rows[j];
+          }
+        }
+      }
+      return null;
+    };
+
+    const ltvRow   = findRow('LTV');
+    const cacRow   = findRow('CAC');
+    const brandFRow= findRow('1. Динамика брендового спроса');
+    const brandPRow= findAfter('1. Динамика брендового спроса','План');
+    const profitRow= findRow('2. Чистая прибыль');
+    const convFRow = findRow('2. Конверсия лид-покупка');
+    const convPRow = findAfter('Конверсия лид-покупка','План');
+    const clientRow= findRow('Кол-во клиентов сети');
+    const acadInRow= findRow('Кол-во зашли');
+    const acadCRow = findRow('получили сертификат');
+    const npsZanRow= findAfter('NPS занятий не менее','Факт');
+
+    const pct=v=>v===null?null:(v>1?Math.round(v):Math.round(v*100));
+
+    if(ltvRow)    updateArr(LTV,    rowMonths(ltvRow));
+    if(cacRow)    updateArr(CAC,    rowMonths(cacRow));
+    if(brandFRow) updateArr(BRAND_F,rowMonths(brandFRow));
+    if(brandPRow) updateArr(BRAND_P,rowMonths(brandPRow));
+    if(profitRow) updateArr(PROFIT, rowMonths(profitRow),pct);
+    if(convFRow)  updateArr(CONV_F, rowMonths(convFRow), pct);
+    if(convPRow)  updateArr(CONV_P, rowMonths(convPRow), pct);
+    if(clientRow) updateArr(CLIENTS,rowMonths(clientRow));
+    if(acadInRow) updateArr(ACAD_IN,rowMonths(acadInRow));
+    if(acadCRow)  updateArr(ACAD_C, rowMonths(acadCRow));
+    if(npsZanRow) updateArr(NPS_ZAN_F,rowMonths(npsZanRow));
+
+    // Обновляем KFU текущими значениями
+    const ltvLast=lastNonZero(LTV);
+    const cacNow=CAC[ltvLast.i]||KFU[0].metrics[0].cmp;
+    KFU[0].metrics[0].f=ltvLast.v;
+    KFU[0].metrics[0].cmp=cacNow;
+    KFU[0].metrics[0].hint=`LTV ${Math.round(ltvLast.v).toLocaleString('ru-RU')} ${ltvLast.v>cacNow?'>':'<'} CAC ${Math.round(cacNow).toLocaleString('ru-RU')} — маркетинг ${ltvLast.v>cacNow?'окупается':'не окупается'}`;
+    KFU[0].metrics[1].f=lastNonZero(PROFIT).v;
+
+    const brandLast=lastNonZero(BRAND_F);
+    KFU[1].metrics[0].f=brandLast.v;
+    KFU[1].metrics[0].p=BRAND_P[brandLast.i]||KFU[1].metrics[0].p;
+
+    const convLast=lastNonZero(CONV_F);
+    KFU[2].metrics[0].f=convLast.v;
+    KFU[2].metrics[0].p=CONV_P[convLast.i]||KFU[2].metrics[0].p;
+
+    // Перерисовываем
+    document.getElementById('kfu-row1').innerHTML='';
+    document.getElementById('kfu-row2').innerHTML='';
+    renderKFU();
+    initKFUCharts();
+    if(analyticsInited)initAnalyticsCharts();
+    DEPTS.forEach((d,i)=>{if(document.getElementById(`dept-${i}`)&&d.chart)d.chart.render();});
+
+    console.log('✅ Live data loaded from Google Sheets');
+  }catch(e){
+    console.warn('⚠️ Live data load failed, using defaults:', e);
+  }
+}
+
 // ── REFRESH (не перезагружать страницу) ──────────────────────────────────────────────
 function refreshData(){
-  // Перерисовываю всё БЕЗ перезагрузки
-  renderKFU();
-  renderDepts();
-  initKFUCharts();
+  loadLiveData();
   loadMap();
-  redrawCharts();
 }
 
 // ── INIT ──────────────────────────────────────────────
@@ -987,6 +1085,7 @@ renderKFU();
 renderDepts();
 initKFUCharts();
 loadMap();
+loadLiveData(); // живые данные из Google Sheets
 </script>
 </body>
 </html>
