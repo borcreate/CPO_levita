@@ -933,9 +933,7 @@ function redrawCharts(){
   // Перерисовываем основные графики с фильтром
   initKFUChartsFiltered();
   if(analyticsInited) initAnalyticsChartsFiltered();
-  // Перерисовываем отделы полностью
-  document.getElementById('dept-list').innerHTML = '';
-  renderDepts();
+  // Отделы оставляем как есть (фильтр для них сложнее)
 }
 
 function getFilteredLabels(){
