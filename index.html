@@ -930,10 +930,46 @@ function filterData(arr){
 }
 
 function redrawCharts(){
-  // Перерисовываем основные графики с фильтром
   initKFUChartsFiltered();
   if(analyticsInited) initAnalyticsChartsFiltered();
-  // Отделы оставляем как есть (фильтр для них сложнее)
+  // Обновляем KFU-карточки (последнее значение из выбранного периода)
+  updateKFUCards();
+}
+
+function updateKFUCards(){
+  const filtered=getFiltered(LTV).filter(v=>v!==null&&v!==0);
+  if(!filtered.length)return;
+  const idx=selectedMonths.size===0
+    ? [lastNonZero(LTV).i]
+    : [...selectedMonths].sort((a,b)=>b-a); // последний выбранный месяц первый
+
+  const getVal=(arr)=>{
+    if(selectedMonths.size===0) return lastNonZero(arr).v;
+    const vals=[...selectedMonths].map(i=>arr[i]).filter(v=>v!==null&&v!==undefined&&v!==0);
+    return vals.length?vals[vals.length-1]:lastNonZero(arr).v;
+  };
+  const getIdx=()=>{
+    if(selectedMonths.size===0) return lastNonZero(LTV).i;
+    return [...selectedMonths].sort((a,b)=>b-a)[0];
+  };
+
+  const mi=getIdx();
+
+  KFU[0].metrics[0].f   =LTV[mi];
+  KFU[0].metrics[0].cmp =CAC[mi];
+  KFU[0].metrics[0].hint=`LTV ${Math.round(LTV[mi]).toLocaleString('ru-RU')} ${LTV[mi]>CAC[mi]?'>':'<'} CAC ${Math.round(CAC[mi]).toLocaleString('ru-RU')} — маркетинг ${LTV[mi]>CAC[mi]?'окупается':'не окупается'}`;
+  KFU[0].metrics[1].f=PROFIT[mi]||lastNonZero(PROFIT).v;
+  KFU[1].metrics[0].f=BRAND_F[mi]||lastNonZero(BRAND_F).v;
+  KFU[1].metrics[0].p=BRAND_P[mi]||lastNonZero(BRAND_P).v;
+  KFU[2].metrics[0].f=CONV_F[mi]||lastNonZero(CONV_F).v;
+  KFU[2].metrics[0].p=CONV_P[mi]||lastNonZero(CONV_P).v;
+  KFU[3].metrics[0].f=NPS_ZAN_F[mi]||lastNonZero(NPS_ZAN_F).v;
+  KFU[5].metrics[0].f=NPS_PF[mi]||lastNonZero(NPS_PF).v;
+  KFU[5].metrics[0].p=NPS_PP[mi]||lastNonZero(NPS_PP).v;
+
+  document.getElementById('kfu-row1').innerHTML='';
+  document.getElementById('kfu-row2').innerHTML='';
+  renderKFU();
 }
 
 function getFilteredLabels(){
@@ -1003,49 +1039,84 @@ async function loadLiveData(){
   try{
     const rows=await fetchSheet('Аналитика года');
 
-    const findRow=label=>rows.find(r=>r[0]&&String(r[0]).trim().startsWith(label));
-    const findAfter=(label,nextLabel)=>{
+    // helpers
+    const findRow=label=>rows.find(r=>r[0]&&String(r[0]).trim().startsWith(label.trim()));
+    const findAfter=(startLabel,nextLabel,maxLook=6)=>{
       for(let i=0;i<rows.length;i++){
-        if(rows[i][0]&&String(rows[i][0]).includes(label)){
-          for(let j=i+1;j<Math.min(i+4,rows.length);j++){
-            if(rows[j][0]&&String(rows[j][0]).trim()===nextLabel)return rows[j];
+        if(rows[i][0]&&String(rows[i][0]).includes(startLabel)){
+          for(let j=i+1;j<Math.min(i+maxLook,rows.length);j++){
+            if(rows[j][0]&&String(rows[j][0]).trim()===nextLabel.trim())return rows[j];
           }
         }
       }
       return null;
     };
+    const pct=v=>v===null?null:(Math.abs(v)>1?Math.round(v):Math.round(v*100));
+    const nonZero=v=>v!==null&&v!==undefined&&v!==0;
 
-    const ltvRow   = findRow('LTV');
-    const cacRow   = findRow('CAC');
-    const brandFRow= findRow('1. Динамика брендового спроса');
-    const brandPRow= findAfter('1. Динамика брендового спроса','План');
-    const profitRow= findRow('2. Чистая прибыль');
-    const convFRow = findRow('2. Конверсия лид-покупка');
-    const convPRow = findAfter('Конверсия лид-покупка','План');
-    const clientRow= findRow('Кол-во клиентов сети');
-    const acadInRow= findRow('Кол-во зашли');
-    const acadCRow = findRow('получили сертификат');
-    const npsZanRow= findAfter('NPS занятий не менее','Факт');
+    // ── Находим строки ──
+    const ltvRow    = findRow('LTV');
+    const cacRow    = findRow('CAC');
+    const brandFRow = findRow('1. Динамика брендового спроса');
+    const brandPRow = findAfter('1. Динамика брендового спроса','План');
+    const profitRow = findRow('2. Чистая прибыль');
+    const convFRow  = findRow('2. Конверсия лид-покупка');
+    const convPRow  = findAfter('2. Конверсия лид-покупка','План');
+    const clientRow = findRow('Кол-во клиентов сети');
+    const acadInRow = findRow('Кол-во зашли');
+    const acadCRow  = findRow('получили сертификат');
+    const npsZanRow = findAfter('1. NPS занятий не менее','Факт');
+    const npsPPRow  = findAfter('1. NPS партнеров','План');
+    const npsPFRow  = findAfter('1. NPS партнеров','Факт');
 
-    const pct=v=>v===null?null:(v>1?Math.round(v):Math.round(v*100));
+    // ── Обновляем массивы (только ненулевые реальные значения) ──
+    const apply=(target,row,fn)=>{
+      if(!row)return;
+      rowMonths(row).forEach((v,i)=>{if(nonZero(v)){const r=fn?fn(v):v;if(nonZero(r))target[i]=r;}});
+    };
 
-    if(ltvRow)    updateArr(LTV,    rowMonths(ltvRow));
-    if(cacRow)    updateArr(CAC,    rowMonths(cacRow));
-    if(brandFRow) updateArr(BRAND_F,rowMonths(brandFRow));
-    if(brandPRow) updateArr(BRAND_P,rowMonths(brandPRow));
-    if(profitRow) updateArr(PROFIT, rowMonths(profitRow),pct);
-    if(convFRow)  updateArr(CONV_F, rowMonths(convFRow), pct);
-    if(convPRow)  updateArr(CONV_P, rowMonths(convPRow), pct);
-    if(clientRow) updateArr(CLIENTS,rowMonths(clientRow));
-    if(acadInRow) updateArr(ACAD_IN,rowMonths(acadInRow));
-    if(acadCRow)  updateArr(ACAD_C, rowMonths(acadCRow));
-    if(npsZanRow) updateArr(NPS_ZAN_F,rowMonths(npsZanRow));
+    apply(LTV,     ltvRow);
+    apply(CAC,     cacRow);
+    apply(BRAND_F, brandFRow);
+    apply(BRAND_P, brandPRow);
+    apply(PROFIT,  profitRow, pct);
+    apply(CONV_F,  convFRow,  pct);
+    apply(CONV_P,  convPRow,  pct);
+    apply(CLIENTS, clientRow);
+    apply(ACAD_IN, acadInRow);
+    apply(ACAD_C,  acadCRow);
+    apply(NPS_ZAN_F, npsZanRow);
+    apply(NPS_PF, npsPFRow, pct);
+    apply(NPS_PP, npsPPRow, pct);
 
-    // Обновляем KFU текущими значениями
+    // SHMP — берём последние реальные данные по каждому курсу
+    const shmpCourses=[
+      {label:'1 курс',pIdx:0,fIdx:0},
+      {label:'2 курс',pIdx:1,fIdx:1},
+      {label:'3.1 курс',pIdx:2,fIdx:2},
+      {label:'3.2 курс',pIdx:3,fIdx:3},
+    ];
+    shmpCourses.forEach(c=>{
+      const pr=findAfter(c.label,'План',4);
+      const fr=findAfter(c.label,'Факт',4);
+      if(pr){const v=rowMonths(pr).find(nonZero);if(v)SHMP_P[c.pIdx]=v;}
+      if(fr){const v=rowMonths(fr).find(nonZero);if(v)SHMP_F2[c.fIdx]=v;}
+    });
+
+    // Посещения по направлениям (PIE) — берём последний ненулевой месяц каждого
+    const pieNames=['Stretching','Pilates','Barre','Body-ballet','Балетная подкачка','Кл.хор','Танцы народов','Пластика и сила'];
+    pieNames.forEach((n,i)=>{
+      const r=findRow(n);
+      if(!r)return;
+      const v=rowMonths(r).reduceRight((acc,x)=>acc!==null?acc:(nonZero(x)?x:null),null);
+      if(v)PIE_D[i]=v;
+    });
+
+    // ── Обновляем KFU-карточки текущими значениями ──
     const ltvLast=lastNonZero(LTV);
-    const cacNow=CAC[ltvLast.i]||KFU[0].metrics[0].cmp;
-    KFU[0].metrics[0].f=ltvLast.v;
-    KFU[0].metrics[0].cmp=cacNow;
+    const cacNow =CAC[ltvLast.i]||KFU[0].metrics[0].cmp;
+    KFU[0].metrics[0].f   =ltvLast.v;
+    KFU[0].metrics[0].cmp =cacNow;
     KFU[0].metrics[0].hint=`LTV ${Math.round(ltvLast.v).toLocaleString('ru-RU')} ${ltvLast.v>cacNow?'>':'<'} CAC ${Math.round(cacNow).toLocaleString('ru-RU')} — маркетинг ${ltvLast.v>cacNow?'окупается':'не окупается'}`;
     KFU[0].metrics[1].f=lastNonZero(PROFIT).v;
 
@@ -1057,12 +1128,19 @@ async function loadLiveData(){
     KFU[2].metrics[0].f=convLast.v;
     KFU[2].metrics[0].p=CONV_P[convLast.i]||KFU[2].metrics[0].p;
 
-    // Перерисовываем
+    const npsZanLast=lastNonZero(NPS_ZAN_F);
+    KFU[3].metrics[0].f=npsZanLast.v;
+
+    const npsPFLast=lastNonZero(NPS_PF);
+    KFU[5].metrics[0].f=npsPFLast.v;
+    KFU[5].metrics[0].p=NPS_PP[npsPFLast.i]||KFU[5].metrics[0].p;
+
+    // ── Перерисовываем ── (ВАЖНО: redrawCharts сохраняет выбранный период!)
     document.getElementById('kfu-row1').innerHTML='';
     document.getElementById('kfu-row2').innerHTML='';
     renderKFU();
-    initKFUCharts();
-    if(analyticsInited)initAnalyticsCharts();
+    redrawCharts(); // ← уважает selectedMonths
+    if(analyticsInited)initAnalyticsChartsFiltered();
     DEPTS.forEach((d,i)=>{if(document.getElementById(`dept-${i}`)&&d.chart)d.chart.render();});
 
     console.log('✅ Live data loaded from Google Sheets');
