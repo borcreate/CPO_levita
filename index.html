@@ -13,7 +13,7 @@
 :root{
   --bg:#f2f2f7;--bg2:#ffffff;--bg3:#f7f7fa;--bg4:#ebebf0;
   --gold:#b8902a;--gold-dim:rgba(184,144,42,0.08);
-  --text:#1c1c2e;--muted:#6b7280;--muted2:#9ca3af;
+  --text:#1c1c2e;--muted:#333333;--muted2:#666666;
   --green:#16a34a;--yellow:#ca8a04;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
   --border:#e5e7eb;--r:10px;
 }
@@ -24,7 +24,7 @@ html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-syst
 .hdr-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .hdr-date{font-size:11px;color:var(--muted)}
 /* NAV */
-.nav{display:flex;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;gap:4px}
+.nav{display:flex;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;gap:4px;position:sticky;top:56px;z-index:199}
 .nav-tab{padding:14px 18px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
 .nav-tab:hover{color:var(--text);background:var(--bg3)}
 .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
@@ -166,7 +166,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   <div class="nav-tab" onclick="showTab('map',this)">Карта франчайзи</div>
 </nav>
 
-<div style="background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+<div style="background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
   <span style="font-size:11px;color:var(--muted);margin-right:4px">Период:</span>
   <div id="period-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
   <button onclick="clearPeriod()" style="margin-left:8px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px" id="btn-clear-period" title="Сбросить выбор">✕ Сбросить</button>
@@ -931,6 +931,8 @@ function redrawCharts(){
   // Перерисовываем основные графики с фильтром
   initKFUChartsFiltered();
   if(analyticsInited) initAnalyticsChartsFiltered();
+  // Перерисовываем графики отделов
+  DEPTS.forEach((d,i)=>{ if(d.chart) d.chart.render(); });
 }
 
 function getFilteredLabels(){
