@@ -18,20 +18,132 @@
   --border:#e5e7eb;--r:10px;
 }
 html,body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh}
+/* HEADER */
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:200;box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .hdr-logo{font-size:18px;font-weight:800;letter-spacing:5px;color:var(--gold)}
 .hdr-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .hdr-date{font-size:11px;color:var(--muted)}
+/* NAV */
 .nav{display:flex;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;gap:4px;position:sticky;top:56px;z-index:199}
 .nav-tab{padding:14px 18px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
 .nav-tab:hover{color:var(--text);background:var(--bg3)}
 .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+/* MAIN */
 main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .page{display:none}.page.active{display:block}
+/* CARDS */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .card-pad{padding:20px}
-.loading{padding:40px;text-align:center;color:var(--muted);font-size:13px}
-.error{padding:20px;background:rgba(220,38,38,.1);border:1px solid #dc2626;color:#dc2626;border-radius:6px;margin:20px 0}
+/* STAT GRID */
+.stat-grid{display:grid;gap:12px;margin-bottom:20px}
+.stat-grid-4{grid-template-columns:repeat(4,1fr)}
+.stat-grid-3{grid-template-columns:repeat(3,1fr)}
+.stat-grid-2{grid-template-columns:repeat(2,1fr)}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:.15s}
+.stat-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);border-color:var(--gold)}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:700;line-height:1}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.stat-badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;margin-top:6px}
+.green{color:var(--green)}.yellow{color:var(--yellow)}.red{color:var(--red)}.blue{color:var(--blue)}
+.bg-green{background:rgba(22,163,74,.1);color:var(--green)}
+.bg-yellow{background:rgba(202,138,4,.1);color:var(--yellow)}
+.bg-red{background:rgba(220,38,38,.1);color:var(--red)}
+.bg-blue{background:rgba(37,99,235,.1);color:var(--blue)}
+/* CHARTS */
+.chart-wrap{position:relative;height:220px}
+.chart-wrap-sm{position:relative;height:180px}
+.chart-wrap-lg{position:relative;height:260px}
+.chart-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.chart-legend{display:flex;gap:16px;margin-top:10px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+.charts-row{display:grid;gap:16px;margin-bottom:16px}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-2{grid-template-columns:repeat(2,1fr)}
+/* KFU */
+.kfu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.kfu-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kfu-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);display:flex;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:.15s}
+.kfu-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.09);transform:translateY(-1px)}
+.kfu-bar{width:3px;flex-shrink:0}
+.kfu-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:10px}
+.kfu-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text)}
+.kfu-desc{font-size:11px;color:var(--muted);font-style:italic;line-height:1.5}
+.kfu-ckp{font-size:11px;color:var(--muted);line-height:1.6}
+.kfu-ckp-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);margin-bottom:4px}
+.kfu-divider{height:1px;background:var(--border)}
+.kfu-metrics{display:flex;flex-direction:column;gap:10px}
+.kfu-metric{}
+.kfu-m-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.kfu-m-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+.kfu-m-val{font-size:24px;font-weight:700;line-height:1}
+.kfu-m-plan{font-size:11px;color:var(--muted)}
+.kfu-prog{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.kfu-prog-fill{height:100%;border-radius:2px}
+/* DEPT */
+.dept-list{display:flex;flex-direction:column;gap:10px}
+.dept-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.dept-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;cursor:pointer;transition:.15s}
+.dept-hdr:hover{background:var(--bg3);border-radius:var(--r) var(--r) 0 0}
+.dept-hdr-l{display:flex;align-items:center;gap:12px}
+.dept-num{width:22px;height:22px;background:var(--gold-dim);border:1px solid rgba(201,168,76,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold)}
+.dept-name{font-size:14px;font-weight:600}
+.dept-arrow{color:var(--muted);font-size:11px;transition:transform .2s}
+.dept-card.open .dept-arrow{transform:rotate(180deg)}
+.dept-body{display:none;padding:16px 20px 20px;border-top:1px solid var(--border)}
+.dept-card.open .dept-body{display:block}
+.dept-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+.dept-table th{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border)}
+.dept-table th:not(:first-child){text-align:right}
+.dept-table td{font-size:13px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.dept-table tr:last-child td{border-bottom:none}
+.dept-table td:not(:first-child){text-align:right}
+.td-name{color:var(--muted)}
+.td-fact{font-weight:600}
+.td-plan{color:var(--muted2)}
+/* PROGRESS BARS */
+.prog-list{display:flex;flex-direction:column;gap:12px}
+.prog-item{}
+.prog-head{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.prog-label{color:var(--muted)}
+.prog-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.prog-fill{height:100%;border-radius:3px;transition:width .5s ease}
+/* MAP */
+.map-timeline{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.stage-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.stage-hdr{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:.15s}
+.stage-hdr:hover{background:var(--bg3)}
+.stage-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+.stage-info{flex:1}
+.stage-title{font-size:14px;font-weight:600;color:var(--gold)}
+.stage-state{font-size:12px;color:var(--muted);margin-top:2px}
+.stage-chevron{color:var(--muted);font-size:11px;transition:transform .2s}
+.stage-card.open .stage-chevron{transform:rotate(180deg)}
+.stage-body{display:none;padding:16px 18px;border-top:1px solid var(--border)}
+.stage-card.open .stage-body{display:block}
+.stage-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stage-col-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px}
+.stage-col-text{font-size:12px;line-height:1.7;color:var(--text)}
+.kfu-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.kfu-mini-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:.15s}
+.kfu-mini-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.kfu-mini-title{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px}
+.kfu-mini-ckp{font-size:11px;color:var(--muted);line-height:1.7}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:16px}
+/* SUMMARY TABLE */
+.summary-table{width:100%;border-collapse:collapse}
+.summary-table th{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.summary-table th:not(:first-child){text-align:right}
+.summary-table td{font-size:13px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.summary-table tr:last-child td{border-bottom:none}
+.summary-table td:not(:first-child){text-align:right}
+.badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px}
+/* LOADING */
+.loading-state{padding:40px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:1024px){.kfu-grid,.kfu-grid-4{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:1fr}.kfu-mini-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.stat-grid-4,.stat-grid-3{grid-template-columns:repeat(2,1fr)}.kfu-grid,.kfu-grid-4{grid-template-columns:1fr}.cols-2,.cols-3{grid-template-columns:1fr}main{padding:16px}.hdr,.nav{padding:0 16px}.stage-cols{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -47,157 +159,823 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   </div>
 </div>
 
-<nav class="nav" id="nav-tabs"></nav>
+<nav class="nav">
+  <div class="nav-tab active" onclick="showTab('kfu',this)">Фокусные метрики</div>
+  <div class="nav-tab" onclick="showTab('depts',this)">Все отделы</div>
+  <div class="nav-tab" onclick="showTab('analytics',this)">Аналитика года</div>
+  <div class="nav-tab" onclick="showTab('map',this)">Карта франчайзи</div>
+</nav>
 
-<main id="pages-container">
-  <div class="loading">Загрузка данных из таблицы...</div>
+<div style="background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
+  <span style="font-size:11px;color:var(--muted);margin-right:4px">Период:</span>
+  <div id="period-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+  <button onclick="clearPeriod()" style="margin-left:8px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px" id="btn-clear-period" title="Сбросить выбор">✕ Сбросить</button>
+  <span id="period-label" style="font-size:11px;color:var(--gold);margin-left:8px"></span>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════ TAB 1: КФУ -->
+<div class="page active" id="tab-kfu">
+  <div class="kfu-grid" id="kfu-row1"></div>
+  <div class="kfu-grid-4" id="kfu-row2"></div>
+  <div class="charts-row cols-3">
+    <div class="card card-pad">
+      <div class="chart-title">LTV vs CAC</div>
+      <div class="chart-sub">Окупаемость маркетинга — LTV должен быть выше CAC</div>
+      <div class="chart-wrap"><canvas id="c-ltv"></canvas></div>
+      <div class="chart-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#b8902a"></div>LTV</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#2563eb"></div>CAC</div>
+      </div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Брендовый спрос</div>
+      <div class="chart-sub">Динамика запросов и упоминаний бренда, план vs факт</div>
+      <div class="chart-wrap"><canvas id="c-brand"></canvas></div>
+      <div class="chart-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#b8902a"></div>Факт</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#444"></div>План</div>
+      </div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">NPS партнёров</div>
+      <div class="chart-sub">Лояльность франчайзи сети, цель >80%</div>
+      <div class="chart-wrap"><canvas id="c-nps-p"></canvas></div>
+      <div class="chart-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#16a34a"></div>Факт</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#444"></div>План</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB 2: ОТДЕЛЫ -->
+<div class="page" id="tab-depts">
+  <div class="dept-list" id="dept-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB 3: АНАЛИТИКА -->
+<div class="page" id="tab-analytics">
+  <div class="charts-row cols-2" style="margin-bottom:16px">
+    <div class="card card-pad">
+      <div class="chart-title">LTV vs CAC — динамика года</div>
+      <div class="chart-sub">Зелёная зона = маркетинг окупается</div>
+      <div class="chart-wrap-lg"><canvas id="a-ltv"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Конверсия лид → покупка</div>
+      <div class="chart-sub">Факт vs план, цель ≥18%</div>
+      <div class="chart-wrap-lg"><canvas id="a-conv"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-row cols-3" style="margin-bottom:16px">
+    <div class="card card-pad">
+      <div class="chart-title">% партнёров с ЧП ≥300К</div>
+      <div class="chart-sub">Цель: 80% партнёров с чистой прибылью от 300К</div>
+      <div class="chart-wrap"><canvas id="a-profit"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">NPS занятий</div>
+      <div class="chart-sub">Качество продукта, цель ≥85%</div>
+      <div class="chart-wrap"><canvas id="a-nps-zan"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Брендовый спрос</div>
+      <div class="chart-sub">Динамика охвата, план vs факт</div>
+      <div class="chart-wrap"><canvas id="a-brand2"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-row cols-2" style="margin-bottom:28px">
+    <div class="card card-pad">
+      <div class="chart-title">Академия администраторов</div>
+      <div class="chart-sub">Зашли vs получили сертификат</div>
+      <div class="chart-wrap"><canvas id="a-acad"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Выручка ШМП по курсам</div>
+      <div class="chart-sub">План vs факт, Янв–Мар</div>
+      <div class="chart-wrap"><canvas id="a-shmp"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+      <div class="section-title" style="margin-bottom:0">Сводная таблица — ключевые метрики (март 2026)</div>
+    </div>
+    <table class="summary-table">
+      <thead><tr><th>Метрика</th><th>Отдел</th><th>План</th><th>Факт</th><th>%</th></tr></thead>
+      <tbody id="summary-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB 4: КАРТА -->
+<div class="page" id="tab-map">
+  <div class="map-timeline" id="map-timeline">
+    <div class="loading-state">Загрузка карты франчайзи...</div>
+  </div>
+  <div style="margin-top:28px">
+    <div class="section-title">Поведенческие маркеры партнёра</div>
+    <div id="markers-section"></div>
+  </div>
+  <div style="margin-top:28px">
+    <div class="section-title">КФУ франшизы — Ценный конечный продукт каждого блока</div>
+    <div class="kfu-mini-grid" id="kfu-mini-grid"></div>
+  </div>
+</div>
+
 </main>
 
 <script>
-// Google Sheets ID
-const SHEET_ID = '1yCNQZ3GLeA5H9l10Jhi9IrUWVTiTR4RbP4CgYn1DHlA';
+Chart.defaults.color = '#6b7280';
+Chart.defaults.borderColor = '#e5e7eb';
+Chart.defaults.font.family = 'Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';
+Chart.defaults.font.size = 11;
 
-// Листы которые загружать
-const SHEETS_TO_LOAD = [
-  'Фокусные метрики',
-  'Дашборд',
-  'Карта франчайзи',
-  'Аналитика года'
+const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+const C = {gold:'#b8902a',blue:'#2563eb',green:'#16a34a',red:'#dc2626',yellow:'#ca8a04',purple:'#7c3aed',teal:'#0891b2',gray:'#9ca3af'};
+
+const LTV    = [4100,4590,4068,3613,3700,4371,3800,4200,3900,4100,4300,4500];
+const CAC    = [3606,3752,3956,3671,3959,3920,3800,3600,3700,3800,3900,4000];
+const BRAND_F= [4224,4934,3916,4876,4007,3967,4200,3900,4100,4300,4000,4200];
+const BRAND_P= [3864,4507,4872,4597,4847,4747,4500,4200,4300,4400,4300,4400];
+const NPS_PF = [94,83,95,86,87,90,88,85,89,91,90,92];
+const NPS_PP = [90,98,94,96,99,96,90,90,90,90,90,90];
+const CONV_F = [12,10,15,12,14,11,13,12,14,11,12,13];
+const CONV_P = [14,8,15,11,8,8,10,10,10,10,10,10];
+const PROFIT = [69,87,75,81,77,74,80,78,82,79,77,80];
+// Клиенты — Янв–Дек (факт + прогноз)
+const CLIENTS= [73010,70234,71500,72800,74200,75100,76000,77200,78100,79300,80100,81500];
+// Академия администраторов — Янв–Дек
+const ACAD_IN= [49,106,70,85,92,110,95,88,102,115,120,130];
+const ACAD_C = [21,39,26,33,36,44,38,35,40,46,50,54];
+// НПС занятий — Янв–Дек
+const NPS_ZAN_F=[87,92,92,90,91,93,92,90,92,93,94,93];
+const NPS_ZAN_P=[85,85,85,85,85,85,85,85,85,85,85,85];
+const SHMP_L = ['1 курс','2 курс','3.1 курс','3.2 курс'];
+const SHMP_P = [600000,4900000,3200000,1600000];
+const SHMP_F2= [297588,3542859,1076063,760206];
+const PIE_L  = ['Stretching','Pilates','Пластика и сила','Barre','Балетная подкачка','Кл.хор.','Нар. танцы','Прочие'];
+const PIE_D  = [128691,72936,28154,25065,11456,10556,9071,15154];
+
+// Логика статуса: для KFU Бизнес-модель LTV > CAC это ХОРОШО (зелёный)
+// Специальный тип 'ratio': f > threshold => зелёный
+const KFU = [
+  { title:'Бизнес-модель',
+    desc:'Оптимизация внутри модели, рычаги прибыли — сходится ли экономика у партнёра',
+    ckp:'Партнёр понимает как растут метрики, регламенты, как работать по бизнес-модели, как тратить финансы. При стагнации прибыли — пересборка: меняем что, как, кому продаём, устройство точки и канала прибыли.',
+    // LTV сравниваем с CAC (не с планом) — если выше, хорошо
+    metrics:[
+      {l:'LTV vs CAC',f:4068,cmp:3956,u:'₽',hint:'LTV 4 068 > CAC 3 956 — маркетинг окупается',type:'gt'},
+      {l:'Партнёры с ЧП ≥300К',f:75,p:80,u:'%'},
+    ] },
+  { title:'Спрос / PR',
+    desc:'Бренд даёт доверие и конверсию, есть стабильный "фундамент" входящего трафика',
+    ckp:'Бренд даёт доверие и конверсию, стабильный "фон спроса". Центральные медиа продают и утепляют, единый бренд гайд, PR пакеты на сеть и локальные. Глубокое изучение ЦА, детальная работа с репутацией, партнёрские каналы по лидам на сеть.',
+    metrics:[
+      {l:'Брендовый спрос',f:3916,p:4872,u:'',hint:'Ниже плана — нужен рост'},
+      {l:'Охват соц.сетей',f:'4M',hint:'суммарный охват центральных каналов'},
+    ] },
+  { title:'Стандарты управления',
+    desc:'Партнёр умеет делать плановые деньги по системе, а не вопреки ей',
+    ckp:'Партнёр делает плановые деньги по системе. Команда управляется по результативным регламентам, любая студия управляется по одинаковым метрикам и видно прозрачно что сломалось. Найдём партнёру выстроенный менеджмент, финансы прозрачны и нет перерасходов.',
+    metrics:[
+      {l:'Конверсия лид→покупка',f:15,p:18,u:'%'},
+      {l:'Выручка с постоянных',f:4953,p:4385,u:'₽'},
+    ] },
+  { title:'Продукт и качество',
+    desc:'Клиент реально получает ощущаемый результат и возвращается снова',
+    ckp:'Клиент получает ощущаемый результат, минимальная негативная и высокая доля удержания. Педагоги работают по регламентам, постоянно собирается обратная связь от клиентов и тайных покупателей. Доля амбасадорских направлений растёт от года к году.',
+    metrics:[
+      {l:'NPS занятий',f:92,p:85,u:'%'},
+      {l:'% амб. направлений',f:17,p:25,u:'%'},
+    ] },
+  { title:'IT + данные',
+    desc:'В любой момент видно — где дырка, кто не выполняет, что делать прямо сейчас',
+    ckp:'В любой момент партнёру видно — где дырка, куда утекли деньги, по какому показателю нужно поднажать для увеличения прибыли. Все оцифровано по источникам лидов и метрикам бизнеса. УК видит все метрики партнёров и точно реагирует на спады компетентной помощью. Безопасность систем присутствует везде.',
+    metrics:[
+      {l:'% студий в CRM',f:97,p:95,u:'%'},
+      {l:'% сдачи отчётности',f:99,p:95,u:'%'},
+    ] },
+  { title:'Справедливость управления',
+    desc:'"Со мной честны, правила понятны, ко мне относятся уважительно" — так должен чувствовать партнёр',
+    ckp:'Партнёр чувствует "со мной честны, правила понятны, изменения предсказуемы и логичны". Нет ощущения что сеть просто собирает деньги. Конфликты решаются быстро и по процедуре, без эмоций и унижения. Хорошие партнёры получают больше возможностей, плохие не паразитируют.',
+    metrics:[
+      {l:'NPS партнёров',f:95,p:80,u:'%'},
+      {l:'Индекс доверия',f:92,p:90,u:'%'},
+    ] },
+  { title:'Качественное сообщество',
+    desc:'Партнёр не один, есть обмен решениями, поддержка, принадлежность к чему-то большему',
+    ckp:'Партнёр не один — есть обмен решениями, поддержка, статус, энергия. Лучшие практики расходятся быстро, ошибки не повторяются. В кризис сообщество удерживает людей от паники и выхода.',
+    metrics:[
+      {l:'% участия в мероп.',f:66,p:80,u:'%'},
+      {l:'Достижений в сети',f:2,p:6,u:'шт'},
+    ] },
 ];
 
-// Главная функция загрузки
-async function initDashboard() {
-  try {
-    console.log('Загружаю листы...');
-    
-    // Загружу каждый лист
-    const sheetsData = {};
-    
-    for (const sheetName of SHEETS_TO_LOAD) {
-      try {
-        const data = await loadSheet(sheetName);
-        sheetsData[sheetName] = data;
-        console.log(`✓ Загружен лист "${sheetName}": ${data.length} строк`);
-      } catch (e) {
-        console.warn(`⚠ Не удалось загрузить "${sheetName}":`, e);
-      }
-    }
-    
-    // Отрисую интерфейс
-    renderDashboard(sheetsData);
-    
-  } catch (e) {
-    console.error('Ошибка инициализации:', e);
-    document.getElementById('pages-container').innerHTML = `
-      <div class="error">
-        <strong>Ошибка загрузки данных:</strong><br>
-        ${e.message}<br><br>
-        <small>Убедитесь, что таблица доступна и имеет нужные листы.</small>
-      </div>
-    `;
-  }
+// ── HELPERS ──────────────────────────────────────────────
+function pct(f,p){ if(!p||p===0) return null; return Math.round(f/p*100); }
+// type='gt': f > cmp = зелёный (LTV > CAC), иначе красный
+function scMetric(m){
+  if(m.type==='gt'){ return m.f > m.cmp ? C.green : C.red; }
+  const p = (typeof m.f==='number'&&m.p!=null) ? Math.round(m.f/m.p*100) : null;
+  return sc(p);
+}
+function sc(p){ if(p===null) return C.blue; return p>=100?C.green:p>=85?C.green:p>=70?C.yellow:C.red; }
+function scClass(p){ if(p===null) return 'blue'; return p>=100?'green':p>=85?'green':p>=60?'yellow':'red'; }
+function fmtNum(v,u){
+  if(typeof v==='string') return v+(u?' '+u:'');
+  if(typeof v!=='number') return '—';
+  let s;
+  if(Math.abs(v)>=1e6) s=(v/1e6).toFixed(1)+'M';
+  else if(Math.abs(v)>=1000) s=Math.round(v).toLocaleString('ru-RU');
+  else if(Number.isInteger(v)) s=String(v);
+  else s=v.toFixed(1);
+  return s+(u?' '+u:'');
+}
+function badgeHtml(p){
+  if(p===null) return '';
+  const cls=p>=85?'bg-green':p>=60?'bg-yellow':'bg-red';
+  return `<span class="badge ${cls}">${p}%</span>`;
 }
 
-// Загрузка отдельного листа через Google Visualization API
-async function loadSheet(sheetName) {
-  return new Promise((resolve, reject) => {
-    const query = new google.visualization.Query(
-      `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(sheetName)}`
-    );
-    
-    query.send((response) => {
-      if (response.isError()) {
-        reject(new Error(`Ошибка загрузки листа "${sheetName}": ${response.getReasons()}`));
-      } else {
-        const table = response.getDataTable();
-        const rows = [];
-        
-        // Конвертирую таблицу в массив
-        for (let i = 0; i < table.getNumberOfRows(); i++) {
-          const row = [];
-          for (let j = 0; j < table.getNumberOfColumns(); j++) {
-            row.push(table.getValue(i, j));
-          }
-          rows.push(row);
-        }
-        
-        resolve(rows);
-      }
-    });
+// ── CHART FACTORY ──────────────────────────────────────────────
+const _charts = {};
+function mkChart(id, cfg){
+  if(_charts[id]){ _charts[id].destroy(); delete _charts[id]; }
+  const el = document.getElementById(id);
+  if(!el) return;
+  _charts[id] = new Chart(el, cfg);
+}
+function lineDs(label, data, color, fill=false, dash=[]){
+  return { label, data, borderColor:color, backgroundColor: fill?color.replace(')',',0.12)').replace('rgb','rgba'):color+'22',
+    borderWidth:2, pointRadius:3, pointHoverRadius:5, tension:.35, fill, borderDash:dash };
+}
+function barDs(label, data, color){
+  return { label, data, backgroundColor:color+'bb', borderColor:color, borderWidth:1, borderRadius:4 };
+}
+function gridOpts(y2=false){
+  const scales = {
+    x:{ grid:{color:'#f0f0f5',drawBorder:false}, ticks:{font:{size:10},color:'#9ca3af'} },
+    y:{ grid:{color:'#f0f0f5',drawBorder:false}, ticks:{font:{size:10},color:'#9ca3af'} }
+  };
+  if(y2) scales.y2={position:'right',grid:{display:false},ticks:{font:{size:10},color:'#9ca3af'}};
+  return scales;
+}
+
+// ── RENDER KFU ──────────────────────────────────────────────
+function renderKFU(){
+  const rows = [document.getElementById('kfu-row1'), document.getElementById('kfu-row2')];
+  KFU.forEach((k,i)=>{
+    const el = document.createElement('div');
+    el.className='kfu-card';
+    // Используем scMetric — он знает про type:'gt' (LTV vs CAC) и обычный план/факт
+    const color = scMetric(k.metrics[0]);
+    const metricsHtml = k.metrics.map(m=>{
+      const mc = scMetric(m);
+      const p = (typeof m.f==='number'&&m.p!=null&&!m.type) ? pct(m.f,m.p) : null;
+      const fill = p!==null?Math.min(p,100):0;
+      // для type=gt показываем LTV vs CAC
+      const valDisplay = m.type==='gt'
+        ? `${fmtNum(m.f,m.u)} <span style="font-size:13px;color:var(--muted)"> vs CAC ${fmtNum(m.cmp,m.u)}</span>`
+        : fmtNum(m.f,m.u);
+      const hintHtml = m.hint ? `<div style="font-size:11px;color:${mc};margin-top:3px;font-style:italic">${m.hint}</div>` : '';
+      return `<div class="kfu-metric">
+        <div class="kfu-m-label">${m.l}</div>
+        <div class="kfu-m-row">
+          <div class="kfu-m-val" style="color:${mc}">${valDisplay}</div>
+          ${m.p!=null&&!m.type?`<span class="kfu-m-plan">план ${fmtNum(m.p,m.u)}</span>`:''}
+        </div>
+        ${hintHtml}
+        ${p!==null?`<div class="kfu-prog"><div class="kfu-prog-fill" style="width:${fill}%;background:${mc}"></div></div>`:''}
+      </div>`;
+    }).join('<div class="kfu-divider" style="margin:2px 0"></div>');
+    el.innerHTML=`<div class="kfu-bar" style="background:${color}"></div>
+      <div class="kfu-body">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <div style="width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color};flex-shrink:0"></div>
+          <div class="kfu-title" style="margin-bottom:0">${k.title}</div>
+        </div>
+        <div class="kfu-desc">${k.desc}</div>
+        <div class="kfu-divider"></div>
+        <div class="kfu-metrics">${metricsHtml}</div>
+      </div>`;
+    rows[i<3?0:1].appendChild(el);
   });
 }
 
-// Отрисовка дашборда
-function renderDashboard(sheetsData) {
-  const container = document.getElementById('pages-container');
-  const navTabs = document.getElementById('nav-tabs');
-  
-  // Очищу
-  container.innerHTML = '';
-  navTabs.innerHTML = '';
-  
-  let isFirst = true;
-  
-  for (const sheetName in sheetsData) {
-    const data = sheetsData[sheetName];
-    
-    // Таб навигации
-    const tab = document.createElement('div');
-    tab.className = `nav-tab ${isFirst ? 'active' : ''}`;
-    tab.textContent = sheetName;
-    tab.onclick = () => switchPage(sheetName);
-    navTabs.appendChild(tab);
-    
-    // Страница с содержимым
-    const page = document.createElement('div');
-    page.className = `page ${isFirst ? 'active' : ''}`;
-    page.id = `page-${sheetName}`;
-    page.innerHTML = renderSheetContent(sheetName, data);
-    container.appendChild(page);
-    
-    isFirst = false;
-  }
-  
-  // Дата
-  const now = new Date();
-  document.getElementById('hdrDate').textContent = now.toLocaleDateString('ru', {month:'long', year:'numeric'});
+// ── INIT KFU CHARTS ──────────────────────────────────────────────
+function initKFUCharts(){
+  mkChart('c-ltv',{type:'line',data:{labels:MONTHS,datasets:[lineDs('LTV',LTV,C.gold,false),lineDs('CAC',CAC,C.blue,false)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('c-brand',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',BRAND_F,C.gold,true),lineDs('План',BRAND_P,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('c-nps-p',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',NPS_PF,C.green,true),lineDs('План',NPS_PP,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...gridOpts(),y:{...gridOpts().y,min:70,max:105}}}});
 }
 
-function switchPage(sheetName) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  
-  document.getElementById(`page-${sheetName}`).classList.add('active');
-  event.target.classList.add('active');
+// ── RENDER DEPTS ──────────────────────────────────────────────
+const DEPTS = [
+  {
+    name:'Отдел открытий', num:1,
+    stats:[
+      {l:'Открытий студий',v:'11 шт',sub:'янв–мар'},
+      {l:'Срок открытия',v:'19 мес',sub:'среднее'},
+      {l:'Расходы на откр.',v:'600К ₽',sub:'итого'},
+      {l:'NPS отдела',v:'—',sub:'нет данных'},
+    ],
+    table:[
+      {n:'Кол-во открытий',f:'11',p:'—',pct:null},
+      {n:'Срок открытия (мес.)',f:'19',p:'—',pct:null},
+      {n:'Расходы (₽)',f:'600 000',p:'—',pct:null},
+    ],
+    chart:{id:'d-openings',render:()=>{
+      mkChart('d-openings',{type:'bar',data:{labels:MONTHS,
+        datasets:[barDs('Открытий',[10,1,0,2,3,2,1,2,3,2,2,1],C.gold),{...barDs('Расходы',[0,500000,100000,200000,300000,200000,100000,200000,300000,200000,200000,100000],C.blue),yAxisID:'y2'}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},
+          scales:{...gridOpts(true),y:{title:{display:true,text:'шт',font:{size:10}}},y2:{position:'right',title:{display:true,text:'₽'},grid:{display:false}}}}});
+    }}
+  },
+  {
+    name:'Отдел ШМП', num:2,
+    stats:[
+      {l:'Выручка (факт)',v:'6.35M ₽',sub:'план 11.1M'},
+      {l:'Выполнение плана',v:'57%',sub:'март',color:'red'},
+      {l:'Кол-во выпускников',v:'0',sub:'нет данных'},
+      {l:'NPS отдела',v:'9.3',sub:'из 10'},
+    ],
+    table:[
+      {n:'Выручка итого',f:'6 353 844 ₽',p:'11 100 000 ₽',pct:57},
+      {n:'1 курс РФ/СНГ',f:'297 588 ₽',p:'600 000 ₽',pct:50},
+      {n:'2 курс РФ/СНГ',f:'3 542 859 ₽',p:'4 900 000 ₽',pct:72},
+      {n:'3.1 курс',f:'1 076 063 ₽',p:'3 200 000 ₽',pct:34},
+      {n:'3.2 курс',f:'760 206 ₽',p:'1 600 000 ₽',pct:48},
+    ],
+    chart:{id:'d-shmp',render:()=>{
+      mkChart('d-shmp',{type:'bar',data:{labels:SHMP_L,
+        datasets:[barDs('План',SHMP_P,C.gray),barDs('Факт',SHMP_F2,C.gold)]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+    }}
+  },
+  {
+    name:'Маркетинг партнёров', num:3,
+    stats:[
+      {l:'Охват Instagram',v:'24 224',sub:'февраль'},
+      {l:'Охват Telegram',v:'51 039',sub:'февраль'},
+      {l:'Лидов с сетевых',v:'79',sub:'февраль'},
+      {l:'PR-выходов',v:'0',sub:'нет данных'},
+    ],
+    table:[
+      {n:'Охват СММ (Инст)',f:'24 224',p:'—',pct:null},
+      {n:'Охват ТГ',f:'51 039',p:'—',pct:null},
+      {n:'Лидов с сетевых каналов',f:'79',p:'—',pct:null},
+      {n:'Гипотезы запущены',f:'4',p:'—',pct:null},
+    ],
+    chart:{id:'d-mkt',render:()=>{
+      mkChart('d-mkt',{type:'line',data:{labels:MONTHS,
+        datasets:[lineDs('Instagram',[ 0,24224,28000,31000,34000,38000,41000,43000,46000,50000,52000,55000],C.purple),lineDs('Telegram',[0,51039,55000,58000,62000,66000,70000,73000,77000,80000,84000,88000],C.teal)]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+    }}
+  },
+  {
+    name:'Территориальные управляющие', num:4,
+    stats:[
+      {l:'Клиентов сети',v:'70 234',sub:'февраль (−2 776 к январю)'},
+      {l:'% аттестаций',v:'82%',sub:'по управлению'},
+      {l:'% сбора роялти',v:'—',sub:'нет данных'},
+      {l:'NPS партнёров',v:'80%',sub:'факт'},
+    ],
+    table:[
+      {n:'Клиентов сети (янв)',f:'73 010',p:'—',pct:null},
+      {n:'Клиентов сети (фев)',f:'70 234',p:'—',pct:null},
+      {n:'% аттестаций (управление)',f:'82%',p:'75%',pct:109},
+      {n:'NPS по клиентам',f:'0%',p:'—',pct:null},
+    ],
+    chart:{id:'d-terr',render:()=>{
+      mkChart('d-terr',{type:'line',data:{labels:MONTHS,
+        datasets:[lineDs('Клиентов сети',CLIENTS,C.gold,true)]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+          scales:{...gridOpts(),y:{min:68000,max:85000,grid:{color:'#f0f0f5',drawBorder:false},ticks:{font:{size:10}}}}}});
+    }}
+  },
+  {
+    name:'Комьюнити менеджер', num:5,
+    stats:[
+      {l:'Мероприятий',v:'0',sub:'план 6 в год'},
+      {l:'Амбасадоров',v:'66%',sub:'из партнёров'},
+      {l:'Достижений в сети',v:'2',sub:'цель >6'},
+      {l:'NPS мероприятий',v:'—',sub:'нет данных'},
+    ],
+    table:[
+      {n:'Мероприятий проведено',f:'0',p:'6 / год',pct:null},
+      {n:'% партнёров-амбасадоров',f:'66%',p:'80%',pct:83},
+      {n:'Достижений в сети',f:'2',p:'6',pct:33},
+    ],
+    progBars:[
+      {l:'% участия в мероприятиях',f:66,p:80},
+      {l:'Достижений в сети',f:2,p:6},
+      {l:'Амбасадоры сети',f:66,p:80},
+    ]
+  },
+  {
+    name:'Обучение и контроль качества', num:6,
+    stats:[
+      {l:'NPS занятий',v:'92%',sub:'цель ≥85%',color:'green'},
+      {l:'Качество занятий',v:'86%',sub:'февраль'},
+      {l:'Тайных покупателей',v:'8 / 20',sub:'план выполнен на 40%'},
+      {l:'Кол-во посещений',v:'300K+',sub:'за период'},
+    ],
+    table:[
+      {n:'NPS занятий',f:'92%',p:'85%',pct:108},
+      {n:'Качество занятий',f:'86%',p:'—',pct:null},
+      {n:'Тайные покупатели',f:'8',p:'20',pct:40},
+      {n:'Индекс групп',f:'51',p:'—',pct:null},
+    ],
+    chart:{id:'d-qual',render:()=>{
+      mkChart('d-nps-zan',{type:'line',data:{labels:MONTHS,
+        datasets:[lineDs('Факт',NPS_ZAN_F,C.green,true),lineDs('План',NPS_ZAN_P,C.gray,false,[5,3])]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},
+          scales:{...gridOpts(),y:{min:70,max:100,grid:{color:'#f0f0f5',drawBorder:false},ticks:{font:{size:10}}}}
+        }});
+      mkChart('d-pie',{type:'doughnut',data:{labels:PIE_L,datasets:[{data:PIE_D,backgroundColor:[C.gold,C.blue,C.green,C.purple,C.teal,C.red,'#ff9f40','#888'],borderWidth:0,hoverOffset:4}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10,padding:6}}}}});
+    }, dualChart: true}
+  },
+  {
+    name:'Академия администраторов', num:7,
+    stats:[
+      {l:'Зашли (фев)',v:'106',sub:''},
+      {l:'Сертификат (фев)',v:'39',sub:'37% выпуск'},
+      {l:'NPS академии',v:'73',sub:'из 100'},
+      {l:'Итого за 3 мес.',v:'225 → 86',sub:'зашли → сертификат'},
+    ],
+    table:[
+      {n:'Зашли',f:'225',p:'—',pct:null},
+      {n:'Получили сертификат',f:'86',p:'—',pct:null},
+      {n:'% выпуска',f:'38%',p:'—',pct:null},
+      {n:'NPS академии',f:'73',p:'—',pct:null},
+    ],
+    chart:{id:'d-acad',render:()=>{
+      mkChart('d-acad',{type:'bar',data:{labels:MONTHS,
+        datasets:[barDs('Зашли',ACAD_IN,C.blue),barDs('Сертификат',ACAD_C,C.gold)]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+    }}
+  },
+  {
+    name:'Академия педагогов', num:8,
+    stats:[
+      {l:'Зашедших (фев)',v:'159',sub:''},
+      {l:'Договоров (фев)',v:'112',sub:''},
+      {l:'% доходимости',v:'86%',sub:'февраль'},
+      {l:'NPS академии',v:'—',sub:'нет данных'},
+    ],
+    table:[
+      {n:'Кол-во зашедших',f:'159',p:'—',pct:null},
+      {n:'% доходимости до аттестации',f:'86%',p:'—',pct:null},
+      {n:'Кол-во договоров',f:'112',p:'—',pct:null},
+    ],
+    progBars:[
+      {l:'% доходимости до аттестации',f:86,p:100},
+      {l:'Конверсия зашли→договор',f:70,p:100},
+    ]
+  },
+];
+
+function renderDepts(){
+  const list = document.getElementById('dept-list');
+  DEPTS.forEach((d,i)=>{
+    const el = document.createElement('div');
+    el.className='dept-card open';
+    el.id=`dept-${i}`;
+    const statsHtml = d.stats?`<div class="stat-grid stat-grid-4" style="margin-bottom:16px">${d.stats.map(s=>`
+      <div class="stat-card">
+        <div class="stat-label">${s.l}</div>
+        <div class="stat-val ${s.color||''}">${s.v}</div>
+        <div class="stat-sub">${s.sub}</div>
+      </div>`).join('')}</div>`:'';
+    const tableHtml = d.table?`<table class="dept-table"><thead><tr><th>Метрика</th><th>Факт</th><th>План</th><th>%</th></tr></thead><tbody>${
+      d.table.map(r=>`<tr><td class="td-name">${r.n}</td><td class="td-fact">${r.f}</td><td class="td-plan">${r.p}</td><td>${badgeHtml(r.pct)}</td></tr>`).join('')
+    }</tbody></table>`:'';
+    const progHtml = d.progBars?`<div class="prog-list">${d.progBars.map(pb=>{
+      const p=Math.round(pb.f/pb.p*100); const cc=p>=85?C.green:p>=60?C.gold:C.red;
+      return `<div class="prog-item"><div class="prog-head"><span class="prog-label">${pb.l}</span><span>${pb.f} / ${pb.p} (${p}%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(p,100)}%;background:${cc}"></div></div></div>`;
+    }).join('')}</div>`:'';
+    const chartHtml = d.chart?(d.chart.dualChart
+      ?`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`
+      :`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
+
+    el.innerHTML=`<div class="dept-hdr" onclick="toggleDept(${i})">
+      <div class="dept-hdr-l"><div class="dept-num">${d.num}</div><div class="dept-name">${d.name}</div></div>
+      <div class="dept-arrow">▲</div></div>
+    <div class="dept-body">${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
+    list.appendChild(el);
+  });
+  // Init charts for open depts
+  DEPTS.forEach((d,i)=>{ if(d.chart) d.chart.render(); });
 }
 
-function renderSheetContent(sheetName, rows) {
-  // Простая таблица для начала
-  let html = '<div class="card card-pad"><table style="width:100%;border-collapse:collapse">';
-  
-  for (let i = 0; i < Math.min(rows.length, 50); i++) {
-    html += '<tr>';
-    for (let j = 0; j < Math.min(rows[i].length, 10); j++) {
-      const val = rows[i][j];
-      const tag = i === 0 ? 'th' : 'td';
-      const style = i === 0 ? 'style="border-bottom:1px solid var(--border);padding:8px;font-weight:600;text-align:left"' : 'style="border-bottom:1px solid var(--border);padding:8px"';
-      html += `<${tag} ${style}>${val || ''}</${tag}>`;
+function toggleDept(i){
+  const el=document.getElementById(`dept-${i}`);
+  const wasOpen=el.classList.contains('open');
+  el.classList.toggle('open');
+  if(!wasOpen && DEPTS[i].chart) DEPTS[i].chart.render();
+}
+
+// ── ANALYTICS CHARTS ──────────────────────────────────────────────
+function initAnalyticsCharts(){
+  mkChart('a-ltv',{type:'line',data:{labels:MONTHS,datasets:[lineDs('LTV',LTV,C.gold,false),lineDs('CAC',CAC,C.blue,false)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-conv',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',CONV_F,C.gold,true),lineDs('План',CONV_P,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-profit',{type:'line',data:{labels:MONTHS,datasets:[lineDs('% партнёров с ЧП ≥300К',PROFIT,C.green,true)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{...gridOpts(),y:{min:50,max:100,grid:{color:'#f0f0f5',drawBorder:false},ticks:{font:{size:10},callback:v=>v+'%'}}}}});
+  mkChart('a-nps-zan',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',NPS_ZAN_F,C.green,true),lineDs('План',NPS_ZAN_P,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},
+      scales:{...gridOpts(),y:{min:70,max:100,grid:{color:'#f0f0f5',drawBorder:false},ticks:{font:{size:10}}}}}});
+  mkChart('a-brand2',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',BRAND_F,C.gold,true),lineDs('План',BRAND_P,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-acad',{type:'bar',data:{labels:MONTHS,datasets:[barDs('Зашли',ACAD_IN,C.blue),barDs('Сертификат',ACAD_C,C.gold)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-shmp',{type:'bar',data:{labels:SHMP_L,datasets:[barDs('План',SHMP_P,C.gray),barDs('Факт',SHMP_F2,C.gold)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  // Summary table
+  const rows=[
+    {m:'LTV',d:'Бизнес-модель',p:4500,f:4068,u:'₽'},
+    {m:'Конверсия лид→покупка',d:'Стандарты',p:18,f:15,u:'%'},
+    {m:'NPS занятий',d:'Продукт',p:85,f:92,u:'%'},
+    {m:'% студий в CRM',d:'IT+данные',p:96,f:97,u:'%'},
+    {m:'NPS партнёров',d:'Справедливость',p:94,f:95,u:'%'},
+    {m:'Брендовый спрос',d:'Спрос/PR',p:4872,f:3916,u:''},
+    {m:'% участия в мероп.',d:'Сообщество',p:80,f:66,u:'%'},
+    {m:'Выручка ШМП',d:'Отдел ШМП',p:11100000,f:6353844,u:'₽'},
+    {m:'Клиентов сети',d:'Терр. управ.',p:null,f:70234,u:''},
+  ];
+  document.getElementById('summary-tbody').innerHTML=rows.map(r=>{
+    const p=r.p?pct(r.f,r.p):null;
+    return `<tr><td style="font-weight:500">${r.m}</td><td style="color:var(--muted)">${r.d}</td>
+      <td style="color:var(--muted)">${r.p?fmtNum(r.p,r.u):'—'}</td>
+      <td style="font-weight:600">${fmtNum(r.f,r.u)}</td><td>${badgeHtml(p)}</td></tr>`;
+  }).join('');
+}
+
+// ── КАРТА ФРАНЧАЙЗИ ──────────────────────────────────────────────
+const STAGE_COLORS=['#b8902a','#2563eb','#16a34a','#ca8a04','#dc2626','#7c3aed'];
+const STAGE_EMOJI=['🌟','⚡','💰','🔥','⚖️','👑'];
+
+function renderMap(rows){
+  const stages=rows.slice(1,7);
+  const ckpRow=rows[12]||[];
+  const descRow=rows[9]||[];
+  const kfuNames=['Бизнес-модель','Спрос/PR','Стандарты управления','Продукт и качество','IT + данные','Справедливость','Сообщество'];
+  const timeline=document.getElementById('map-timeline');
+  const clean=s=>String(s||'').replace(/\xa0/g,' ').trim();
+  const fmt=s=>clean(s).replace(/\n/g,'<br>').replace(/- /g,'• ');
+
+  timeline.innerHTML=stages.map((r,i)=>{
+    const title=clean(r[0]).replace(/\n.*/,'');
+    const state=clean(r[1]);
+    const thoughts=clean(r[2]); // триггерные мысли
+    const trigger=clean(r[3]);  // триггер выхода
+    const feeling=clean(r[4]);  // как должно ощущаться
+    const todo=fmt(r[5]);       // что делать
+    const tone=fmt(r[6]);       // как общаться
+    const markers=clean(r[7]);  // поведенческие маркеры
+
+    const c=STAGE_COLORS[i];
+    const shortState=state.slice(0,90)+(state.length>90?'…':'');
+    return `<div class="stage-card" id="stage-${i}">
+      <div class="stage-hdr" onclick="toggleStage(${i})">
+        <div class="stage-num" style="background:${c}22;color:${c}">${STAGE_EMOJI[i]}</div>
+        <div class="stage-info">
+          <div class="stage-title">${title}</div>
+          <div class="stage-state">${shortState}</div>
+        </div>
+        <div class="stage-chevron">▼</div>
+      </div>
+      <div class="stage-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div>
+            <div class="stage-col-title">😤 Триггерные мысли</div>
+            <div class="stage-col-text">${thoughts||'—'}</div>
+          </div>
+          <div>
+            <div class="stage-col-title">⚠️ Триггер выхода</div>
+            <div class="stage-col-text">${trigger||'—'}</div>
+          </div>
+          <div>
+            <div class="stage-col-title">💚 Как должно ощущаться</div>
+            <div class="stage-col-text">${feeling||'—'}</div>
+          </div>
+          <div>
+            <div class="stage-col-title">👀 Поведенческие маркеры</div>
+            <div class="stage-col-text" style="color:var(--muted);font-style:italic">↓ Смотри раздел ниже</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div class="stage-col-title">✅ Что делать</div>
+            <div class="stage-col-text">${todo||'—'}</div>
+          </div>
+          <div>
+            <div class="stage-col-title">💬 Как общаться</div>
+            <div class="stage-col-text">${tone||'—'}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── ПОВЕДЕНЧЕСКИЕ МАРКЕРЫ — отдельный раздел ──
+  // Маркеры — это структурированные паттерны: "Начал X → Что значит → Риск → Действие"
+  // Парсим из col[7] каждого этапа
+  const markersEl = document.getElementById('markers-section');
+  if(markersEl){
+    // Берём маркеры из первого этапа где они есть (они универсальны для всех)
+    let allMarkersRaw = '';
+    for(const r of stages){ const raw=clean(r[7]); if(raw){ allMarkersRaw=raw; break; } }
+    if(allMarkersRaw){
+      const blocks=allMarkersRaw.split(/(?=Начал|Перестал|Финансовые маркеры)/g).filter(b=>b.trim());
+      const blocksHtml=blocks.map(block=>{
+        const lines=block.split(/\n/).map(l=>l.trim()).filter(Boolean);
+        const header=lines[0]||'';
+        const rest=lines.slice(1);
+        const znamenie=rest.filter(l=>l.startsWith('Что значит')).map(l=>l.replace(/^Что значит:?\s*/,'')).join(' ');
+        const risk=rest.filter(l=>l.toLowerCase().startsWith('риск')).map(l=>l.replace(/^Риск:?\s*/i,'')).join(' ');
+        const action=rest.filter(l=>l.toLowerCase().startsWith('действие')).map(l=>l.replace(/^Действие:?\s*/i,'')).join(' ');
+        const riskColor=risk.toLowerCase().includes('очень высок')?C.red:risk.toLowerCase().includes('высок')?C.yellow:C.gold;
+        return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+          <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:10px">${header}</div>
+          ${znamenie?`<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px">Что значит</div><div style="font-size:12px;color:var(--text);line-height:1.6">${znamenie}</div></div>`:''}
+          ${risk?`<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px">Риск</div><div style="font-size:12px;color:${riskColor};font-weight:600">${risk}</div></div>`:''}
+          ${action?`<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px">Действие</div><div style="font-size:12px;color:var(--text);line-height:1.6">${action.replace(/- /g,'• ')}</div></div>`:''}
+          ${!znamenie&&!risk&&!action?`<div style="font-size:12px;color:var(--muted);line-height:1.6">${rest.join('<br>')}</div>`:''}
+        </div>`;
+      }).join('');
+      markersEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px">${blocksHtml}</div>`;
+    } else {
+      markersEl.innerHTML='<div class="loading-state">Маркеры не найдены в таблице</div>';
     }
-    html += '</tr>';
   }
-  
-  html += '</table></div>';
-  return html;
+
+  // Данные КФУ для светофора (из JS-массива KFU)
+  const kfuStatusColors = KFU.map(k => {
+    const m = k.metrics[0];
+    if(m.type==='gt') return m.f > m.cmp ? C.green : C.red;
+    const p = (typeof m.f==='number' && m.p!=null) ? Math.round(m.f/m.p*100) : null;
+    return sc(p);
+  });
+
+  document.getElementById('kfu-mini-grid').innerHTML=kfuNames.map((n,i)=>{
+    const desc=clean(descRow[i]||'');
+    const ckpRaw=String(ckpRow[i]||'').replace(/\xa0/g,' ').trim();
+    // ЦКП из JS-массива KFU (правильные тексты)
+    const ckpText = KFU[i] ? KFU[i].ckp : ckpRaw;
+    const sc_color = kfuStatusColors[i] || C.blue;
+    return `<div class="kfu-mini-card" style="border-left:3px solid ${sc_color}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:8px;height:8px;border-radius:50%;background:${sc_color};box-shadow:0 0 6px ${sc_color};flex-shrink:0"></div>
+        <div class="kfu-mini-title" style="margin-bottom:0">${n}</div>
+      </div>
+      ${desc?`<div style="font-size:11px;color:var(--muted);font-style:italic;margin-bottom:10px;line-height:1.5">${desc.slice(0,110)}${desc.length>110?'…':''}</div>`:''}
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px">Ценный конечный продукт</div>
+      <div class="kfu-mini-ckp">${ckpText.replace(/\n/g,'<br>')||'—'}</div>
+    </div>`;
+  }).join('');
 }
 
-// Загружу Google Visualization API
-const script = document.createElement('script');
-script.src = 'https://www.gstatic.com/charts/loader.js';
-script.onload = () => {
-  google.charts.load('current', {packages: ['corechart', 'table']});
-  google.charts.setOnLoadCallback(initDashboard);
-};
-document.head.appendChild(script);
+function toggleStage(i){
+  document.getElementById(`stage-${i}`).classList.toggle('open');
+}
+
+async function loadMap(){
+  try{
+    const url=`https://docs.google.com/spreadsheets/d/1yCNQZ3GLeA5H9l10Jhi9IrUWVTiTR4RbP4CgYn1DHlA/gviz/tq?tqx=out:json&sheet=${encodeURIComponent('Карта франчайзи')}`;
+    const t=await(await fetch(url)).text();
+    const m=t.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/);
+    if(!m) throw new Error('parse');
+    const data=JSON.parse(m[1]);
+    const rows=data.table.rows.map(r=>r.c.map(c=>!c?'':(c.f!=null?c.f:(c.v!=null?String(c.v):''))));
+    renderMap(rows);
+  }catch(e){
+    document.getElementById('map-timeline').innerHTML=`<div class="loading-state">Не удалось загрузить данные карты.<br><span style="font-size:11px">Проверьте доступ к таблице.</span></div>`;
+  }
+}
+
+// ── TABS ──────────────────────────────────────────────
+let analyticsInited=false;
+function showTab(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+  if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
+}
+
+// ── PERIOD FILTER ──────────────────────────────────────────────
+let selectedMonths = new Set();
+const MONTH_LABELS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+
+function initPeriod(){
+  const c = document.getElementById('period-btns');
+  MONTH_LABELS.forEach((m,i)=>{
+    const btn=document.createElement('button');
+    btn.textContent=m;
+    btn.dataset.idx=i;
+    btn.style.cssText='background:var(--bg2);border:1px solid var(--border);color:var(--muted);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;transition:.15s;font-weight:500';
+    btn.onclick=()=>toggleMonth(i,btn);
+    c.appendChild(btn);
+  });
+}
+
+function toggleMonth(i,btn){
+  if(selectedMonths.has(i)){
+    selectedMonths.delete(i);
+    btn.style.background='transparent';
+    btn.style.borderColor='var(--border)';
+    btn.style.color='var(--muted)';
+  } else {
+    selectedMonths.add(i);
+    btn.style.background='rgba(184,144,42,0.1)';
+    btn.style.borderColor='#b8902a';
+    btn.style.color='#b8902a';
+  }
+  updatePeriodLabel();
+  redrawCharts();
+}
+
+function clearPeriod(){
+  selectedMonths.clear();
+  document.querySelectorAll('#period-btns button').forEach(b=>{
+    b.style.background='transparent';
+    b.style.borderColor='var(--border)';
+    b.style.color='var(--muted)';
+  });
+  updatePeriodLabel();
+  redrawCharts();
+}
+
+function updatePeriodLabel(){
+  const lbl=document.getElementById('period-label');
+  if(selectedMonths.size===0){ lbl.textContent=''; return; }
+  const sorted=[...selectedMonths].sort((a,b)=>a-b);
+  lbl.textContent='Выбрано: '+sorted.map(i=>MONTH_LABELS[i]).join(', ');
+}
+
+function filterData(arr){
+  if(selectedMonths.size===0) return arr;
+  return arr.map((v,i)=>selectedMonths.has(i)?v:null);
+}
+
+function redrawCharts(){
+  // Перерисовываем основные графики с фильтром
+  initKFUChartsFiltered();
+  if(analyticsInited) initAnalyticsChartsFiltered();
+  // Перерисовываем графики отделов
+  DEPTS.forEach((d,i)=>{ if(d.chart) d.chart.render(); });
+}
+
+function getFilteredLabels(){
+  if(selectedMonths.size===0) return MONTHS;
+  return MONTHS.filter((_,i)=>selectedMonths.has(i));
+}
+function getFiltered(arr){
+  if(selectedMonths.size===0) return arr;
+  return arr.filter((_,i)=>selectedMonths.has(i));
+}
+
+function initKFUChartsFiltered(){
+  const lbl=getFilteredLabels();
+  mkChart('c-ltv',{type:'line',data:{labels:lbl,datasets:[lineDs('LTV',getFiltered(LTV),C.gold),lineDs('CAC',getFiltered(CAC),C.blue)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('c-brand',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(BRAND_F),C.gold,true),lineDs('План',getFiltered(BRAND_P),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('c-nps-p',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(NPS_PF),C.green,true),lineDs('План',getFiltered(NPS_PP),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...gridOpts(),y:{min:70,max:105,grid:{color:'#f0f0f5',drawBorder:false}}}}});
+}
+
+function initAnalyticsChartsFiltered(){
+  const lbl=getFilteredLabels();
+  mkChart('a-ltv',{type:'line',data:{labels:lbl,datasets:[lineDs('LTV',getFiltered(LTV),C.gold),lineDs('CAC',getFiltered(CAC),C.blue)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-conv',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(CONV_F),C.gold,true),lineDs('План',getFiltered(CONV_P),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-profit',{type:'line',data:{labels:lbl,datasets:[lineDs('% партнёров',getFiltered(PROFIT),C.green,true)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...gridOpts(),y:{min:50,max:100,ticks:{callback:v=>v+'%'}}}}});
+  mkChart('a-nps-zan',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(NPS_ZAN_F),C.green,true),lineDs('План',getFiltered(NPS_ZAN_P),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:{...gridOpts(),y:{min:70,max:100,ticks:{font:{size:10}}}}}});
+  mkChart('a-brand2',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(BRAND_F),C.gold,true),lineDs('План',getFiltered(BRAND_P),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+}
+
+// ── INIT ──────────────────────────────────────────────
+const now=new Date();
+document.getElementById('hdrDate').textContent=now.toLocaleDateString('ru',{month:'long',year:'numeric'});
+initPeriod();
+renderKFU();
+renderDepts();
+initKFUCharts();
+loadMap();
 </script>
 </body>
 </html>
