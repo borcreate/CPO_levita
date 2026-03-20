@@ -94,7 +94,8 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .dept-card.open .dept-arrow{transform:rotate(180deg)}
 .dept-body{display:none;padding:16px 20px 20px;border-top:1px solid var(--border)}
 .dept-card.open .dept-body{display:block}
-.dept-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+.dept-table{width:100%;border-collapse:collapse;margin-bottom:16px;white-space:nowrap}
+.dept-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .dept-table th{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border)}
 .dept-table th:not(:first-child){text-align:right}
 .dept-table td{font-size:13px;padding:8px 10px;border-bottom:1px solid var(--border)}
@@ -143,7 +144,8 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 /* LOADING */
 .loading-state{padding:40px;text-align:center;color:var(--muted);font-size:13px}
 @media(max-width:1024px){.kfu-grid,.kfu-grid-4{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:1fr}.kfu-mini-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){.stat-grid-4,.stat-grid-3{grid-template-columns:repeat(2,1fr)}.kfu-grid,.kfu-grid-4{grid-template-columns:1fr}.cols-2,.cols-3{grid-template-columns:1fr}main{padding:16px}.hdr,.nav{padding:0 16px}.stage-cols{grid-template-columns:1fr}}
+@media(max-width:1024px){#period-btns{flex-wrap:wrap}.dept-table{font-size:12px}}
+@media(max-width:640px){.stat-grid-4,.stat-grid-3{grid-template-columns:repeat(2,1fr)}.kfu-grid,.kfu-grid-4{grid-template-columns:1fr}.cols-2,.cols-3{grid-template-columns:1fr}main{padding:16px}.hdr,.nav{padding:0 16px}.stage-cols{grid-template-columns:1fr}#period-btns button{padding:3px 6px;font-size:10px}.stat-card{padding:12px}}
 </style>
 </head>
 <body>
@@ -653,9 +655,9 @@ function renderDepts(){
         <div class="stat-val ${s.color||''}">${s.v}</div>
         <div class="stat-sub">${s.sub}</div>
       </div>`).join('')}</div>`:'';
-    const tableHtml = d.table?`<table class="dept-table"><thead><tr><th>Метрика</th><th>Факт</th><th>План</th><th>%</th></tr></thead><tbody>${
+    const tableHtml = d.table?`<div class="dept-table-wrap"><table class="dept-table"><thead><tr><th>Метрика</th><th>Факт</th><th>План</th><th>%</th></tr></thead><tbody>${
       d.table.map(r=>`<tr><td class="td-name">${r.n}</td><td class="td-fact">${r.f}</td><td class="td-plan">${r.p}</td><td>${badgeHtml(r.pct)}</td></tr>`).join('')
-    }</tbody></table>`:'';
+    }</tbody></table></div>`:'';
     const progHtml = d.progBars?`<div class="prog-list">${d.progBars.map(pb=>{
       const p=Math.round(pb.f/pb.p*100); const cc=p>=85?C.green:p>=60?C.gold:C.red;
       return `<div class="prog-item"><div class="prog-head"><span class="prog-label">${pb.l}</span><span>${pb.f} / ${pb.p} (${p}%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(p,100)}%;background:${cc}"></div></div></div>`;
