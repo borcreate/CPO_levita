@@ -320,6 +320,11 @@ const SHMP_F2= [297588,3542859,1076063,760206];
 // Выручка с постоянных клиентов
 const CONST_REV_F=[3695,4576,4978,4594,4222,4774,4794,4985,4519,3659,3707,4216];
 const CONST_REV_P=[4549,4304,3952,4929,3712,4343,4857,3656,4592,4529,4903,4919];
+// % студий в CRM и сдача отчётности
+const CRM_F=[94,92,98,96,93,97,98,99,99,91,98,94];
+const CRM_P=[95,96,90,93,96,97,99,93,95,93,92,92];
+const REP_F=[92,96,97,93,97,96,95,91,90,98,94,90];
+const REP_P=[94,93,94,93,95,94,93,90,96,90,97,96];
 const PIE_L  = ['Stretching','Pilates','Пластика и сила','Barre','Балетная подкачка','Кл.хор.','Нар. танцы','Прочие'];
 const PIE_D  = [128691,72936,28154,25065,11456,10556,9071,15154];
 
@@ -1000,8 +1005,17 @@ function updateKFUCards(){
   KFU[2].metrics[1].p=getAvg(CONST_REV_P);
 
   KFU[3].metrics[0].f=getAvg(NPS_ZAN_F);
-  KFU[5].metrics[0].f=getAvg(NPS_PF);
-  KFU[5].metrics[0].p=getAvg(NPS_PP);
+
+  KFU[4].metrics[0].f=getAvg(CRM_F);
+  KFU[4].metrics[0].p=getAvg(CRM_P);
+  KFU[4].metrics[1].f=getAvg(REP_F);
+  KFU[4].metrics[1].p=getAvg(REP_P);
+
+  // NPS партнёров: значения уже в % (напр. 95), план тоже в %
+  const npsPf=getAvg(NPS_PF);
+  const npsPp=getAvg(NPS_PP);
+  KFU[5].metrics[0].f=npsPf>1?npsPf:Math.round(npsPf*100);
+  KFU[5].metrics[0].p=npsPp>1?npsPp:Math.round(npsPp*100);
 
   document.getElementById('kfu-row1').innerHTML='';
   document.getElementById('kfu-row2').innerHTML='';
@@ -1073,85 +1087,77 @@ function lastNonZero(arr){
 
 async function loadLiveData(){
   try{
-    const rows=await fetchSheet('Аналитика года');
+    // ── Грузим сводный раздел напрямую по диапазону (надёжнее чем поиск по всему листу) ──
+    const [svodRows, fullRows] = await Promise.all([
+      fetchSheet('Аналитика года&range=A245:M310'),
+      fetchSheet('Аналитика года'),
+    ]);
 
-    const nonZero=v=>v!==null&&v!==undefined&&v!==0;
-    const pct=v=>v===null?null:(Math.abs(v)>1?Math.round(v):Math.round(v*100));
+    const nonZero=v=>v!==null&&v!==undefined&&v!==0&&v!=='';
+    // Конвертация: если значение 0.14 → 14, если 14 → 14
+    const toPct=v=>v===null||v===undefined?null:(Math.abs(v)<=1?Math.round(v*100):Math.round(v));
 
-    // ── Ищем строки ПОСЛЕ метки "Для сводного листа" ──
-    // Это раздел с корректными данными для дашборда
-    let sectionStart=0;
-    for(let i=0;i<rows.length;i++){
-      if(rows[i][0]&&String(rows[i][0]).includes('сводного листа')){sectionStart=i;break;}
-    }
-
-    const findInSection=(label,fromIdx=sectionStart)=>{
-      for(let i=fromIdx;i<rows.length;i++){
-        if(rows[i][0]&&String(rows[i][0]).trim().startsWith(label.trim()))return rows[i];
+    const findIn=(rows,label)=>{
+      for(let i=0;i<rows.length;i++){
+        if(rows[i][0]!==null&&rows[i][0]!==undefined&&String(rows[i][0]).trim().startsWith(String(label).trim()))return rows[i];
       }
       return null;
     };
-    const findAfterInSection=(label,nextLabel,fromIdx=sectionStart,maxLook=8)=>{
-      for(let i=fromIdx;i<rows.length;i++){
-        if(rows[i][0]&&String(rows[i][0]).includes(label)){
+    const findAfterIn=(rows,label,nextLabel,maxLook=8)=>{
+      for(let i=0;i<rows.length;i++){
+        if(rows[i][0]!==null&&String(rows[i][0]).includes(label)){
           for(let j=i+1;j<Math.min(i+maxLook,rows.length);j++){
-            if(rows[j][0]&&String(rows[j][0]).trim()===nextLabel.trim())return rows[j];
+            if(rows[j][0]!==null&&String(rows[j][0]).trim()===String(nextLabel).trim())return rows[j];
           }
         }
       }
       return null;
     };
-    // Глобальный поиск (для данных которых нет в сводном разделе)
-    const findRow=label=>{
-      for(let i=0;i<rows.length;i++){
-        if(rows[i][0]&&String(rows[i][0]).trim().startsWith(label.trim()))return rows[i];
-      }
-      return null;
-    };
-    const findAfter=(startLabel,nextLabel,maxLook=6)=>{
-      for(let i=0;i<rows.length;i++){
-        if(rows[i][0]&&String(rows[i][0]).includes(startLabel)){
-          for(let j=i+1;j<Math.min(i+maxLook,rows.length);j++){
-            if(rows[j][0]&&String(rows[j][0]).trim()===nextLabel.trim())return rows[j];
-          }
-        }
-      }
-      return null;
-    };
-
     const apply=(target,row,fn)=>{
       if(!row)return;
-      rowMonths(row).forEach((v,i)=>{if(nonZero(v)){const r=fn?fn(v):v;if(nonZero(r))target[i]=r;}});
+      rowMonths(row).forEach((v,i)=>{
+        if(!nonZero(v))return;
+        const r=fn?fn(v):v;
+        if(r!==null&&r!==undefined)target[i]=r;
+      });
     };
 
-    // ── Загрузка из "Для сводного листа" ──
-    apply(LTV,     findInSection('LTV'));
-    apply(CAC,     findInSection('CAC'));
-    apply(PROFIT,  findInSection('2. Чистая прибыль'), pct);
-    apply(BRAND_F, findInSection('1. Динамика брендового спроса'));
-    apply(BRAND_P, findAfterInSection('1. Динамика брендового спроса','План'));
-    apply(CONV_F,  findInSection('2. Конверсия лид-покупка'), pct);
-    apply(CONV_P,  findAfterInSection('2. Конверсия лид-покупка','План'), pct);
+    // ══ СВОДНЫЙ РАЗДЕЛ (A245:M310) — точные данные для KFU ══
+    // Бизнес-модель
+    apply(LTV,      findIn(svodRows,'LTV'));
+    apply(CAC,      findIn(svodRows,'CAC'));
+    apply(PROFIT,   findIn(svodRows,'2. Чистая прибыль'), toPct);
 
-    // Выручка с постоянных
-    apply(CONV_F.map?CONV_F:[], findAfterInSection('3. План/факт выручки с постоянных','Факт'));
-    // Реально обновляем CONV_F2 (выручка с постоянных) — отдельный массив
-    const constRevFRow=findAfterInSection('3. План/факт выручки с постоянных','Факт');
-    const constRevPRow=findAfterInSection('3. План/факт выручки с постоянных','План');
-    if(constRevFRow) apply(CONST_REV_F, constRevFRow);
-    if(constRevPRow) apply(CONST_REV_P, constRevPRow);
+    // Спрос / PR
+    apply(BRAND_F,  findIn(svodRows,'1. Динамика брендового спроса'));
+    apply(BRAND_P,  findAfterIn(svodRows,'1. Динамика брендового спроса','План'));
 
-    // NPS занятий — из глобального поиска (в сводном только ссылки)
-    apply(NPS_ZAN_F, findAfter('1. NPS занятий не менее','Факт'));
-    apply(NPS_PF, findAfterInSection('1. NPS партнеров','Факт'));
-    apply(NPS_PP, findAfterInSection('1. NPS партнеров','План'));
+    // Стандарты управления
+    apply(CONV_F,       findIn(svodRows,'2. Конверсия лид-покупка'), toPct);
+    apply(CONV_P,       findAfterIn(svodRows,'2. Конверсия лид-покупка','План'), toPct);
+    apply(CONST_REV_F,  findAfterIn(svodRows,'3. План/факт выручки с постоянных','Факт'));
+    apply(CONST_REV_P,  findAfterIn(svodRows,'3. План/факт выручки с постоянных','План'));
 
-    // ── Глобальные данные (не в сводном листе) ──
-    apply(CLIENTS, findRow('Кол-во клиентов сети'));
-    apply(ACAD_IN, findRow('Кол-во зашли'));
-    apply(ACAD_C,  findRow('получили сертификат'));
+    // Продукт
+    apply(NPS_ZAN_F, findAfterIn(svodRows,'1. NPS занятий не менее','Факт'));
 
-    // SHMP по курсам
+    // IT
+    apply(CRM_F, findAfterIn(svodRows,'1. % студий с корректными данными','Факт'), toPct);
+    apply(CRM_P, findAfterIn(svodRows,'1. % студий с корректными данными','План'), toPct);
+    apply(REP_F, findAfterIn(svodRows,'2. % студий сдающих отчетность','Факт'), toPct);
+    apply(REP_P, findAfterIn(svodRows,'2. % студий сдающих отчетность','План'), toPct);
+
+    // Справедливость
+    apply(NPS_PF, findAfterIn(svodRows,'1. NPS партнеров','Факт'), toPct);
+    apply(NPS_PP, findAfterIn(svodRows,'1. NPS партнеров','План'), toPct);
+
+    // ══ ПОЛНЫЙ ЛИСТ — данные отделов ══
+    apply(CLIENTS, findIn(fullRows,'Кол-во клиентов сети'));
+    apply(ACAD_IN, findIn(fullRows,'Кол-во зашли'));
+    apply(ACAD_C,  findIn(fullRows,'получили сертификат'));
+    apply(NPS_ZAN_F, findAfterIn(fullRows,'NPS занятий','Факт') || findIn(svodRows,'Факт'));
+
+    // SHMP по курсам — берём сумму за все ненулевые месяцы (накопительно)
     const shmpSections=[
       {label:'1 курс',pIdx:0,fIdx:0},
       {label:'2 курс',pIdx:1,fIdx:1},
@@ -1159,36 +1165,39 @@ async function loadLiveData(){
       {label:'3.2 курс',pIdx:3,fIdx:3},
     ];
     shmpSections.forEach(c=>{
-      const pr=findAfter(c.label,'План',4);
-      const fr=findAfter(c.label,'Факт',4);
-      if(pr){const vals=rowMonths(pr).filter(nonZero);if(vals.length)SHMP_P[c.pIdx]=vals[vals.length-1];}
-      if(fr){const vals=rowMonths(fr).filter(nonZero);if(vals.length)SHMP_F2[c.fIdx]=vals[vals.length-1];}
+      const pr=findAfterIn(fullRows,c.label,'План',5);
+      const fr=findAfterIn(fullRows,c.label,'Факт',5);
+      if(pr){const vals=rowMonths(pr).filter(nonZero);if(vals.length)SHMP_P[c.pIdx]=vals.reduce((a,b)=>a+b,0);}
+      if(fr){const vals=rowMonths(fr).filter(nonZero);if(vals.length)SHMP_F2[c.fIdx]=vals.reduce((a,b)=>a+b,0);}
     });
 
-    // PIE — посещения по направлениям
+    // PIE — посещения, берём март (index 2) или последний ненулевой
     const pieMap=[
-      {label:'Stretching ',idx:0},{label:'Pilates ',idx:1},{label:'Barre ',idx:3},
-      {label:'Балетная подкачка ',idx:4},{label:'Кл.хор',idx:5},{label:'Танцы народов',idx:6},
-      {label:'Пластика и сила ',idx:7}
+      ['Stretching ',0],['Pilates ',1],['Barre ',3],
+      ['Балетная подкачка ',4],['Кл.хор',5],['Танцы народов',6],['Пластика и сила ',7]
     ];
-    pieMap.forEach(p=>{
-      const r=findRow(p.label);
+    pieMap.forEach(([label,idx])=>{
+      const r=findIn(fullRows,label);
       if(!r)return;
       const v=rowMonths(r).reduceRight((acc,x)=>acc!==null?acc:(nonZero(x)?x:null),null);
-      if(v)PIE_D[p.idx]=v;
+      if(v)PIE_D[idx]=v;
     });
 
     // ── Перерисовываем (redrawCharts уважает selectedMonths) ──
     document.getElementById('kfu-row1').innerHTML='';
     document.getElementById('kfu-row2').innerHTML='';
     redrawCharts();
-    renderKFU();
     if(analyticsInited)initAnalyticsChartsFiltered();
     DEPTS.forEach((d,i)=>{if(document.getElementById(`dept-${i}`)&&d.chart)d.chart.render();});
 
-    console.log('✅ Live data loaded, sectionStart='+sectionStart);
+    console.log('✅ Live data loaded OK');
   }catch(e){
     console.warn('⚠️ Live data load failed:', e);
+    // При ошибке всё равно перерисовываем с дефолтными данными
+    document.getElementById('kfu-row1').innerHTML='';
+    document.getElementById('kfu-row2').innerHTML='';
+    renderKFU();
+    redrawCharts();
   }
 }
 
