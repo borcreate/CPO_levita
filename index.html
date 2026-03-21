@@ -349,19 +349,19 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 
 <!-- ══════════ MOBILE BOTTOM BAR ══════════ -->
 <div id="mobile-bar">
-  <button class="mob-tab active" id="mob-kfu" onclick="showTab('kfu',document.querySelector('.nav-tab'));setMobTab(this)">
+  <button class="mob-tab active" id="mob-kfu" onclick="mobNav('kfu',this)">
     <span class="mob-tab-icon">📊</span>Метрики
   </button>
-  <button class="mob-tab" id="mob-depts" onclick="showTab('depts',document.querySelectorAll('.nav-tab')[1]);setMobTab(this)">
+  <button class="mob-tab" id="mob-depts" onclick="mobNav('depts',this)">
     <span class="mob-tab-icon">🏢</span>Отделы
   </button>
-  <button class="mob-tab" id="mob-analytics" onclick="showTab('analytics',document.querySelectorAll('.nav-tab')[2]);setMobTab(this)">
+  <button class="mob-tab" id="mob-analytics" onclick="mobNav('analytics',this)">
     <span class="mob-tab-icon">📈</span>Аналитика
   </button>
-  <button class="mob-tab" id="mob-materials" onclick="showTab('materials',document.querySelectorAll('.nav-tab')[4]);setMobTab(this)">
+  <button class="mob-tab" id="mob-materials" onclick="mobNav('materials',this)">
     <span class="mob-tab-icon">📎</span>Материалы
   </button>
-  <button class="mob-tab" id="mob-map" onclick="showTab('map',document.querySelectorAll('.nav-tab')[3]);setMobTab(this)">
+  <button class="mob-tab" id="mob-map" onclick="mobNav('map',this)">
     <span class="mob-tab-icon">🗺️</span>Карта
   </button>
 </div>
@@ -2153,6 +2153,18 @@ document.addEventListener('keydown', e => {
 function setMobTab(el){
   document.querySelectorAll('.mob-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
+}
+
+function mobNav(tabName, el){
+  // Находим соответствующий nav-tab и переключаем
+  const navTabs = document.querySelectorAll('.nav-tab');
+  let found = null;
+  navTabs.forEach(t => {
+    if(t.getAttribute('onclick') && t.getAttribute('onclick').includes("'"+tabName+"'")) found = t;
+  });
+  if(found) showTab(tabName, found);
+  else showTab(tabName, navTabs[0]); // fallback
+  setMobTab(el);
 }
 
 // ── BOOT ────────────────────────────────────────────────
