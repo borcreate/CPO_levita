@@ -1602,12 +1602,12 @@ function getFiltered(arr){
 }
 
 function initKFUChartsFiltered(){
-  const lbl=getFilteredLabels();
-  mkChart('c-ltv',{type:'line',data:{labels:lbl,datasets:[lineDs('LTV',getFiltered(LTV),C.gold),lineDs('CAC',getFiltered(CAC),C.blue)]},
+  // KFU графики всегда показывают полный год — фильтр не применяется
+  mkChart('c-ltv',{type:'line',data:{labels:MONTHS,datasets:[lineDs('LTV',LTV,C.gold),lineDs('CAC',CAC,C.blue)]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
-  mkChart('c-brand',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(BRAND_F),C.gold,true),lineDs('План',getFiltered(BRAND_P),C.gray,false,[5,3])]},
+  mkChart('c-brand',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',BRAND_F,C.gold,true),lineDs('План',BRAND_P,C.gray,false,[5,3])]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
-  mkChart('c-nps-p',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(NPS_PF),C.green,true),lineDs('План',getFiltered(NPS_PP),C.gray,false,[5,3])]},
+  mkChart('c-nps-p',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',NPS_PF,C.green,true),lineDs('План',NPS_PP,C.gray,false,[5,3])]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...gridOpts(),y:{min:70,max:105,grid:{color:'#f0f0f5',drawBorder:false}}}}});
 }
 
