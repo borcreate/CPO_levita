@@ -278,14 +278,13 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
     <div class="mat-form-row">
       <label class="mat-form-label">Категория</label>
       <select class="mat-form-input" id="mat-cat">
-        <option value="Общее">Общее</option>
-        <option value="Регламенты">Регламенты</option>
-        <option value="Финансы">Финансы</option>
-        <option value="Маркетинг">Маркетинг</option>
-        <option value="Обучение">Обучение</option>
-        <option value="HR">HR</option>
-        <option value="IT">IT</option>
-        <option value="Прочее">Прочее</option>
+        <option value="Для руководителей">👑 Для руководителей</option>
+        <option value="Отдел открытий">🏗️ Отдел открытий</option>
+        <option value="Отдел ШМП">🎓 Отдел ШМП</option>
+        <option value="Маркетинг студий">📣 Маркетинг студий</option>
+        <option value="Террит. управляющие">🗺️ Террит. управляющие</option>
+        <option value="Продукт и качество">⭐ Продукт и качество</option>
+        <option value="Комьюнити">🤝 Комьюнити</option>
       </select>
     </div>
     <div class="mat-modal-btns">
@@ -1812,12 +1811,12 @@ function addUser() {
 // MATERIALS SYSTEM
 // ══════════════════════════════════════════════════════════
 const MATERIALS_KEY = 'levita_materials_v1';
-const MAT_CATS = ['Все','Общее','Регламенты','Финансы','Маркетинг','Обучение','HR','IT','Прочее'];
+const MAT_CATS = ['Все','Для руководителей','Отдел открытий','Отдел ШМП','Маркетинг студий','Террит. управляющие','Продукт и качество','Комьюнити'];
 let matActiveCat = 'Все';
 
 const MAT_ICONS = {
-  'Регламенты':'📋','Финансы':'💰','Маркетинг':'📣','Обучение':'🎓',
-  'HR':'👥','IT':'💻','Общее':'📄','Прочее':'📎'
+  'Для руководителей':'👑','Отдел открытий':'🏗️','Отдел ШМП':'🎓',
+  'Маркетинг студий':'📣','Террит. управляющие':'🗺️','Продукт и качество':'⭐','Комьюнити':'🤝'
 };
 
 function getMaterials(){ try{ return JSON.parse(localStorage.getItem(MATERIALS_KEY))||[]; }catch{ return []; } }
