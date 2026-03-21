@@ -323,7 +323,10 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
     <div class="add-user-form">
       <input id="nu-login" type="text" placeholder="логин">
       <input id="nu-pass" type="password" placeholder="пароль">
-      <input id="nu-role" type="text" placeholder="роль (user/admin)">
+      <select id="nu-role" style="padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none;background:#fff">
+        <option value="observer">Наблюдатель</option>
+        <option value="admin">Админ</option>
+      </select>
       <button onclick="addUser()">Добавить</button>
     </div>
     <div class="auth-err" id="users-err"></div>
@@ -867,7 +870,7 @@ function updateTasks(deptIdx, tasks){
 function renderTasksBlock(deptIdx){
   const tasks = getTasks(deptIdx);
   const sess = currentSession();
-  const canEdit = sess && (sess.role==='admin' || sess.role==='user');
+  const canEdit = sess && (sess.role==='admin');
 
   const listHtml = tasks.length===0
     ? `<div class="task-empty">Задач пока нет</div>`
@@ -1729,18 +1732,35 @@ document.getElementById('users-modal').addEventListener('click', function(e) {
   if (e.target === this) closeUsersModal();
 });
 
+const ROLE_LABELS = { admin: '👑 Админ', user: '✏️ Редактор', observer: '👁 Наблюдатель' };
+
 function renderUsersTable() {
   const users = getUsers();
   const tbody = document.getElementById('users-tbody');
   tbody.innerHTML = users.map((u, i) => `
     <tr>
       <td>${u.login}</td>
-      <td>${u.role}</td>
-      <td><input type="password" placeholder="новый пароль" id="np-${i}" style="width:120px;padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:inherit;outline:none">
+      <td>
+        ${u.login === 'admin'
+          ? `<span>${ROLE_LABELS[u.role]||u.role}</span>`
+          : `<select id="nr-${i}" style="padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:inherit;outline:none" onchange="changeRole(${i})">
+              <option value="admin"${u.role==='admin'?' selected':''}>👑 Админ</option>
+              <option value="observer"${u.role==='observer'?' selected':''}>👁 Наблюдатель</option>
+            </select>`}
+      </td>
+      <td><input type="password" placeholder="новый пароль" id="np-${i}" style="width:110px;padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:inherit;outline:none">
       <button class="u-btn" onclick="changePass(${i})">Сохранить</button></td>
       <td>${u.login !== 'admin' ? `<button class="u-btn del" onclick="deleteUser(${i})">Удалить</button>` : ''}</td>
     </tr>
   `).join('');
+}
+
+function changeRole(idx){
+  const users = getUsers();
+  const sel = document.getElementById(`nr-${idx}`);
+  if(!sel) return;
+  users[idx].role = sel.value;
+  saveUsers(users);
 }
 
 function changePass(idx) {
@@ -1774,7 +1794,7 @@ function addUser() {
   err.style.color = 'var(--red)';
   if (!login) { err.textContent = 'Введите логин'; return; }
   if (!pass || pass.length < 4) { err.textContent = 'Пароль минимум 4 символа'; return; }
-  if (!['user','admin'].includes(role)) { err.textContent = 'Роль: user или admin'; return; }
+  if (!['observer','admin'].includes(role)) { err.textContent = 'Роль: admin или observer'; return; }
   const users = getUsers();
   if (users.find(u => u.login === login)) { err.textContent = 'Такой логин уже существует'; return; }
   users.push({ login, passHash: hashPass(pass), role });
