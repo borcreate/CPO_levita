@@ -1069,7 +1069,7 @@ function renderDepts(){
 
   DEPTS.forEach((d,i)=>{
     const el = document.createElement('div');
-    el.className='dept-card open';
+    el.className='dept-card';
     el.id=`dept-${i}`;
 
     const ownerName = owners[i] || '—';
@@ -2076,7 +2076,7 @@ function renderTrafficGrid(){
   let html = '';
   for(let i=0;i<8;i++){
     const d = getDeptStatus(i);
-    html += `<div class="traffic-card" onclick="showTab('depts',document.querySelectorAll('.nav-tab')[1])">
+    html += `<div class="traffic-card" onclick="goToDept(${i})">
       <div class="traffic-dot ${d.status}"></div>
       <div>
         <div class="traffic-label">${d.label}</div>
@@ -2085,6 +2085,27 @@ function renderTrafficGrid(){
     </div>`;
   }
   grid.innerHTML = html;
+}
+
+function goToDept(idx){
+  // Переключаем на вкладку отделов
+  const navTab = document.querySelectorAll('.nav-tab')[1];
+  showTab('depts', navTab);
+  // Обновляем мобильный бар
+  const mobDepts = document.getElementById('mob-depts');
+  if(mobDepts) setMobTab(mobDepts);
+  // Открываем нужный отдел и скроллим
+  setTimeout(()=>{
+    // Закрываем все
+    document.querySelectorAll('.dept-card').forEach(c=>c.classList.remove('open'));
+    // Открываем нужный
+    const el = document.getElementById(`dept-${idx}`);
+    if(el){
+      el.classList.add('open');
+      if(DEPTS[idx]?.chart) DEPTS[idx].chart.render();
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, 50);
 }
 
 // ══════════════════════════════════════════════════════════
