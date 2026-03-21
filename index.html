@@ -168,6 +168,45 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .auth-btn{width:100%;padding:11px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:20px;font-family:inherit;transition:.15s}
 .auth-btn:hover{background:#a07820}
 .auth-err{font-size:12px;color:var(--red);margin-top:10px;min-height:18px}
+/* ══ MATERIALS ══ */
+.mat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.mat-header-title{font-size:18px;font-weight:700;color:var(--text)}
+.mat-add-btn{background:var(--gold);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.mat-add-btn:hover{background:#a07820}
+.mat-cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.mat-cat-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:.15s;font-family:inherit}
+.mat-cat-btn.active,.mat-cat-btn:hover{background:rgba(184,144,42,.1);border-color:var(--gold);color:var(--gold)}
+.mat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:1024px){.mat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.mat-grid{grid-template-columns:1fr}}
+.mat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:8px;transition:.15s}
+.mat-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.09);border-color:var(--gold)}
+.mat-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.mat-card-icon{font-size:22px;flex-shrink:0}
+.mat-card-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.3}
+.mat-card-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.mat-card-cat{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--gold-dim);color:var(--gold);text-transform:uppercase;letter-spacing:.6px}
+.mat-card-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--blue);text-decoration:none;font-weight:500;margin-top:2px}
+.mat-card-link:hover{text-decoration:underline}
+.mat-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+.mat-card-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px;padding:2px 6px;border-radius:5px;transition:.1s;opacity:0;font-family:inherit}
+.mat-card:hover .mat-card-del{opacity:1}
+.mat-card-del:hover{color:var(--red);background:#fef2f2}
+.mat-empty{padding:40px;text-align:center;color:var(--muted);font-size:13px;font-style:italic}
+/* Modal add material */
+#mat-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:8000;display:flex;align-items:center;justify-content:center}
+#mat-modal.hidden{display:none}
+.mat-modal-box{background:#fff;border-radius:14px;padding:32px;width:460px;max-width:calc(100vw - 32px);box-shadow:0 8px 40px rgba(0,0,0,.15)}
+.mat-modal-title{font-size:16px;font-weight:700;margin-bottom:20px}
+.mat-form-row{margin-bottom:14px}
+.mat-form-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;display:block}
+.mat-form-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none;transition:.15s}
+.mat-form-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,144,42,.08)}
+.mat-form-row select.mat-form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+.mat-modal-btns{display:flex;gap:8px;margin-top:20px}
+.mat-modal-save{flex:1;padding:10px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.mat-modal-save:hover{background:#a07820}
+.mat-modal-cancel{padding:10px 18px;background:var(--bg3);color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
 /* ══ TASKS ══ */
 .tasks-section{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
 .tasks-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
@@ -219,6 +258,43 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 </style>
 </head>
 <body>
+
+<!-- ══════════ MATERIALS MODAL ══════════ -->
+<div id="mat-modal" class="hidden">
+  <div class="mat-modal-box">
+    <div class="mat-modal-title">📎 Добавить материал</div>
+    <div class="mat-form-row">
+      <label class="mat-form-label">Название</label>
+      <input class="mat-form-input" id="mat-name" type="text" placeholder="Регламент по открытию студии">
+    </div>
+    <div class="mat-form-row">
+      <label class="mat-form-label">Ссылка (URL)</label>
+      <input class="mat-form-input" id="mat-url" type="url" placeholder="https://docs.google.com/...">
+    </div>
+    <div class="mat-form-row">
+      <label class="mat-form-label">Описание (необязательно)</label>
+      <input class="mat-form-input" id="mat-desc" type="text" placeholder="Краткое описание документа">
+    </div>
+    <div class="mat-form-row">
+      <label class="mat-form-label">Категория</label>
+      <select class="mat-form-input" id="mat-cat">
+        <option value="Общее">Общее</option>
+        <option value="Регламенты">Регламенты</option>
+        <option value="Финансы">Финансы</option>
+        <option value="Маркетинг">Маркетинг</option>
+        <option value="Обучение">Обучение</option>
+        <option value="HR">HR</option>
+        <option value="IT">IT</option>
+        <option value="Прочее">Прочее</option>
+      </select>
+    </div>
+    <div class="mat-modal-btns">
+      <button class="mat-modal-cancel" onclick="closeMaterialModal()">Отмена</button>
+      <button class="mat-modal-save" onclick="saveMaterial()">Сохранить</button>
+    </div>
+    <div class="auth-err" id="mat-err"></div>
+  </div>
+</div>
 
 <!-- ══════════ AUTH OVERLAY ══════════ -->
 <div id="auth-overlay">
@@ -273,6 +349,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   <div class="nav-tab" onclick="showTab('depts',this)">Все отделы</div>
   <div class="nav-tab" onclick="showTab('analytics',this)">Аналитика года</div>
   <div class="nav-tab" onclick="showTab('map',this)">Карта франчайзи</div>
+  <div class="nav-tab" onclick="showTab('materials',this)">📎 Материалы</div>
 </nav>
 
 <div style="background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
@@ -376,6 +453,11 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
       <tbody id="summary-tbody"></tbody>
     </table>
   </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB 5: МАТЕРИАЛЫ -->
+<div class="page" id="tab-materials">
+  <div id="materials-root"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════ TAB 4: КАРТА -->
@@ -1151,6 +1233,7 @@ function showTab(name,el){
   document.getElementById('tab-'+name).classList.add('active');
   el.classList.add('active');
   if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
+  if(name==='materials'){ renderMaterials(); }
 }
 
 // ── PERIOD FILTER ──────────────────────────────────────────────
@@ -1699,6 +1782,110 @@ function addUser() {
   err.textContent = '✓ Пользователь добавлен';
   setTimeout(() => { err.textContent = ''; err.style.color = 'var(--red)'; }, 2000);
   renderUsersTable();
+}
+
+// ══════════════════════════════════════════════════════════
+// MATERIALS SYSTEM
+// ══════════════════════════════════════════════════════════
+const MATERIALS_KEY = 'levita_materials_v1';
+const MAT_CATS = ['Все','Общее','Регламенты','Финансы','Маркетинг','Обучение','HR','IT','Прочее'];
+let matActiveCat = 'Все';
+
+const MAT_ICONS = {
+  'Регламенты':'📋','Финансы':'💰','Маркетинг':'📣','Обучение':'🎓',
+  'HR':'👥','IT':'💻','Общее':'📄','Прочее':'📎'
+};
+
+function getMaterials(){ try{ return JSON.parse(localStorage.getItem(MATERIALS_KEY))||[]; }catch{ return []; } }
+function setMaterials(arr){ localStorage.setItem(MATERIALS_KEY, JSON.stringify(arr)); }
+
+function openMaterialModal(){
+  document.getElementById('mat-modal').classList.remove('hidden');
+  document.getElementById('mat-name').value='';
+  document.getElementById('mat-url').value='';
+  document.getElementById('mat-desc').value='';
+  document.getElementById('mat-err').textContent='';
+  setTimeout(()=>document.getElementById('mat-name').focus(),50);
+}
+function closeMaterialModal(){
+  document.getElementById('mat-modal').classList.add('hidden');
+}
+document.getElementById('mat-modal').addEventListener('click',function(e){ if(e.target===this) closeMaterialModal(); });
+
+function saveMaterial(){
+  const name = document.getElementById('mat-name').value.trim();
+  const url  = document.getElementById('mat-url').value.trim();
+  const desc = document.getElementById('mat-desc').value.trim();
+  const cat  = document.getElementById('mat-cat').value;
+  const err  = document.getElementById('mat-err');
+  err.textContent='';
+  if(!name){ err.textContent='Введите название'; return; }
+  if(!url){ err.textContent='Введите ссылку'; return; }
+  const sess = currentSession();
+  const mats = getMaterials();
+  mats.unshift({
+    id: Date.now(),
+    name, url, desc, cat,
+    author: sess ? sess.login : '—',
+    date: new Date().toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'})
+  });
+  setMaterials(mats);
+  closeMaterialModal();
+  renderMaterials();
+}
+
+function deleteMaterial(id){
+  const mats = getMaterials().filter(m=>m.id!==id);
+  setMaterials(mats);
+  renderMaterials();
+}
+
+function renderMaterials(){
+  const root = document.getElementById('materials-root');
+  if(!root) return;
+  const mats = getMaterials();
+  const sess = currentSession();
+  const canEdit = sess && (sess.role==='admin');
+  const filtered = matActiveCat==='Все' ? mats : mats.filter(m=>m.cat===matActiveCat);
+
+  const catsHtml = MAT_CATS.map(c=>`
+    <button class="mat-cat-btn${matActiveCat===c?' active':''}" onclick="setMatCat('${c}')">${c}${c==='Все'?` (${mats.length})`:''}</button>
+  `).join('');
+
+  const addBtn = canEdit ? `<button class="mat-add-btn" onclick="openMaterialModal()">+ Добавить</button>` : '';
+
+  const cardsHtml = filtered.length===0
+    ? `<div class="mat-empty">Материалов пока нет${matActiveCat!=='Все'?' в этой категории':''}</div>`
+    : `<div class="mat-grid">${filtered.map(m=>`
+        <div class="mat-card">
+          <div class="mat-card-top">
+            <div>
+              <div class="mat-card-name">${escHtml(m.name)}</div>
+              ${m.desc?`<div class="mat-card-desc">${escHtml(m.desc)}</div>`:''}
+            </div>
+            <div class="mat-card-icon">${MAT_ICONS[m.cat]||'📎'}</div>
+          </div>
+          <div><span class="mat-card-cat">${m.cat}</span></div>
+          <div class="mat-card-footer">
+            <a class="mat-card-link" href="${escHtml(m.url)}" target="_blank" rel="noopener">🔗 Открыть</a>
+            ${canEdit?`<button class="mat-card-del" onclick="deleteMaterial(${m.id})">Удалить</button>`:''}
+          </div>
+          <div style="font-size:10px;color:var(--muted2)">${m.author} · ${m.date}</div>
+        </div>`).join('')}</div>`;
+
+  root.innerHTML = `
+    <div class="mat-header">
+      <div class="mat-header-title">📎 Материалы и документы</div>
+      ${addBtn}
+    </div>
+    <div class="mat-cats">${catsHtml}</div>
+    ${cardsHtml}
+  `;
+}
+
+function setMatCat(cat){
+  matActiveCat = cat;
+  renderMaterials();
 }
 
 // ── BOOT ────────────────────────────────────────────────
