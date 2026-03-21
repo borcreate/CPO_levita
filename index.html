@@ -735,11 +735,11 @@ function renderDepts(){
     const el = document.createElement('div');
     el.className='dept-card open';
     el.id=`dept-${i}`;
-    const statsHtml = d.stats?`<div class="stat-grid stat-grid-4" style="margin-bottom:16px">${d.stats.map(s=>`
+    const statsHtml = d.stats?`<div class="stat-grid stat-grid-4" style="margin-bottom:16px">${d.stats.map((s,si)=>`
       <div class="stat-card">
         <div class="stat-label">${s.l}</div>
-        <div class="stat-val ${s.color||''}">${s.v}</div>
-        <div class="stat-sub">${s.sub}</div>
+        <div class="stat-val ${s.color||''}" id="dstat-${i}-${si}">${s.v}</div>
+        <div class="stat-sub" id="dstat-sub-${i}-${si}">${s.sub}</div>
       </div>`).join('')}</div>`:'';
     const tableHtml = d.table?`<div class="dept-table-wrap"><table class="dept-table"><thead><tr><th>Метрика</th><th>Факт</th><th>План</th><th>%</th></tr></thead><tbody>${
       d.table.map(r=>`<tr><td class="td-name">${r.n}</td><td class="td-fact">${r.f}</td><td class="td-plan">${r.p}</td><td>${badgeHtml(r.pct)}</td></tr>`).join('')
@@ -1059,16 +1059,61 @@ function getAvgFor(arr){
   return vals.length===1?vals[0]:Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
 }
 
-function updateDeptsForPeriod(){
-  // Обновляем статы отделов при смене периода
-  // Академия администраторов (dept 6)
-  const mi=selectedMonths.size===0?lastNonZero(ACAD_IN).i:[...selectedMonths].sort((a,b)=>b-a)[0];
-  const acadInEl=document.querySelector('#dept-6 .stat-val');
-  if(acadInEl) acadInEl.textContent=getAvgFor(ACAD_IN);
+function setDStat(deptIdx, statIdx, val, sub){
+  const el = document.getElementById(`dstat-${deptIdx}-${statIdx}`);
+  if(el) el.textContent = val;
+  const sub_el = document.getElementById(`dstat-sub-${deptIdx}-${statIdx}`);
+  if(sub_el && sub !== undefined) sub_el.textContent = sub;
+}
 
-  // Клиенты сети (dept 3)
-  const clientEls=document.querySelectorAll('#dept-3 .stat-val');
-  if(clientEls[0]) clientEls[0].textContent=getAvgFor(CLIENTS).toLocaleString('ru-RU');
+function updateDeptsForPeriod(){
+  const lbl = selectedMonths.size===0
+    ? MONTH_LABELS[new Date().getMonth()]
+    : [...selectedMonths].sort((a,b)=>a-b).map(i=>MONTH_LABELS[i]).join('+');
+
+  // ── Отдел 3 (Маркетинг, индекс 2): Клиенты сети ──
+  const clients = getAvgFor(CLIENTS);
+  setDStat(3, 0, clients.toLocaleString('ru-RU'), lbl);
+
+  // ── Отдел 6 (Обучение и КК, индекс 5): NPS занятий ──
+  const npsZan = getAvgFor(NPS_ZAN_F);
+  setDStat(5, 0, npsZan+'%', 'цель ≥85%');
+
+  // ── Отдел 1 (ШМП, индекс 1): выручка ──
+  const shmpF = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
+  const shmpP = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
+  const shmpPct = shmpP ? Math.round(shmpF/shmpP*100) : 0;
+  setDStat(1, 0, (shmpF/1e6).toFixed(2)+'M ₽', lbl);
+  setDStat(1, 1, shmpPct+'%', lbl, );
+
+  // ── Отдел 6 (Академия администраторов, индекс 6): зашли ──
+  const acadIn = getAvgFor(ACAD_IN);
+  const acadC  = getAvgFor(ACAD_C);
+  setDStat(6, 0, acadIn, lbl);
+  setDStat(6, 1, acadC, lbl);
+
+  // ── CRM/отчётность → КФУ IT (обновляется через updateKFUCards) ──
+  // Дополнительно обновляем таблицы отделов у тех кто имеет динамические данные
+  updateDeptTables();
+}
+
+function updateDeptTables(){
+  // Обновляем td-fact / td-plan у отдела ШМП (индекс 1)
+  const shmpFact = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
+  const shmpPlan = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
+  const shmpPct  = shmpPlan ? Math.round(shmpFact/shmpPlan*100) : 0;
+  const shmpRows = document.querySelectorAll('#dept-1 .td-fact');
+  if(shmpRows[0]) shmpRows[0].textContent = Math.round(shmpFact).toLocaleString('ru-RU')+' ₽';
+
+  // Клиенты сети в таблице отдела 3
+  const clientRows = document.querySelectorAll('#dept-3 .td-fact');
+  const clients = getAvgFor(CLIENTS);
+  if(clientRows[0]) clientRows[0].textContent = clients.toLocaleString('ru-RU');
+
+  // Академия администраторов в таблице отдела 6
+  const acadRows = document.querySelectorAll('#dept-6 .td-fact');
+  if(acadRows[0]) acadRows[0].textContent = getAvgFor(ACAD_IN);
+  if(acadRows[1]) acadRows[1].textContent = getAvgFor(ACAD_C);
 }
 
 function updateKFUCards(){
