@@ -1003,10 +1003,19 @@ function toggleMonth(i,btn){
 
 function clearPeriod(){
   selectedMonths.clear();
+  const currentMonth = new Date().getMonth();
   document.querySelectorAll('#period-btns button').forEach(b=>{
-    b.style.background='transparent';
-    b.style.borderColor='var(--border)';
-    b.style.color='var(--muted)';
+    const i = parseInt(b.dataset.idx);
+    if(i === currentMonth){
+      selectedMonths.add(i);
+      b.style.background='rgba(184,144,42,0.1)';
+      b.style.borderColor='#b8902a';
+      b.style.color='#b8902a';
+    } else {
+      b.style.background='transparent';
+      b.style.borderColor='var(--border)';
+      b.style.color='var(--muted)';
+    }
   });
   updatePeriodLabel();
   redrawCharts();
