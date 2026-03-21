@@ -1451,9 +1451,13 @@ function clearPeriod(){
 
 function updatePeriodLabel(){
   const lbl=document.getElementById('period-label');
-  if(selectedMonths.size===0){ lbl.textContent=''; return; }
-  const sorted=[...selectedMonths].sort((a,b)=>a-b);
-  lbl.textContent='Выбрано: '+sorted.map(i=>MONTH_LABELS[i]).join(', ');
+  if(selectedMonths.size===0){ lbl.textContent=''; }
+  else {
+    const sorted=[...selectedMonths].sort((a,b)=>a-b);
+    lbl.textContent='Выбрано: '+sorted.map(i=>MONTH_LABELS[i]).join(', ');
+  }
+  // Всегда синхронизируем мобильную метку
+  updateMobPeriodLabel();
 }
 
 function filterData(arr){
@@ -2322,7 +2326,7 @@ const now=new Date();
 document.getElementById('hdrDate').textContent=now.toLocaleDateString('ru',{month:'long',year:'numeric'});
 initTheme();
 initPeriod();
-updateMobPeriodLabel();
+updateMobPeriodLabel(); // после initPeriod — теперь знает про март
 renderTrafficGrid();
 renderKFU();
 renderKFUTrafficGrid();
