@@ -168,6 +168,26 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .auth-btn{width:100%;padding:11px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:20px;font-family:inherit;transition:.15s}
 .auth-btn:hover{background:#a07820}
 .auth-err{font-size:12px;color:var(--red);margin-top:10px;min-height:18px}
+/* ══ TASKS ══ */
+.tasks-section{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+.tasks-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.tasks-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);transition:.1s}
+.task-item.done{opacity:.55}
+.task-item.done .task-text{text-decoration:line-through;color:var(--muted)}
+.task-check{width:16px;height:16px;border:2px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:.1s;background:#fff}
+.task-check.checked{background:var(--green);border-color:var(--green);color:#fff}
+.task-text{font-size:13px;flex:1;line-height:1.4;color:var(--text)}
+.task-meta{font-size:10px;color:var(--muted2);white-space:nowrap;margin-top:1px}
+.task-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0 2px;line-height:1;opacity:0;transition:.1s}
+.task-item:hover .task-del{opacity:1}
+.task-del:hover{color:var(--red)}
+.task-add-row{display:flex;gap:6px;margin-top:4px}
+.task-add-input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none;background:#fff;transition:.15s}
+.task-add-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,144,42,.08)}
+.task-add-btn{padding:7px 14px;background:var(--gold);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.task-add-btn:hover{background:#a07820}
+.task-empty{font-size:12px;color:var(--muted);font-style:italic;padding:4px 0}
 /* ══ DEPT OWNER ══ */
 .dept-owner-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
 .dept-owner-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
@@ -738,6 +758,107 @@ const DEPTS = [
   },
 ];
 
+// ══════════════════════════════════════════════════════════
+// TASKS SYSTEM
+// ══════════════════════════════════════════════════════════
+const TASKS_KEY = 'levita_tasks_v1';
+
+function getTasks(deptIdx){
+  try{ const all=JSON.parse(localStorage.getItem(TASKS_KEY))||{}; return all[deptIdx]||[]; }catch{ return []; }
+}
+function saveTask(deptIdx, task){
+  try{
+    const all=JSON.parse(localStorage.getItem(TASKS_KEY))||{};
+    if(!all[deptIdx]) all[deptIdx]=[];
+    all[deptIdx].push(task);
+    localStorage.setItem(TASKS_KEY, JSON.stringify(all));
+  }catch{}
+}
+function updateTasks(deptIdx, tasks){
+  try{
+    const all=JSON.parse(localStorage.getItem(TASKS_KEY))||{};
+    all[deptIdx]=tasks;
+    localStorage.setItem(TASKS_KEY, JSON.stringify(all));
+  }catch{}
+}
+
+function renderTasksBlock(deptIdx){
+  const tasks = getTasks(deptIdx);
+  const sess = currentSession();
+  const canEdit = sess && (sess.role==='admin' || sess.role==='user');
+
+  const listHtml = tasks.length===0
+    ? `<div class="task-empty">Задач пока нет</div>`
+    : tasks.map((t,ti)=>`
+      <div class="task-item${t.done?' done':''}" id="task-${deptIdx}-${ti}">
+        <div class="task-check${t.done?' checked':''}" onclick="toggleTask(${deptIdx},${ti})">${t.done?'✓':''}</div>
+        <div style="flex:1">
+          <div class="task-text">${escHtml(t.text)}</div>
+          <div class="task-meta">${t.author} · ${t.date}</div>
+        </div>
+        ${canEdit?`<button class="task-del" onclick="deleteTask(${deptIdx},${ti})" title="Удалить">✕</button>`:''}
+      </div>`).join('');
+
+  const addRow = canEdit ? `
+    <div class="task-add-row">
+      <input class="task-add-input" id="task-inp-${deptIdx}" type="text" placeholder="Новая задача / фокус...">
+      <button class="task-add-btn" onclick="addTask(${deptIdx})">+ Добавить</button>
+    </div>` : '';
+
+  return `<div class="tasks-section" id="tasks-section-${deptIdx}">
+    <div class="tasks-title">🎯 Фокусы и задачи <span style="background:var(--gold-dim);color:var(--gold);padding:1px 7px;border-radius:10px;font-size:10px">${tasks.length}</span></div>
+    <div class="tasks-list" id="tasks-list-${deptIdx}">${listHtml}</div>
+    ${addRow}
+  </div>`;
+}
+
+function escHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function addTask(deptIdx){
+  const inp = document.getElementById(`task-inp-${deptIdx}`);
+  const text = inp ? inp.value.trim() : '';
+  if(!text) return;
+  const sess = currentSession();
+  const task = {
+    text,
+    done: false,
+    author: sess ? sess.login : 'unknown',
+    date: new Date().toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'})
+  };
+  saveTask(deptIdx, task);
+  inp.value = '';
+  refreshTasksList(deptIdx);
+}
+
+function toggleTask(deptIdx, taskIdx){
+  const tasks = getTasks(deptIdx);
+  if(!tasks[taskIdx]) return;
+  tasks[taskIdx].done = !tasks[taskIdx].done;
+  updateTasks(deptIdx, tasks);
+  refreshTasksList(deptIdx);
+}
+
+function deleteTask(deptIdx, taskIdx){
+  const tasks = getTasks(deptIdx);
+  tasks.splice(taskIdx, 1);
+  updateTasks(deptIdx, tasks);
+  refreshTasksList(deptIdx);
+}
+
+function refreshTasksList(deptIdx){
+  const section = document.getElementById(`tasks-section-${deptIdx}`);
+  if(!section) return;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = renderTasksBlock(deptIdx);
+  const newSection = tmp.firstElementChild;
+  section.replaceWith(newSection);
+  // Навешиваем Enter на инпут
+  const inp = document.getElementById(`task-inp-${deptIdx}`);
+  if(inp) inp.addEventListener('keydown', e => { if(e.key==='Enter') addTask(deptIdx); });
+}
+
 // ── DEPT OWNERS storage ──────────────────────────────────
 const DEPT_OWNERS_KEY = 'levita_dept_owners_v1';
 function getDeptOwners(){ try{ return JSON.parse(localStorage.getItem(DEPT_OWNERS_KEY))||{}; }catch{ return {}; } }
@@ -779,14 +900,21 @@ function renderDepts(){
       ?`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`
       :`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
 
+    const tasksHtml = renderTasksBlock(i);
+
     el.innerHTML=`<div class="dept-hdr" onclick="toggleDept(${i})">
       <div class="dept-hdr-l"><div class="dept-num">${d.num}</div><div class="dept-name">${d.name}</div></div>
       <div class="dept-arrow">▲</div></div>
-    <div class="dept-body">${ownerHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
+    <div class="dept-body">${ownerHtml}${tasksHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
     list.appendChild(el);
   });
   // Init charts for open depts
   DEPTS.forEach((d,i)=>{ if(d.chart) d.chart.render(); });
+  // Bind Enter on task inputs
+  DEPTS.forEach((_,i)=>{
+    const inp = document.getElementById(`task-inp-${i}`);
+    if(inp) inp.addEventListener('keydown', e=>{ if(e.key==='Enter') addTask(i); });
+  });
 }
 
 function startEditOwner(i){
