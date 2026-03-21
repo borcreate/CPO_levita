@@ -79,8 +79,11 @@ body.present .hdr{display:none}
 body.present .nav{top:0}
 body.present #period-bar{top:56px}
 body.present #alert-banner{top:0}
+body.present #exit-present-btn{display:flex!important}
 .present-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:.15s}
 .present-btn:hover{border-color:var(--gold);color:var(--gold)}
+#exit-present-btn{display:none;position:fixed;top:10px;right:10px;z-index:9999;background:var(--gold);color:var(--graphite);border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 2px 12px rgba(0,0,0,.2);align-items:center;gap:6px}
+
 
 /* ══ DARK TOGGLE ══ */
 .theme-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit;transition:.15s;line-height:1}
@@ -336,6 +339,9 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 </style>
 </head>
 <body>
+
+<!-- ══════════ EXIT PRESENT BUTTON ══════════ -->
+<button id="exit-present-btn" onclick="togglePresent()">✕ Выйти</button>
 
 <!-- ══════════ ALERT BANNER ══════════ -->
 <div id="alert-banner"></div>
