@@ -168,6 +168,15 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .auth-btn{width:100%;padding:11px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:20px;font-family:inherit;transition:.15s}
 .auth-btn:hover{background:#a07820}
 .auth-err{font-size:12px;color:var(--red);margin-top:10px;min-height:18px}
+/* ══ DEPT OWNER ══ */
+.dept-owner-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
+.dept-owner-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
+.dept-owner-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.dept-owner-input{flex:1;padding:5px 9px;border:1px solid var(--gold);border-radius:6px;font-size:13px;font-family:inherit;outline:none;background:#fff}
+.dept-edit-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:2px 6px;border-radius:5px;transition:.1s;line-height:1}
+.dept-edit-btn:hover{background:var(--bg4);color:var(--gold)}
+.dept-save-btn{background:var(--gold);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.dept-save-btn:hover{background:#a07820}
 /* ══ USER MANAGEMENT MODAL ══ */
 #users-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:8000;display:flex;align-items:center;justify-content:center}
 #users-modal.hidden{display:none}
@@ -729,12 +738,30 @@ const DEPTS = [
   },
 ];
 
+// ── DEPT OWNERS storage ──────────────────────────────────
+const DEPT_OWNERS_KEY = 'levita_dept_owners_v1';
+function getDeptOwners(){ try{ return JSON.parse(localStorage.getItem(DEPT_OWNERS_KEY))||{}; }catch{ return {}; } }
+function saveDeptOwner(i, name){ const o=getDeptOwners(); o[i]=name; localStorage.setItem(DEPT_OWNERS_KEY,JSON.stringify(o)); }
+
 function renderDepts(){
   const list = document.getElementById('dept-list');
+  const owners = getDeptOwners();
+  const sess = currentSession();
+  const isAdmin = sess && sess.role === 'admin';
+
   DEPTS.forEach((d,i)=>{
     const el = document.createElement('div');
     el.className='dept-card open';
     el.id=`dept-${i}`;
+
+    const ownerName = owners[i] || '—';
+    const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного">✏️</button>` : '';
+    const ownerHtml = `<div class="dept-owner-row" id="dept-owner-row-${i}">
+      <span class="dept-owner-label">Ответственный</span>
+      <span class="dept-owner-name" id="dept-owner-name-${i}">${ownerName}</span>
+      ${editBtn}
+    </div>`;
+
     const statsHtml = d.stats?`<div class="stat-grid stat-grid-4" style="margin-bottom:16px">${d.stats.map((s,si)=>`
       <div class="stat-card">
         <div class="stat-label">${s.l}</div>
@@ -755,11 +782,49 @@ function renderDepts(){
     el.innerHTML=`<div class="dept-hdr" onclick="toggleDept(${i})">
       <div class="dept-hdr-l"><div class="dept-num">${d.num}</div><div class="dept-name">${d.name}</div></div>
       <div class="dept-arrow">▲</div></div>
-    <div class="dept-body">${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
+    <div class="dept-body">${ownerHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
     list.appendChild(el);
   });
   // Init charts for open depts
   DEPTS.forEach((d,i)=>{ if(d.chart) d.chart.render(); });
+}
+
+function startEditOwner(i){
+  const row = document.getElementById(`dept-owner-row-${i}`);
+  const current = getDeptOwners()[i] || '';
+  row.innerHTML = `
+    <span class="dept-owner-label">Ответственный</span>
+    <input class="dept-owner-input" id="dept-owner-input-${i}" type="text" value="${current}" placeholder="Имя Фамилия">
+    <button class="dept-save-btn" onclick="saveOwner(${i})">Сохранить</button>
+    <button class="dept-edit-btn" onclick="cancelEditOwner(${i})" title="Отмена">✕</button>
+  `;
+  const inp = document.getElementById(`dept-owner-input-${i}`);
+  inp.focus();
+  inp.addEventListener('keydown', e => { if(e.key==='Enter') saveOwner(i); if(e.key==='Escape') cancelEditOwner(i); });
+}
+
+function saveOwner(i){
+  const inp = document.getElementById(`dept-owner-input-${i}`);
+  const name = inp ? inp.value.trim() : '';
+  saveDeptOwner(i, name || '—');
+  restoreOwnerRow(i, name || '—');
+}
+
+function cancelEditOwner(i){
+  const name = getDeptOwners()[i] || '—';
+  restoreOwnerRow(i, name);
+}
+
+function restoreOwnerRow(i, name){
+  const row = document.getElementById(`dept-owner-row-${i}`);
+  const sess = currentSession();
+  const isAdmin = sess && sess.role === 'admin';
+  const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного">✏️</button>` : '';
+  row.innerHTML = `
+    <span class="dept-owner-label">Ответственный</span>
+    <span class="dept-owner-name" id="dept-owner-name-${i}">${name}</span>
+    ${editBtn}
+  `;
 }
 
 function toggleDept(i){
