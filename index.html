@@ -30,7 +30,72 @@
   --green:#16a34a;--yellow:#ca8a04;--red:#dc2626;--blue:#2563eb;--purple:#7c3aed;
   --border:#e0e0e0;--r:10px;
 }
-html,body{background:var(--bg);color:var(--text);font-family:'Spectral','Georgia',serif;min-height:100vh}
+html,body{background:var(--bg);color:var(--text);font-family:'Spectral','Georgia',serif;min-height:100vh;transition:background .3s,color .3s}
+
+/* ══ DARK THEME ══ */
+body.dark{
+  --bg:#101a25;--bg2:#1a2535;--bg3:#1f2e40;--bg4:#243448;
+  --text:#f0ead6;--muted:#8899aa;--muted2:#556677;
+  --border:#2a3a4e;
+}
+
+/* ══ SKELETON LOADER ══ */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px;color:transparent!important}
+.skeleton *{visibility:hidden}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ══ COUNTER ANIMATION ══ */
+.count-anim{transition:opacity .15s}
+
+/* ══ MICRO HOVER (enhanced) ══ */
+.stat-card{transition:.2s cubic-bezier(.34,1.56,.64,1)!important}
+.stat-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 8px 24px rgba(0,0,0,.10)!important;border-color:var(--gold)!important}
+.kfu-card{transition:.2s cubic-bezier(.34,1.56,.64,1)!important}
+.kfu-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.09)!important}
+.dept-card{transition:.2s ease!important}
+.dept-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)!important}
+
+/* ══ TRAFFIC LIGHT (светофор) ══ */
+.traffic-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+@media(max-width:1024px){.traffic-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.traffic-grid{grid-template-columns:1fr}}
+.traffic-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.traffic-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-1px)}
+.traffic-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+.traffic-dot.green{background:#16a34a;color:#16a34a}
+.traffic-dot.yellow{background:#ca8a04;color:#ca8a04}
+.traffic-dot.red{background:#dc2626;color:#dc2626}
+.traffic-label{font-size:12px;font-weight:600;color:var(--text);flex:1}
+.traffic-sub{font-size:10px;color:var(--muted)}
+
+/* ══ ALERT BANNER ══ */
+#alert-banner{display:none;background:#fef2f2;border-bottom:2px solid #dc2626;padding:10px 28px;font-size:13px;color:#b91c1c;font-weight:500;position:sticky;top:56px;z-index:198}
+#alert-banner.show{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.alert-item{margin-right:16px}
+#alert-banner.hidden-alerts{display:none!important}
+
+/* ══ PRESENTATION MODE ══ */
+body.present .hdr{display:none}
+body.present .nav{top:0}
+body.present #period-bar{top:56px}
+body.present #alert-banner{top:0}
+.present-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:.15s}
+.present-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ══ DARK TOGGLE ══ */
+.theme-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit;transition:.15s;line-height:1}
+.theme-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ══ MOBILE BOTTOM BAR ══ */
+@media(max-width:640px){
+  .nav{display:none!important}
+  #mobile-bar{display:flex!important}
+}
+#mobile-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);z-index:500;padding:4px 0 env(safe-area-inset-bottom,4px)}
+.mob-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;cursor:pointer;font-size:9px;color:var(--muted);transition:.15s;border:none;background:none;font-family:inherit}
+.mob-tab.active{color:var(--gold)}
+.mob-tab-icon{font-size:18px;line-height:1}
+@media(max-width:640px){main{padding-bottom:72px!important}}
 /* HEADER */
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:200;box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .hdr-logo{font-size:20px;font-weight:normal;letter-spacing:6px;color:var(--gold);font-family:'My','Georgia',serif}
@@ -272,6 +337,28 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 </head>
 <body>
 
+<!-- ══════════ ALERT BANNER ══════════ -->
+<div id="alert-banner"></div>
+
+<!-- ══════════ MOBILE BOTTOM BAR ══════════ -->
+<div id="mobile-bar">
+  <button class="mob-tab active" id="mob-kfu" onclick="showTab('kfu',document.querySelector('.nav-tab'));setMobTab(this)">
+    <span class="mob-tab-icon">📊</span>Метрики
+  </button>
+  <button class="mob-tab" id="mob-depts" onclick="showTab('depts',document.querySelectorAll('.nav-tab')[1]);setMobTab(this)">
+    <span class="mob-tab-icon">🏢</span>Отделы
+  </button>
+  <button class="mob-tab" id="mob-analytics" onclick="showTab('analytics',document.querySelectorAll('.nav-tab')[2]);setMobTab(this)">
+    <span class="mob-tab-icon">📈</span>Аналитика
+  </button>
+  <button class="mob-tab" id="mob-materials" onclick="showTab('materials',document.querySelectorAll('.nav-tab')[4]);setMobTab(this)">
+    <span class="mob-tab-icon">📎</span>Материалы
+  </button>
+  <button class="mob-tab" id="mob-map" onclick="showTab('map',document.querySelectorAll('.nav-tab')[3]);setMobTab(this)">
+    <span class="mob-tab-icon">🗺️</span>Карта
+  </button>
+</div>
+
 <!-- ══════════ MATERIALS MODAL ══════════ -->
 <div id="mat-modal" class="hidden">
   <div class="mat-modal-box">
@@ -353,8 +440,10 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   <div style="display:flex;align-items:center;gap:12px">
     <div class="hdr-date" id="hdrDate"></div>
     <span id="hdr-username" style="font-size:12px;color:var(--muted)"></span>
-    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👥</button>
-    <button id="hdr-refresh-btn" onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻</button>
+    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👥</button>
+    <button class="theme-btn" id="hdr-theme-btn" onclick="toggleTheme()" title="Тёмная тема">🌙</button>
+    <button class="present-btn" onclick="togglePresent()" title="Режим презентации">⛶</button>
+    <button id="hdr-refresh-btn" onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻</button>
     <button id="hdr-logout-btn" onclick="logout()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Выйти</button>
   </div>
 </div>
@@ -378,6 +467,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 
 <!-- ═══════════════════════════════════════════════ TAB 1: КФУ -->
 <div class="page active" id="tab-kfu">
+  <div class="traffic-grid" id="traffic-grid"></div>
   <div class="kfu-grid" id="kfu-row1"></div>
   <div class="kfu-grid-4" id="kfu-row2"></div>
   <div class="charts-row cols-3">
@@ -1924,6 +2014,140 @@ function setMatCat(cat){
   renderMaterials();
 }
 
+// ══════════════════════════════════════════════════════════
+// COUNTER ANIMATION
+// ══════════════════════════════════════════════════════════
+function animateCount(el, target, duration=800, suffix=''){
+  if(typeof target !== 'number' || isNaN(target)) return;
+  const start = 0;
+  const startTime = performance.now();
+  function tick(now){
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // easeOutExpo
+    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+    const current = Math.round(start + (target - start) * ease);
+    el.textContent = current.toLocaleString('ru-RU') + suffix;
+    if(progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function runCountAnimations(){
+  document.querySelectorAll('.stat-val[data-count]').forEach(el => {
+    const val = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    if(!isNaN(val)) animateCount(el, val, 900, suffix);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// TRAFFIC LIGHT (светофор по отделам)
+// ══════════════════════════════════════════════════════════
+function getDeptStatus(deptIdx){
+  // Простая логика: смотрим на tasks и owner
+  // Можно расширить реальными KPI
+  const statusMap = {
+    0: {label:'Отдел открытий', status:'yellow', sub:'11 открытий'},
+    1: {label:'Отдел ШМП', status:'red', sub:'57% плана'},
+    2: {label:'Маркетинг', status:'yellow', sub:'79 лидов'},
+    3: {label:'Терр. управляющие', status:'green', sub:'NPS 80%'},
+    4: {label:'Комьюнити', status:'red', sub:'0 мероприятий'},
+    5: {label:'Обучение и КК', status:'green', sub:'NPS 92%'},
+    6: {label:'Академия адм.', status:'yellow', sub:'38% выпуск'},
+    7: {label:'Академия пед.', status:'green', sub:'86% доходимость'},
+  };
+  return statusMap[deptIdx] || {label:'Отдел '+deptIdx, status:'yellow', sub:''};
+}
+
+function renderTrafficGrid(){
+  const grid = document.getElementById('traffic-grid');
+  if(!grid) return;
+  let html = '';
+  for(let i=0;i<8;i++){
+    const d = getDeptStatus(i);
+    html += `<div class="traffic-card" onclick="showTab('depts',document.querySelectorAll('.nav-tab')[1])">
+      <div class="traffic-dot ${d.status}"></div>
+      <div>
+        <div class="traffic-label">${d.label}</div>
+        <div class="traffic-sub">${d.sub}</div>
+      </div>
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// ALERT BANNER
+// ══════════════════════════════════════════════════════════
+function checkAlerts(){
+  const banner = document.getElementById('alert-banner');
+  if(!banner) return;
+  const alerts = [];
+
+  // Проверяем критические показатели из KFU
+  if(KFU[2]?.metrics[0]?.f < KFU[2]?.metrics[0]?.p * 0.7){
+    alerts.push(`⚠️ Конверсия лид→покупка: ${KFU[2].metrics[0].f}% при плане ${KFU[2].metrics[0].p}%`);
+  }
+  if(KFU[1]?.metrics[0]?.f < KFU[1]?.metrics[0]?.p * 0.7){
+    alerts.push(`⚠️ Брендовый спрос ниже плана на ${Math.round((1-KFU[1].metrics[0].f/KFU[1].metrics[0].p)*100)}%`);
+  }
+  // ШМП план выполнение < 60%
+  const shmpFact = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
+  const shmpPlan = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
+  if(shmpPlan && shmpFact/shmpPlan < 0.6){
+    alerts.push(`⚠️ Отдел ШМП: ${Math.round(shmpFact/shmpPlan*100)}% плана`);
+  }
+
+  if(alerts.length > 0){
+    banner.innerHTML = alerts.map(a=>`<span class="alert-item">${a}</span>`).join('');
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// DARK THEME
+// ══════════════════════════════════════════════════════════
+const THEME_KEY = 'levita_theme_v1';
+
+function toggleTheme(){
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+  document.getElementById('hdr-theme-btn').textContent = isDark ? '☀️' : '🌙';
+}
+
+function initTheme(){
+  const saved = localStorage.getItem(THEME_KEY);
+  if(saved === 'dark'){
+    document.body.classList.add('dark');
+    const btn = document.getElementById('hdr-theme-btn');
+    if(btn) btn.textContent = '☀️';
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// PRESENTATION MODE
+// ══════════════════════════════════════════════════════════
+function togglePresent(){
+  document.body.classList.toggle('present');
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'F' && !e.ctrlKey && !e.metaKey && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+    togglePresent();
+  }
+  if(e.key === 'Escape') document.body.classList.remove('present');
+});
+
+// ══════════════════════════════════════════════════════════
+// MOBILE BOTTOM BAR
+// ══════════════════════════════════════════════════════════
+function setMobTab(el){
+  document.querySelectorAll('.mob-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
 // ── BOOT ────────────────────────────────────────────────
 initDefaultUsers();
 const _sess = currentSession();
@@ -1935,12 +2159,15 @@ if (_sess) {
 // ── INIT ──────────────────────────────────────────────
 const now=new Date();
 document.getElementById('hdrDate').textContent=now.toLocaleDateString('ru',{month:'long',year:'numeric'});
+initTheme();
 initPeriod();
+renderTrafficGrid();
 renderKFU();
 renderDepts();
 initKFUCharts();
 loadMap();
 loadLiveData(); // живые данные из Google Sheets
+setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
 </script>
 </body>
 </html>
