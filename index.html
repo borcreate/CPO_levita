@@ -477,6 +477,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 
 <!-- ═══════════════════════════════════════════════ TAB 1: КФУ -->
 <div class="page active" id="tab-kfu">
+  <div class="traffic-grid" id="kfu-traffic-grid" style="margin-bottom:20px"></div>
   <div class="kfu-grid" id="kfu-row1"></div>
   <div class="kfu-grid-4" id="kfu-row2"></div>
   <div class="charts-row cols-3">
@@ -1433,6 +1434,7 @@ function redrawCharts(){
   if(analyticsInited) initAnalyticsChartsFiltered();
   updateKFUCards();
   updateDeptsForPeriod();
+  renderKFUTrafficGrid();
 }
 
 // Данные отделов по месяцам (индексы: 0=Янв, 1=Фев, 2=Мар...)
@@ -2070,6 +2072,42 @@ function getDeptStatus(deptIdx){
   return statusMap[deptIdx] || {label:'Отдел '+deptIdx, status:'yellow', sub:''};
 }
 
+function getKFUTrafficStatus(){
+  // Считаем статус каждого KFU по его метрикам
+  return KFU.map((k, i) => {
+    let pcts = [];
+    k.metrics.forEach(m => {
+      if(m.type === 'gt') {
+        // LTV vs CAC: зелёный если LTV > CAC
+        pcts.push(m.f > m.cmp ? 100 : 50);
+      } else if(typeof m.f === 'number' && m.p != null) {
+        pcts.push(Math.round(m.f / m.p * 100));
+      }
+    });
+    const avg = pcts.length ? pcts.reduce((a,b)=>a+b,0)/pcts.length : null;
+    let status = 'yellow';
+    if(avg === null) status = 'yellow';
+    else if(avg >= 85) status = 'green';
+    else if(avg >= 60) status = 'yellow';
+    else status = 'red';
+    return { label: k.title, status, sub: avg !== null ? Math.round(avg)+'% плана' : '—' };
+  });
+}
+
+function renderKFUTrafficGrid(){
+  const grid = document.getElementById('kfu-traffic-grid');
+  if(!grid) return;
+  const items = getKFUTrafficStatus();
+  grid.innerHTML = items.map((d,i) => `
+    <div class="traffic-card" onclick="document.getElementById('kfu-row${i<3?1:2}').querySelectorAll('.kfu-card')[${i<3?i:i-3}]?.scrollIntoView({behavior:'smooth',block:'center'})">
+      <div class="traffic-dot ${d.status}"></div>
+      <div>
+        <div class="traffic-label">${d.label}</div>
+        <div class="traffic-sub">${d.sub}</div>
+      </div>
+    </div>`).join('');
+}
+
 function renderTrafficGrid(){
   const grid = document.getElementById('traffic-grid');
   if(!grid) return;
@@ -2206,6 +2244,7 @@ initTheme();
 initPeriod();
 renderTrafficGrid();
 renderKFU();
+renderKFUTrafficGrid();
 renderDepts();
 initKFUCharts();
 loadMap();
