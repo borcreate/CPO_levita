@@ -146,9 +146,74 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 @media(max-width:1024px){.kfu-grid,.kfu-grid-4{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:1fr}.kfu-mini-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1024px){#period-btns{flex-wrap:wrap}.dept-table{font-size:12px}}
 @media(max-width:640px){.stat-grid-4,.stat-grid-3{grid-template-columns:repeat(2,1fr)}.kfu-grid,.kfu-grid-4{grid-template-columns:1fr}.cols-2,.cols-3{grid-template-columns:1fr}main{padding:16px}.hdr,.nav{padding:0 16px}.stage-cols{grid-template-columns:1fr}#period-btns button{padding:3px 6px;font-size:10px}.stat-card{padding:12px}}
+/* ══ AUTH ══ */
+#auth-overlay{position:fixed;inset:0;background:#f2f2f7;z-index:9999;display:flex;align-items:center;justify-content:center}
+#auth-overlay.hidden{display:none}
+.auth-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:40px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.auth-logo{font-size:22px;font-weight:800;letter-spacing:5px;color:var(--gold);margin-bottom:4px}
+.auth-sub{font-size:12px;color:var(--muted);margin-bottom:28px}
+.auth-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;display:block}
+.auth-input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:.15s;background:#fafafa}
+.auth-input:focus{border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(184,144,42,.08)}
+.auth-btn{width:100%;padding:11px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:20px;font-family:inherit;transition:.15s}
+.auth-btn:hover{background:#a07820}
+.auth-err{font-size:12px;color:var(--red);margin-top:10px;min-height:18px}
+/* ══ USER MANAGEMENT MODAL ══ */
+#users-modal{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:8000;display:flex;align-items:center;justify-content:center}
+#users-modal.hidden{display:none}
+.users-box{background:#fff;border-radius:14px;padding:32px;width:480px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.15)}
+.users-title{font-size:16px;font-weight:700;margin-bottom:20px}
+.users-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+.users-table th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.users-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.users-table tr:last-child td{border-bottom:none}
+.u-btn{font-size:11px;padding:3px 9px;border-radius:5px;border:1px solid var(--border);cursor:pointer;font-family:inherit;background:#fafafa;transition:.1s}
+.u-btn:hover{background:var(--bg4)}
+.u-btn.del{border-color:#fca5a5;color:var(--red)}
+.u-btn.del:hover{background:#fef2f2}
+.add-user-form{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+.add-user-form input{flex:1;min-width:100px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none}
+.add-user-form input:focus{border-color:var(--gold)}
+.add-user-form button{padding:8px 14px;background:var(--gold);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.add-user-form button:hover{background:#a07820}
+.modal-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);line-height:1;padding:0}
 </style>
 </head>
 <body>
+
+<!-- ══════════ AUTH OVERLAY ══════════ -->
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-logo">LEVITA</div>
+    <div class="auth-sub">CPO Dashboard · Войдите в систему</div>
+    <label class="auth-label" for="auth-login">Логин</label>
+    <input class="auth-input" id="auth-login" type="text" placeholder="ваш логин" autocomplete="username">
+    <label class="auth-label" for="auth-pass" style="margin-top:14px">Пароль</label>
+    <input class="auth-input" id="auth-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button class="auth-btn" id="auth-submit">Войти</button>
+    <div class="auth-err" id="auth-err"></div>
+  </div>
+</div>
+
+<!-- ══════════ USERS MODAL ══════════ -->
+<div id="users-modal" class="hidden">
+  <div class="users-box">
+    <button class="modal-close" onclick="closeUsersModal()">✕</button>
+    <div class="users-title">👥 Управление пользователями</div>
+    <table class="users-table">
+      <thead><tr><th>Логин</th><th>Роль</th><th>Новый пароль</th><th></th></tr></thead>
+      <tbody id="users-tbody"></tbody>
+    </table>
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text)">Добавить пользователя</div>
+    <div class="add-user-form">
+      <input id="nu-login" type="text" placeholder="логин">
+      <input id="nu-pass" type="password" placeholder="пароль">
+      <input id="nu-role" type="text" placeholder="роль (user/admin)">
+      <button onclick="addUser()">Добавить</button>
+    </div>
+    <div class="auth-err" id="users-err"></div>
+  </div>
+</div>
 
 <div class="hdr">
   <div>
@@ -157,7 +222,10 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <div class="hdr-date" id="hdrDate"></div>
+    <span id="hdr-username" style="font-size:12px;color:var(--muted)"></span>
+    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👥 Пользователи</button>
     <button onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻ Обновить</button>
+    <button onclick="logout()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Выйти</button>
   </div>
 </div>
 
@@ -1207,6 +1275,173 @@ function refreshData(){
   loadLiveData();
   loadMap();
 }
+
+// ══════════════════════════════════════════════════════════
+// AUTH SYSTEM
+// ══════════════════════════════════════════════════════════
+
+const AUTH_KEY = 'levita_users_v1';
+const SESSION_KEY = 'levita_session_v1';
+
+function hashPass(str) {
+  // Простой хеш (для production лучше использовать bcrypt на сервере)
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + c;
+    hash |= 0;
+  }
+  return 'h_' + Math.abs(hash).toString(36) + '_' + str.length;
+}
+
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem(AUTH_KEY)) || []; } catch { return []; }
+}
+
+function saveUsers(users) {
+  localStorage.setItem(AUTH_KEY, JSON.stringify(users));
+}
+
+function initDefaultUsers() {
+  const users = getUsers();
+  if (users.length === 0) {
+    saveUsers([{ login: 'admin', passHash: hashPass('levita2026'), role: 'admin' }]);
+  }
+}
+
+function currentSession() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch { return null; }
+}
+
+function setSession(user) {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ login: user.login, role: user.role }));
+}
+
+function clearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+function login(loginVal, passVal) {
+  const users = getUsers();
+  const user = users.find(u => u.login === loginVal.trim() && u.passHash === hashPass(passVal));
+  if (!user) return false;
+  setSession(user);
+  return true;
+}
+
+function logout() {
+  clearSession();
+  location.reload();
+}
+
+function showDashboard(session) {
+  document.getElementById('auth-overlay').classList.add('hidden');
+  document.getElementById('hdr-username').textContent = '👤 ' + session.login;
+  if (session.role === 'admin') {
+    document.getElementById('hdr-users-btn').style.display = 'inline-block';
+  }
+}
+
+// ── Auth form ────────────────────────────────────────────
+document.getElementById('auth-submit').addEventListener('click', doLogin);
+document.getElementById('auth-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogin() {
+  const loginVal = document.getElementById('auth-login').value;
+  const passVal = document.getElementById('auth-pass').value;
+  const err = document.getElementById('auth-err');
+  err.textContent = '';
+  if (!loginVal || !passVal) { err.textContent = 'Введите логин и пароль'; return; }
+  if (login(loginVal, passVal)) {
+    showDashboard(currentSession());
+  } else {
+    err.textContent = 'Неверный логин или пароль';
+    document.getElementById('auth-pass').value = '';
+    document.getElementById('auth-pass').focus();
+  }
+}
+
+// ── Users modal ──────────────────────────────────────────
+function openUsersModal() {
+  renderUsersTable();
+  document.getElementById('users-modal').classList.remove('hidden');
+}
+
+function closeUsersModal() {
+  document.getElementById('users-modal').classList.add('hidden');
+  document.getElementById('users-err').textContent = '';
+}
+
+document.getElementById('users-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeUsersModal();
+});
+
+function renderUsersTable() {
+  const users = getUsers();
+  const tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = users.map((u, i) => `
+    <tr>
+      <td>${u.login}</td>
+      <td>${u.role}</td>
+      <td><input type="password" placeholder="новый пароль" id="np-${i}" style="width:120px;padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:inherit;outline:none">
+      <button class="u-btn" onclick="changePass(${i})">Сохранить</button></td>
+      <td>${u.login !== 'admin' ? `<button class="u-btn del" onclick="deleteUser(${i})">Удалить</button>` : ''}</td>
+    </tr>
+  `).join('');
+}
+
+function changePass(idx) {
+  const users = getUsers();
+  const np = document.getElementById(`np-${idx}`).value;
+  const err = document.getElementById('users-err');
+  if (!np || np.length < 4) { err.textContent = 'Пароль минимум 4 символа'; return; }
+  users[idx].passHash = hashPass(np);
+  saveUsers(users);
+  err.textContent = '';
+  err.style.color = 'var(--green)';
+  err.textContent = '✓ Пароль изменён';
+  setTimeout(() => { err.textContent = ''; err.style.color = 'var(--red)'; }, 2000);
+  renderUsersTable();
+}
+
+function deleteUser(idx) {
+  const users = getUsers();
+  const sess = currentSession();
+  if (users[idx].login === sess.login) { document.getElementById('users-err').textContent = 'Нельзя удалить текущего пользователя'; return; }
+  users.splice(idx, 1);
+  saveUsers(users);
+  renderUsersTable();
+}
+
+function addUser() {
+  const login = document.getElementById('nu-login').value.trim();
+  const pass = document.getElementById('nu-pass').value;
+  const role = document.getElementById('nu-role').value.trim() || 'user';
+  const err = document.getElementById('users-err');
+  err.style.color = 'var(--red)';
+  if (!login) { err.textContent = 'Введите логин'; return; }
+  if (!pass || pass.length < 4) { err.textContent = 'Пароль минимум 4 символа'; return; }
+  if (!['user','admin'].includes(role)) { err.textContent = 'Роль: user или admin'; return; }
+  const users = getUsers();
+  if (users.find(u => u.login === login)) { err.textContent = 'Такой логин уже существует'; return; }
+  users.push({ login, passHash: hashPass(pass), role });
+  saveUsers(users);
+  document.getElementById('nu-login').value = '';
+  document.getElementById('nu-pass').value = '';
+  document.getElementById('nu-role').value = '';
+  err.style.color = 'var(--green)';
+  err.textContent = '✓ Пользователь добавлен';
+  setTimeout(() => { err.textContent = ''; err.style.color = 'var(--red)'; }, 2000);
+  renderUsersTable();
+}
+
+// ── BOOT ────────────────────────────────────────────────
+initDefaultUsers();
+const _sess = currentSession();
+if (_sess) {
+  showDashboard(_sess);
+}
+// (если нет сессии — оверлей остаётся видимым)
 
 // ── INIT ──────────────────────────────────────────────
 const now=new Date();
