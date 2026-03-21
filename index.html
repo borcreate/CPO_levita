@@ -146,10 +146,20 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 @media(max-width:1024px){.kfu-grid,.kfu-grid-4{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:1fr}.kfu-mini-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1024px){#period-btns{flex-wrap:wrap}.dept-table{font-size:12px}}
 @media(max-width:640px){.stat-grid-4,.stat-grid-3{grid-template-columns:repeat(2,1fr)}.kfu-grid,.kfu-grid-4{grid-template-columns:1fr}.cols-2,.cols-3{grid-template-columns:1fr}main{padding:16px}.hdr,.nav{padding:0 16px}.stage-cols{grid-template-columns:1fr}#period-btns button{padding:3px 6px;font-size:10px}.stat-card{padding:12px}}
+/* ══ MOBILE HEADER ══ */
+@media(max-width:640px){
+  .hdr{height:auto;padding:8px 16px;flex-wrap:wrap;gap:6px}
+  .hdr-logo{font-size:15px;letter-spacing:3px}
+  .hdr-sub{font-size:10px}
+  .hdr-date{display:none}
+  #hdr-username{font-size:11px}
+  #hdr-users-btn,#hdr-refresh-btn,#hdr-logout-btn{padding:4px 8px;font-size:11px}
+  .hdr>div:last-child{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+}
 /* ══ AUTH ══ */
 #auth-overlay{position:fixed;inset:0;background:#f2f2f7;z-index:9999;display:flex;align-items:center;justify-content:center}
 #auth-overlay.hidden{display:none}
-.auth-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:40px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.auth-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:40px;width:360px;max-width:calc(100vw - 32px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
 .auth-logo{font-size:22px;font-weight:800;letter-spacing:5px;color:var(--gold);margin-bottom:4px}
 .auth-sub{font-size:12px;color:var(--muted);margin-bottom:28px}
 .auth-label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px;display:block}
@@ -223,9 +233,9 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   <div style="display:flex;align-items:center;gap:12px">
     <div class="hdr-date" id="hdrDate"></div>
     <span id="hdr-username" style="font-size:12px;color:var(--muted)"></span>
-    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👥 Пользователи</button>
-    <button onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻ Обновить</button>
-    <button onclick="logout()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Выйти</button>
+    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👥</button>
+    <button id="hdr-refresh-btn" onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#b8902a';this.style.color='#b8902a'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻</button>
+    <button id="hdr-logout-btn" onclick="logout()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Выйти</button>
   </div>
 </div>
 
