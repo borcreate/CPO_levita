@@ -352,7 +352,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   <div class="nav-tab" onclick="showTab('materials',this)">📎 Материалы</div>
 </nav>
 
-<div style="background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
+<div id="period-bar" style="background:var(--bg3);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
   <span style="font-size:11px;color:var(--muted);margin-right:4px">Период:</span>
   <div id="period-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
   <button onclick="clearPeriod()" style="margin-left:8px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px" id="btn-clear-period" title="Сбросить выбор">✕ Сбросить</button>
@@ -1234,6 +1234,10 @@ function showTab(name,el){
   el.classList.add('active');
   if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
   if(name==='materials'){ renderMaterials(); }
+  // Скрываем фильтр на вкладках где он не нужен
+  const hidePeriod = ['map','materials'];
+  const periodBar = document.getElementById('period-bar');
+  if(periodBar) periodBar.style.display = hidePeriod.includes(name) ? 'none' : '';
 }
 
 // ── PERIOD FILTER ──────────────────────────────────────────────
