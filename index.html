@@ -231,6 +231,26 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 @media(max-width:1024px){.kfu-grid,.kfu-grid-4{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:1fr}.kfu-mini-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1024px){#period-btns{flex-wrap:wrap}.dept-table{font-size:12px}}
 @media(max-width:640px){.stat-grid-4,.stat-grid-3{grid-template-columns:repeat(2,1fr)}.kfu-grid,.kfu-grid-4{grid-template-columns:1fr}.cols-2,.cols-3{grid-template-columns:1fr}main{padding:16px}.hdr,.nav{padding:0 16px}.stage-cols{grid-template-columns:1fr}#period-btns button{padding:3px 6px;font-size:10px}.stat-card{padding:12px}}
+
+/* ══ MOBILE PERIOD DROPDOWN ══ */
+@media(max-width:640px){
+  #period-bar{padding:8px 16px!important;background:var(--bg2)!important;box-shadow:0 2px 8px rgba(0,0,0,.08)!important}
+  #period-btns{display:none!important}
+  #btn-clear-period{display:none!important}
+  #period-label{display:none!important}
+  #mob-period-btn{display:flex!important}
+}
+#mob-period-btn{display:none;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;font-weight:500;transition:.15s}
+#mob-period-btn:hover{border-color:var(--gold);color:var(--gold)}
+#mob-period-dropdown{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);border-radius:16px 16px 0 0;z-index:600;padding:16px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.12)}
+#mob-period-dropdown.open{display:block}
+.mob-period-title{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.8px}
+.mob-period-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.mob-month-btn{padding:10px 4px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;text-align:center;transition:.15s}
+.mob-month-btn.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);font-weight:700}
+.mob-period-close{width:100%;padding:12px;background:var(--gold);color:var(--graphite);border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.mob-period-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:599}
+.mob-period-overlay.open{display:block}
 /* ══ MOBILE HEADER ══ */
 @media(max-width:640px){
   .hdr{height:auto;padding:8px 16px;flex-wrap:wrap;gap:6px}
@@ -471,6 +491,18 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
   <div id="period-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
   <button onclick="clearPeriod()" style="margin-left:8px;background:transparent;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px" id="btn-clear-period" title="Сбросить выбор">✕ Сбросить</button>
   <span id="period-label" style="font-size:11px;color:var(--gold);margin-left:8px"></span>
+  <!-- Mobile period button -->
+  <button id="mob-period-btn" onclick="openMobPeriod()">
+    <span>📅</span><span id="mob-period-label">Март</span><span>▾</span>
+  </button>
+</div>
+
+<!-- Mobile period dropdown -->
+<div class="mob-period-overlay" id="mob-period-overlay" onclick="closeMobPeriod()"></div>
+<div id="mob-period-dropdown">
+  <div class="mob-period-title">Выберите период</div>
+  <div class="mob-period-grid" id="mob-period-grid"></div>
+  <button class="mob-period-close" onclick="closeMobPeriod()">Готово</button>
 </div>
 
 <main>
@@ -2212,6 +2244,54 @@ document.addEventListener('keydown', e => {
 // ══════════════════════════════════════════════════════════
 // MOBILE BOTTOM BAR
 // ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// MOBILE PERIOD DROPDOWN
+// ══════════════════════════════════════════════════════════
+function openMobPeriod(){
+  // Рендерим сетку месяцев
+  const grid = document.getElementById('mob-period-grid');
+  grid.innerHTML = MONTH_LABELS.map((m,i) => `
+    <button class="mob-month-btn${selectedMonths.has(i)?' active':''}" onclick="toggleMobMonth(${i},this)">${m}</button>
+  `).join('');
+  document.getElementById('mob-period-dropdown').classList.add('open');
+  document.getElementById('mob-period-overlay').classList.add('open');
+}
+
+function closeMobPeriod(){
+  document.getElementById('mob-period-dropdown').classList.remove('open');
+  document.getElementById('mob-period-overlay').classList.remove('open');
+  updateMobPeriodLabel();
+}
+
+function toggleMobMonth(i, btn){
+  if(selectedMonths.has(i)){
+    selectedMonths.delete(i);
+    btn.classList.remove('active');
+    // Синхронизируем десктоп кнопки
+    const desktopBtns = document.querySelectorAll('#period-btns button');
+    if(desktopBtns[i]){ desktopBtns[i].style.background='transparent'; desktopBtns[i].style.borderColor='var(--border)'; desktopBtns[i].style.color='var(--muted)'; }
+  } else {
+    selectedMonths.add(i);
+    btn.classList.add('active');
+    const desktopBtns = document.querySelectorAll('#period-btns button');
+    if(desktopBtns[i]){ desktopBtns[i].style.background='rgba(238,201,92,0.1)'; desktopBtns[i].style.borderColor='var(--gold)'; desktopBtns[i].style.color='var(--gold)'; }
+  }
+  updatePeriodLabel();
+  redrawCharts();
+}
+
+function updateMobPeriodLabel(){
+  const btn = document.getElementById('mob-period-label');
+  if(!btn) return;
+  if(selectedMonths.size === 0){
+    btn.textContent = 'Месяц';
+  } else if(selectedMonths.size === 1){
+    btn.textContent = MONTH_LABELS[[...selectedMonths][0]];
+  } else {
+    btn.textContent = [...selectedMonths].sort((a,b)=>a-b).map(i=>MONTH_LABELS[i]).join(', ');
+  }
+}
+
 function setMobTab(el){
   document.querySelectorAll('.mob-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
@@ -2242,6 +2322,7 @@ const now=new Date();
 document.getElementById('hdrDate').textContent=now.toLocaleDateString('ru',{month:'long',year:'numeric'});
 initTheme();
 initPeriod();
+updateMobPeriodLabel();
 renderTrafficGrid();
 renderKFU();
 renderKFUTrafficGrid();
