@@ -79,6 +79,7 @@ body.dark{
 #alert-banner.show{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .alert-item{margin-right:16px}
 #alert-banner.hidden-alerts{display:none!important}
+#period-bar.hidden-period{display:none!important}
 
 /* ══ PRESENTATION MODE ══ */
 body.present .hdr{display:none}
@@ -1560,7 +1561,7 @@ function showTab(name,el){
   // Скрываем фильтр и алерт-баннер на вкладках где они не нужны
   const hidePeriod = ['map','materials'];
   const periodBar = document.getElementById('period-bar');
-  if(periodBar) periodBar.style.display = hidePeriod.includes(name) ? 'none' : '';
+  if(periodBar) periodBar.classList.toggle('hidden-period', hidePeriod.includes(name));
   const alertBanner = document.getElementById('alert-banner');
   if(alertBanner) alertBanner.classList.toggle('hidden-alerts', hidePeriod.includes(name));
 }
