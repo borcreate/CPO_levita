@@ -312,7 +312,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .mat-modal-save:hover{background:#a07820}
 .mat-modal-cancel{padding:10px 18px;background:var(--bg3);color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
 /* ══ TASKS ══ */
-.tasks-section{margin-top:20px;border-top:2px solid var(--border);padding-top:16px}
+.tasks-section{margin-top:20px;border-top:2px solid var(--gold-dim);padding-top:16px}
 .tasks-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .tasks-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);transition:.1s}
@@ -351,7 +351,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .owners-panel-dots{display:flex;gap:5px;align-items:center}
 .owners-panel-ind{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--muted)}
 /* ══ TEAM BLOCK ══ */
-.team-block{margin-top:20px;padding-top:16px;border-top:2px solid var(--border)}
+.team-block{margin-top:20px;padding-top:16px;border-top:2px solid var(--gold-dim)}
 .team-block-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px}
 .team-summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
 .team-summary-item{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
@@ -409,7 +409,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 .team-history-date{font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600}
 .team-history-dots{display:flex;gap:12px;font-size:12px}
 /* ══ DEPT OWNER ══ */
-.dept-owner-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px 16px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)}
+.dept-owner-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px 16px;background:var(--bg3);border-radius:10px;border:1px solid var(--border);border-left:3px solid var(--gold)}
 .dept-owner-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;flex-shrink:0}
 .dept-owner-name{font-size:16px;font-weight:700;color:var(--text);flex:1}
 .dept-owner-input{flex:1;padding:5px 9px;border:1px solid var(--gold);border-radius:6px;font-size:13px;font-family:inherit;outline:none;background:#fff}
@@ -1185,9 +1185,14 @@ function renderDepts(){
 
     const ownerName = owners[i] || '—';
     const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного">✏️</button>` : '';
+    const ownerEntry = getOwnerStatuses()[i];
+    const ownerDots = ownerName&&ownerName!=='—' ? ownerDotsHtml(ownerEntry) : '';
+    const ownerRateBtn = ownerName&&ownerName!=='—' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
     const ownerHtml = `<div class="dept-owner-row" id="dept-owner-row-${i}">
       <span class="dept-owner-label">Ответственный</span>
       <span class="dept-owner-name" id="dept-owner-name-${i}">${ownerName}</span>
+      ${ownerDots}
+      ${ownerRateBtn}
       ${editBtn}
     </div>`;
 
