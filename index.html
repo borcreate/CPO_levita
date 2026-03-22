@@ -331,6 +331,64 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .task-add-btn{padding:7px 14px;background:var(--gold);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
 .task-add-btn:hover{background:#a07820}
 .task-empty{font-size:12px;color:var(--muted);font-style:italic;padding:4px 0}
+/* ══ TEAM BLOCK ══ */
+.team-block{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.team-block-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px}
+.team-summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
+.team-summary-item{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.team-summary-item b{color:var(--text)}
+.team-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.team-filter-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:.15s}
+.team-filter-btn:hover,.team-filter-btn.active{border-color:var(--gold);color:var(--gold)}
+.team-search{flex:1;min-width:120px;max-width:200px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;outline:none;background:var(--bg2);color:var(--text)}
+.team-search:focus{border-color:var(--gold)}
+.team-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.team-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;transition:.15s}
+.team-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.team-card.stale{border-color:#f59e0b;background:#fffbeb}
+body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
+.team-card-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+.team-card-summary{font-size:11px;color:var(--muted);margin-bottom:10px}
+.team-indicators{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.team-ind{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted)}
+.team-ind-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.team-ind-dot.green{background:#16a34a}
+.team-ind-dot.yellow{background:#ca8a04}
+.team-ind-dot.red{background:#dc2626}
+.team-ind-dot.gray{background:#aaa}
+.team-tooltip-wrap{position:relative;display:inline-flex;align-items:center}
+.team-tooltip-icon{width:14px;height:14px;border-radius:50%;background:var(--bg4);border:1px solid var(--border);color:var(--muted);font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:help;line-height:1;margin-left:2px;flex-shrink:0}
+.team-tooltip-box{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#101a25;color:#f0ead6;font-size:11px;padding:8px 12px;border-radius:8px;width:220px;line-height:1.5;z-index:999;pointer-events:none;white-space:normal}
+.team-tooltip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#101a25}
+.team-tooltip-wrap:hover .team-tooltip-box,.team-tooltip-wrap.tip-open .team-tooltip-box{display:block}
+.team-field{margin-bottom:8px}
+.team-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:2px}
+.team-field-val{font-size:12px;color:var(--text);line-height:1.5}
+.team-stale-badge{font-size:10px;font-weight:600;color:#d97706;background:#fef3c7;border:1px solid #fcd34d;border-radius:5px;padding:2px 7px;display:inline-block;margin-bottom:8px}
+.team-date{font-size:10px;color:var(--muted);margin-top:8px}
+.team-card-footer{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.team-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:.15s}
+.team-btn:hover{border-color:var(--gold);color:var(--gold)}
+.team-btn.primary{background:var(--gold);color:#101a25;border-color:var(--gold);font-weight:600}
+.team-btn.primary:hover{background:#d4a800}
+.team-add-person-btn{background:none;border:1px dashed var(--border);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer;font-size:12px;font-family:inherit;width:100%;transition:.15s;text-align:center;margin-top:8px}
+.team-add-person-btn:hover{border-color:var(--gold);color:var(--gold)}
+.team-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;align-items:center;justify-content:center;padding:16px}
+.team-modal-overlay.open{display:flex}
+.team-modal{background:var(--bg2);border-radius:14px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.team-modal-title{font-size:16px;font-weight:700;margin-bottom:18px;color:var(--text)}
+.team-modal-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px;margin-top:14px;display:block}
+.team-modal-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;outline:none;background:var(--bg3);color:var(--text);transition:.15s;resize:vertical}
+.team-modal-input:focus{border-color:var(--gold);background:var(--bg2)}
+.team-status-row{display:flex;gap:8px;flex-wrap:wrap}
+.team-status-btn{flex:1;min-width:70px;padding:8px 4px;border-radius:8px;border:2px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;text-align:center;transition:.15s;background:var(--bg3);color:var(--muted)}
+.team-status-btn.sel-green{border-color:#16a34a;background:#dcfce7;color:#16a34a}
+.team-status-btn.sel-yellow{border-color:#ca8a04;background:#fef9c3;color:#ca8a04}
+.team-status-btn.sel-red{border-color:#dc2626;background:#fee2e2;color:#dc2626}
+.team-modal-footer{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.team-history-entry{padding:8px 12px;border-left:3px solid var(--border);margin-bottom:8px;border-radius:0 6px 6px 0;background:var(--bg3)}
+.team-history-date{font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.team-history-dots{display:flex;gap:12px;font-size:12px}
 /* ══ DEPT OWNER ══ */
 .dept-owner-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)}
 .dept-owner-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
@@ -1131,11 +1189,12 @@ function renderDepts(){
       :`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
 
     const tasksHtml = renderTasksBlock(i);
+    const teamHtml = renderTeamBlock(i);
 
     el.innerHTML=`<div class="dept-hdr" onclick="toggleDept(${i})">
       <div class="dept-hdr-l"><div class="dept-num">${d.num}</div><div class="dept-name">${d.name}</div></div>
       <div class="dept-arrow">▲</div></div>
-    <div class="dept-body">${ownerHtml}${tasksHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
+    <div class="dept-body">${ownerHtml}${tasksHtml}${teamHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
     list.appendChild(el);
   });
   // Init charts for open depts
@@ -2259,6 +2318,132 @@ function initTheme(){
 // ══════════════════════════════════════════════════════════
 // PRESENTATION MODE
 // ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// TEAM BLOCK
+// ══════════════════════════════════════════════════════════
+const TEAM_KEY='levita_team_v1';
+function getTeam(){try{return JSON.parse(localStorage.getItem(TEAM_KEY))||{};}catch{return{};}}
+function saveTeam(d){localStorage.setItem(TEAM_KEY,JSON.stringify(d));}
+function getTeamForDept(idx){return(getTeam()[idx]||[]);}
+function dotClass(v){return v==='green'?'green':v==='yellow'?'yellow':v==='red'?'red':'gray';}
+function dotEmoji(v){return v==='green'?'🟢':v==='yellow'?'🟡':v==='red'?'🔴':'⚪';}
+function isStale(p){const h=p.history||[];if(!h.length)return true;return(Date.now()-new Date(h[h.length-1].date).getTime())>7*24*60*60*1000;}
+const IND_TIPS={energy:'Энергия — текущая оценка состояния: хватает ли сил, интереса и вовлечённости тянуть роль без просадки.',exec:'Исполнение — насколько стабильно человек доводит задачи до результата и выполняет договорённости в срок.',load:'Нагрузка — текущий объём задач: справляется ли без перегруза и риска срывов.'};
+function tipHtml(uid,key){return`<span class="team-tooltip-wrap" onclick="event.stopPropagation();this.classList.toggle('tip-open')"><span class="team-tooltip-icon">i</span><span class="team-tooltip-box">${IND_TIPS[key]}</span></span>`;}
+
+function renderTeamBlock(deptIdx){
+  const sess=currentSession();const isAdmin=sess&&sess.role==='admin';
+  const people=getTeamForDept(deptIdx);
+  const fk=`tf_${deptIdx}`,sk=`ts_${deptIdx}`,qk=`tq_${deptIdx}`;
+  const af=sessionStorage.getItem(fk)||'all';
+  const as=sessionStorage.getItem(sk)||'date';
+  const aq=(sessionStorage.getItem(qk)||'').toLowerCase();
+  // сводка
+  let eC={green:0,yellow:0,red:0},xC={green:0,yellow:0,red:0},lC={green:0,yellow:0,red:0},st=0;
+  people.forEach(p=>{const h=p.history||[],last=h[h.length-1];if(!last||isStale(p)){st++;return;}if(eC[last.energy]!=null)eC[last.energy]++;if(xC[last.exec]!=null)xC[last.exec]++;if(lC[last.load]!=null)lC[last.load]++;});
+  const sumHtml=people.length?`<div class="team-summary"><span class="team-summary-item"><b>${people.length}</b>&nbsp;чел.</span><span class="team-summary-item">Энергия:&nbsp;🟢<b>${eC.green}</b>&nbsp;🟡<b>${eC.yellow}</b>&nbsp;🔴<b>${eC.red}</b></span><span class="team-summary-item">Исполнение:&nbsp;🟢<b>${xC.green}</b>&nbsp;🟡<b>${xC.yellow}</b>&nbsp;🔴<b>${xC.red}</b></span><span class="team-summary-item">Нагрузка:&nbsp;🟢<b>${lC.green}</b>&nbsp;🟡<b>${lC.yellow}</b>&nbsp;🔴<b>${lC.red}</b></span>${st?`<span class="team-summary-item" style="color:#d97706">⚠️&nbsp;<b>${st}</b>&nbsp;без обновл.</span>`:''}</div>`:'';
+  const filtersHtml=people.length?`<div class="team-filters"><button class="team-filter-btn${af==='all'?' active':''}" onclick="setTF(${deptIdx},'all')">Все</button><button class="team-filter-btn${af==='red'?' active':''}" onclick="setTF(${deptIdx},'red')">🔴</button><button class="team-filter-btn${af==='yellow'?' active':''}" onclick="setTF(${deptIdx},'yellow')">🟡</button><button class="team-filter-btn${af==='green'?' active':''}" onclick="setTF(${deptIdx},'green')">🟢</button><button class="team-filter-btn${af==='stale'?' active':''}" onclick="setTF(${deptIdx},'stale')">⚠️</button><select style="margin-left:auto;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:6px;font-size:11px;font-family:inherit" onchange="setTS(${deptIdx},this.value)"><option value="date"${as==='date'?' selected':''}>По дате</option><option value="red"${as==='red'?' selected':''}>По красным</option><option value="name"${as==='name'?' selected':''}>По имени</option></select><input class="team-search" placeholder="Поиск…" value="${escHtml(sessionStorage.getItem(qk)||'')}" oninput="setTQ(${deptIdx},this.value)"></div>`:'';
+  // фильтр+сортировка
+  let list=people.filter(p=>{if(aq&&!p.name.toLowerCase().includes(aq))return false;if(af==='stale')return isStale(p);if(af==='all')return true;const h=p.history||[],l=h[h.length-1];if(!l)return false;return l.energy===af||l.exec===af||l.load===af;});
+  if(as==='date')list.sort((a,b)=>{const ah=a.history||[],bh=b.history||[];return new Date(bh[bh.length-1]?.date||0)-new Date(ah[ah.length-1]?.date||0);});
+  else if(as==='red')list.sort((a,b)=>{const rc=p=>{const h=p.history||[],l=h[h.length-1];if(!l)return 0;return[l.energy,l.exec,l.load].filter(v=>v==='red').length;};return rc(b)-rc(a);});
+  else list.sort((a,b)=>a.name.localeCompare(b.name,'ru'));
+  const cards=list.map(p=>{
+    const h=p.history||[],last=h[h.length-1],stale=isStale(p);
+    const d=last?new Date(last.date).toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):null;
+    return`<div class="team-card${stale?' stale':''}" id="tcard-${p.id}">
+      ${stale?`<div class="team-stale-badge">⚠️ Нет свежего обновления</div>`:''}
+      <div class="team-card-name">${escHtml(p.name)}</div>
+      ${p.role?`<div style="font-size:11px;color:var(--muted);margin-bottom:6px">${escHtml(p.role)}</div>`:''}
+      ${last?.summary?`<div class="team-card-summary">${escHtml(last.summary)}</div>`:''}
+      <div class="team-indicators">
+        <span class="team-ind"><span class="team-ind-dot ${dotClass(last?.energy)}"></span>Энергия${tipHtml(p.id+'e','energy')}</span>
+        <span class="team-ind"><span class="team-ind-dot ${dotClass(last?.exec)}"></span>Исполнение${tipHtml(p.id+'x','exec')}</span>
+        <span class="team-ind"><span class="team-ind-dot ${dotClass(last?.load)}"></span>Нагрузка${tipHtml(p.id+'l','load')}</span>
+      </div>
+      ${last?.focus?`<div class="team-field"><div class="team-field-label">Фокус недели</div><div class="team-field-val">${escHtml(last.focus)}</div></div>`:''}
+      ${last?.issues?`<div class="team-field"><div class="team-field-label">Сложности</div><div class="team-field-val">${escHtml(last.issues)}</div></div>`:''}
+      ${d?`<div class="team-date">Обновлено: ${d}</div>`:''}
+      <div class="team-card-footer">
+        <button class="team-btn" onclick="openTeamDetail('${p.id}',${deptIdx})">Подробнее</button>
+        <button class="team-btn primary" onclick="openTeamUpdate('${p.id}',${deptIdx})">Обновить</button>
+        ${isAdmin?`<button class="team-btn" style="margin-left:auto;color:#dc2626" onclick="delTeamPerson('${p.id}',${deptIdx})">✕</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  const empty=list.length===0&&people.length>0?`<div style="font-size:12px;color:var(--muted);padding:8px 0">Никого нет по фильтру</div>`:people.length===0?`<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0">Команда не добавлена</div>`:'';
+  const addBtn=isAdmin?`<button class="team-add-person-btn" onclick="openTeamAddPerson(${deptIdx})">+ Добавить человека</button>`:'';
+  return`<div class="team-block" id="team-block-${deptIdx}"><div class="team-block-title">👥 Команда</div>${sumHtml}${filtersHtml}<div class="team-cards">${cards}${empty}</div>${addBtn}</div>`;
+}
+
+function setTF(i,v){sessionStorage.setItem(`tf_${i}`,v);rTB(i);}
+function setTS(i,v){sessionStorage.setItem(`ts_${i}`,v);rTB(i);}
+function setTQ(i,v){sessionStorage.setItem(`tq_${i}`,v);rTB(i);}
+function rTB(i){const el=document.getElementById(`team-block-${i}`);if(el)el.outerHTML=renderTeamBlock(i);}
+
+let _tDept=null,_tPid=null,_tSt={energy:null,exec:null,load:null};
+function openTeamUpdate(pid,di){
+  const p=getTeamForDept(di).find(x=>x.id===pid);if(!p)return;
+  _tDept=di;_tPid=pid;
+  const last=(p.history||[]).slice(-1)[0];
+  _tSt={energy:last?.energy||null,exec:last?.exec||null,load:last?.load||null};
+  document.getElementById('team-modal-person-name').textContent=p.name;
+  document.getElementById('team-modal-summary').value=last?.summary||'';
+  document.getElementById('team-modal-focus').value=last?.focus||'';
+  document.getElementById('team-modal-issues').value=last?.issues||'';
+  ['energy','exec','load'].forEach(k=>hlSt(k,_tSt[k]));
+  document.getElementById('team-update-modal').classList.add('open');
+}
+function closeTeamModal(){document.getElementById('team-update-modal').classList.remove('open');}
+function selStatus(f,v){_tSt[f]=v;hlSt(f,v);}
+function hlSt(f,v){const m={energy:'team-modal-energy',exec:'team-modal-exec',load:'team-modal-load'};const row=document.getElementById(m[f]);if(!row)return;row.querySelectorAll('.team-status-btn').forEach(b=>{b.className='team-status-btn';if(b.dataset.val===v)b.className=`team-status-btn sel-${v}`;});}
+function saveTeamUpdate(){
+  if(!_tSt.energy||!_tSt.exec||!_tSt.load){alert('Выберите все три индикатора');return;}
+  const d=getTeam();if(!d[_tDept])d[_tDept]=[];
+  const p=d[_tDept].find(x=>x.id===_tPid);if(!p){closeTeamModal();return;}
+  if(!p.history)p.history=[];
+  p.history.push({date:new Date().toISOString(),summary:document.getElementById('team-modal-summary').value.trim(),energy:_tSt.energy,exec:_tSt.exec,load:_tSt.load,focus:document.getElementById('team-modal-focus').value.trim().slice(0,150),issues:document.getElementById('team-modal-issues').value.trim().slice(0,200)});
+  if(p.history.length>20)p.history=p.history.slice(-20);
+  saveTeam(d);closeTeamModal();rTB(_tDept);
+}
+function openTeamAddPerson(di){
+  document.getElementById('team-add-dept-idx').value=di;
+  document.getElementById('team-add-name').value='';
+  document.getElementById('team-add-role').value='';
+  document.getElementById('team-add-person-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('team-add-name').focus(),50);
+}
+function closeTeamAddModal(){document.getElementById('team-add-person-modal').classList.remove('open');}
+function saveNewPerson(){
+  const name=document.getElementById('team-add-name').value.trim();
+  if(!name){alert('Введите имя');return;}
+  const role=document.getElementById('team-add-role').value.trim();
+  const di=parseInt(document.getElementById('team-add-dept-idx').value);
+  const d=getTeam();if(!d[di])d[di]=[];
+  d[di].push({id:'p'+Date.now(),name,role,history:[]});
+  saveTeam(d);closeTeamAddModal();rTB(di);
+}
+function delTeamPerson(pid,di){
+  if(!confirm('Удалить сотрудника?'))return;
+  const d=getTeam();if(!d[di])return;
+  d[di]=d[di].filter(p=>p.id!==pid);saveTeam(d);rTB(di);
+}
+function openTeamDetail(pid,di){
+  const p=getTeamForDept(di).find(x=>x.id===pid);if(!p)return;
+  document.getElementById('team-detail-name').textContent=p.name;
+  document.getElementById('team-detail-role').textContent=p.role||'';
+  const h=[...(p.history||[])].reverse().slice(0,8);
+  const last=h[0];
+  const cur=last?`<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">${['energy','exec','load'].map(k=>`<div style="background:var(--bg3);border-radius:8px;padding:10px 14px;flex:1;min-width:90px;text-align:center"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:6px">${{energy:'Энергия',exec:'Исполнение',load:'Нагрузка'}[k]}</div><div style="font-size:22px">${dotEmoji(last[k])}</div></div>`).join('')}</div>${last.summary?`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">${escHtml(last.summary)}</div>`:''}${last.focus?`<div class="team-field"><div class="team-field-label">Фокус недели</div><div class="team-field-val">${escHtml(last.focus)}</div></div>`:''}${last.issues?`<div class="team-field" style="margin-top:8px"><div class="team-field-label">Сложности</div><div class="team-field-val">${escHtml(last.issues)}</div></div>`:''}`:`<div style="color:var(--muted);font-size:13px;padding:12px 0">Обновлений ещё нет</div>`;
+  const hist=h.length>1?`<div style="margin-top:20px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px">История</div>${h.slice(1).map(e=>`<div class="team-history-entry"><div class="team-history-date">${new Date(e.date).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div><div class="team-history-dots"><span>Энергия ${dotEmoji(e.energy)}</span><span>Исполнение ${dotEmoji(e.exec)}</span><span>Нагрузка ${dotEmoji(e.load)}</span></div>${e.focus?`<div style="font-size:11px;color:var(--muted);margin-top:3px">${escHtml(e.focus)}</div>`:''}</div>`).join('')}</div>`:'';
+  document.getElementById('team-detail-body').innerHTML=cur+hist;
+  document.getElementById('team-detail-modal').classList.add('open');
+}
+function closeTeamDetailModal(){document.getElementById('team-detail-modal').classList.remove('open');}
+['team-update-modal','team-add-person-modal','team-detail-modal'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});
+});
+
 function togglePresent(){
   document.body.classList.toggle('present');
 }
@@ -2467,5 +2652,66 @@ loadMap();
 loadLiveData(); // живые данные из Google Sheets
 setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
 </script>
+<!-- TEAM MODALS -->
+<div class="team-modal-overlay" id="team-update-modal">
+  <div class="team-modal">
+    <div class="team-modal-title">Обновление состояния</div>
+    <div id="team-modal-person-name" style="font-size:15px;font-weight:700;color:var(--gold);margin-bottom:16px"></div>
+    <label class="team-modal-label">Краткий итог по команде</label>
+    <input class="team-modal-input" id="team-modal-summary" type="text" placeholder="Команда: 8 чел. | 6 в норме | 2 зоны внимания" maxlength="100">
+    <label class="team-modal-label">Энергия</label>
+    <div class="team-status-row" id="team-modal-energy">
+      <button class="team-status-btn" data-val="green" onclick="selStatus('energy','green')">🟢 Зелёный</button>
+      <button class="team-status-btn" data-val="yellow" onclick="selStatus('energy','yellow')">🟡 Жёлтый</button>
+      <button class="team-status-btn" data-val="red" onclick="selStatus('energy','red')">🔴 Красный</button>
+    </div>
+    <label class="team-modal-label">Исполнение</label>
+    <div class="team-status-row" id="team-modal-exec">
+      <button class="team-status-btn" data-val="green" onclick="selStatus('exec','green')">🟢 Зелёный</button>
+      <button class="team-status-btn" data-val="yellow" onclick="selStatus('exec','yellow')">🟡 Жёлтый</button>
+      <button class="team-status-btn" data-val="red" onclick="selStatus('exec','red')">🔴 Красный</button>
+    </div>
+    <label class="team-modal-label">Нагрузка</label>
+    <div class="team-status-row" id="team-modal-load">
+      <button class="team-status-btn" data-val="green" onclick="selStatus('load','green')">🟢 Зелёный</button>
+      <button class="team-status-btn" data-val="yellow" onclick="selStatus('load','yellow')">🟡 Жёлтый</button>
+      <button class="team-status-btn" data-val="red" onclick="selStatus('load','red')">🔴 Красный</button>
+    </div>
+    <label class="team-modal-label">Фокус будущей недели <span style="font-weight:400">(до 150 симв.)</span></label>
+    <textarea class="team-modal-input" id="team-modal-focus" rows="2" maxlength="150" placeholder="Что главное на следующей неделе"></textarea>
+    <label class="team-modal-label">Сложности <span style="font-weight:400">(до 200 симв.)</span></label>
+    <textarea class="team-modal-input" id="team-modal-issues" rows="2" maxlength="200" placeholder="Что мешает или беспокоит"></textarea>
+    <div class="team-modal-footer">
+      <button class="team-btn" onclick="closeTeamModal()">Отмена</button>
+      <button class="team-btn primary" onclick="saveTeamUpdate()">Сохранить</button>
+    </div>
+  </div>
+</div>
+<div class="team-modal-overlay" id="team-add-person-modal">
+  <div class="team-modal" style="max-width:400px">
+    <div class="team-modal-title">Добавить сотрудника</div>
+    <label class="team-modal-label">Имя</label>
+    <input class="team-modal-input" id="team-add-name" type="text" placeholder="Имя Фамилия" maxlength="60">
+    <label class="team-modal-label">Должность</label>
+    <input class="team-modal-input" id="team-add-role" type="text" placeholder="Руководитель отдела" maxlength="80">
+    <input type="hidden" id="team-add-dept-idx">
+    <div class="team-modal-footer">
+      <button class="team-btn" onclick="closeTeamAddModal()">Отмена</button>
+      <button class="team-btn primary" onclick="saveNewPerson()">Добавить</button>
+    </div>
+  </div>
+</div>
+<div class="team-modal-overlay" id="team-detail-modal">
+  <div class="team-modal" style="max-width:540px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <div class="team-modal-title" id="team-detail-name" style="margin-bottom:2px"></div>
+        <div style="font-size:12px;color:var(--muted)" id="team-detail-role"></div>
+      </div>
+      <button class="team-btn" onclick="closeTeamDetailModal()" style="flex-shrink:0">✕</button>
+    </div>
+    <div id="team-detail-body"></div>
+  </div>
+</div>
 </body>
 </html>
