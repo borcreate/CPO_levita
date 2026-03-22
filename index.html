@@ -79,7 +79,9 @@ body.dark{
 #alert-banner.show{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .alert-item{margin-right:16px}
 #alert-banner.hidden-alerts{display:none!important}
+#period-bar{display:flex}
 #period-bar.hidden-period{display:none!important}
+body.present #period-bar{display:none!important}
 
 /* ══ PRESENTATION MODE ══ */
 body.present .hdr{display:none}
@@ -569,7 +571,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div class="nav-tab" onclick="showTab('materials',this)" style="display:flex;align-items:center;gap:6px"><i data-lucide="paperclip" style="width:14px;height:14px"></i> Материалы</div>
 </nav>
 
-<div id="period-bar" style="background:rgba(247,247,247,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
+<div id="period-bar" style="background:rgba(247,247,247,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:8px 28px;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
   <span style="font-size:11px;color:var(--muted);margin-right:4px">Период:</span>
   <div id="period-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
   <div style="width:1px;height:16px;background:var(--border);margin:0 6px;flex-shrink:0"></div>
