@@ -1314,7 +1314,7 @@ function renderMap(rows){
         const risk=rest.filter(l=>l.toLowerCase().startsWith('риск')).map(l=>l.replace(/^Риск:?\s*/i,'')).join(' ');
         const action=rest.filter(l=>l.toLowerCase().startsWith('действие')).map(l=>l.replace(/^Действие:?\s*/i,'')).join(' ');
         const riskColor=risk.toLowerCase().includes('очень высок')?C.red:risk.toLowerCase().includes('высок')?C.yellow:C.gold;
-        return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+        return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;height:100%;box-sizing:border-box">
           <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:10px">${header}</div>
           ${znamenie?`<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px">Что значит</div><div style="font-size:12px;color:var(--text);line-height:1.6">${znamenie}</div></div>`:''}
           ${risk?`<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px">Риск</div><div style="font-size:12px;color:${riskColor};font-weight:600">${risk}</div></div>`:''}
@@ -1322,7 +1322,7 @@ function renderMap(rows){
           ${!znamenie&&!risk&&!action?`<div style="font-size:12px;color:var(--muted);line-height:1.6">${rest.join('<br>')}</div>`:''}
         </div>`;
       }).join('');
-      markersEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px">${blocksHtml}</div>`;
+      markersEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;align-items:stretch">${blocksHtml}</div>`;
     } else {
       markersEl.innerHTML='<div class="loading-state">Маркеры не найдены в таблице</div>';
     }
@@ -1342,7 +1342,7 @@ function renderMap(rows){
     // ЦКП из JS-массива KFU (правильные тексты)
     const ckpText = KFU[i] ? KFU[i].ckp : ckpRaw;
     const sc_color = kfuStatusColors[i] || C.blue;
-    return `<div class="kfu-mini-card" style="border-left:3px solid ${sc_color}">
+    return `<div class="kfu-mini-card" style="border-left:3px solid ${sc_color}${i===kfuNames.length-1?';grid-column:1/-1':''}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
         <div style="width:8px;height:8px;border-radius:50%;background:${sc_color};box-shadow:0 0 6px ${sc_color};flex-shrink:0"></div>
         <div class="kfu-mini-title" style="margin-bottom:0">${n}</div>
@@ -2033,7 +2033,11 @@ function renderMaterials(){
   const addBtn = canEdit ? `<button class="mat-add-btn" onclick="openMaterialModal()">+ Добавить</button>` : '';
 
   const cardsHtml = filtered.length===0
-    ? `<div class="mat-empty">Материалов пока нет${matActiveCat!=='Все'?' в этой категории':''}</div>`
+    ? `<div class="mat-empty" style="padding:60px 20px">
+        <div style="font-size:40px;margin-bottom:12px">📎</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Материалов пока нет${matActiveCat!=='Все'?' в этой категории':''}</div>
+        ${matActiveCat==='Все'&&canEdit?`<div style="font-size:13px;color:var(--muted)">Нажмите <b>+ Добавить</b> чтобы загрузить первый документ</div>`:''}
+      </div>`
     : `<div class="mat-grid">${filtered.map(m=>`
         <div class="mat-card">
           <div class="mat-card-top">
