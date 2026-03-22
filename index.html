@@ -1314,7 +1314,7 @@ function renderMap(rows){
         const risk=rest.filter(l=>l.toLowerCase().startsWith('риск')).map(l=>l.replace(/^Риск:?\s*/i,'')).join(' ');
         const action=rest.filter(l=>l.toLowerCase().startsWith('действие')).map(l=>l.replace(/^Действие:?\s*/i,'')).join(' ');
         const riskColor=risk.toLowerCase().includes('очень высок')?C.red:risk.toLowerCase().includes('высок')?C.yellow:C.gold;
-        return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;height:100%;box-sizing:border-box">
+        return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;box-sizing:border-box">
           <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:10px">${header}</div>
           ${znamenie?`<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px">Что значит</div><div style="font-size:12px;color:var(--text);line-height:1.6">${znamenie}</div></div>`:''}
           ${risk?`<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px">Риск</div><div style="font-size:12px;color:${riskColor};font-weight:600">${risk}</div></div>`:''}
@@ -1322,7 +1322,7 @@ function renderMap(rows){
           ${!znamenie&&!risk&&!action?`<div style="font-size:12px;color:var(--muted);line-height:1.6">${rest.join('<br>')}</div>`:''}
         </div>`;
       }).join('');
-      markersEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;align-items:stretch">${blocksHtml}</div>`;
+      markersEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;grid-auto-rows:1fr">${blocksHtml}</div>`;
     } else {
       markersEl.innerHTML='<div class="loading-state">Маркеры не найдены в таблице</div>';
     }
