@@ -1412,20 +1412,7 @@ function renderMap(rows){
           ${!znamenie&&!risk&&!action?`<div style="font-size:12px;color:var(--muted);line-height:1.6">${rest.join('<br>')}</div>`:''}
         </div>`;
       }).join('');
-      markersEl.innerHTML=`<div id="markers-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px">${blocksHtml}</div>`;
-      // Выравниваем высоту карточек в каждой строке
-      requestAnimationFrame(()=>{
-        const grid=document.getElementById('markers-grid');
-        if(!grid)return;
-        const cards=[...grid.children];
-        cards.forEach(c=>c.style.height='');
-        const cols=Math.round(grid.offsetWidth/310)||2;
-        for(let r=0;r<Math.ceil(cards.length/cols);r++){
-          const row=cards.slice(r*cols,(r+1)*cols);
-          const maxH=Math.max(...row.map(c=>c.offsetHeight));
-          row.forEach(c=>c.style.height=maxH+'px');
-        }
-      });
+      markersEl.innerHTML=`<div id="markers-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;align-items:start">${blocksHtml}</div>`;
     } else {
       markersEl.innerHTML='<div class="loading-state">Маркеры не найдены в таблице</div>';
     }
