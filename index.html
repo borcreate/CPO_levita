@@ -1485,6 +1485,16 @@ function initAnalyticsCharts(){
       <td style="color:var(--muted)">${r.p?fmtNum(r.p,r.u):'—'}</td>
       <td style="font-weight:600">${fmtNum(r.f,r.u)}</td><td>${badgeHtml(p)}</td></tr>`;
   }).join('');
+
+  // Обновляем дельты в заголовках
+  const _convEl=document.getElementById('chart-title-conv');
+  if(_convEl) _convEl.innerHTML='Конверсия лид → покупка'+chartDelta(CONV_F,'');
+  const _profEl=document.getElementById('chart-title-profit');
+  if(_profEl) _profEl.innerHTML='% партнёров с ЧП ≥300К'+chartDelta(PROFIT,'');
+  const _nzEl=document.getElementById('chart-title-nps-zan');
+  if(_nzEl) _nzEl.innerHTML='NPS занятий'+chartDelta(NPS_ZAN_F,'');
+  const _brEl=document.getElementById('chart-title-brand');
+  if(_brEl) _brEl.innerHTML='Брендовый спрос'+chartDelta(BRAND_F,'');
 }
 
 // ── КАРТА ФРАНЧАЙЗИ ──────────────────────────────────────────────
@@ -1935,6 +1945,8 @@ function lastNonZero(arr){
 }
 
 async function loadLiveData(){
+  // Показываем skeleton на stat-val элементах
+  document.querySelectorAll('.stat-val').forEach(el=>{el.dataset.orig=el.textContent;el.classList.add('skeleton');el.style.minWidth='60px';el.style.minHeight='24px'});
   try{
     // ── Грузим сводный раздел напрямую по диапазону (надёжнее чем поиск по всему листу) ──
     const [svodRows, fullRows] = await Promise.all([
@@ -2039,8 +2051,11 @@ async function loadLiveData(){
     if(analyticsInited)initAnalyticsChartsFiltered();
     DEPTS.forEach((d,i)=>{if(document.getElementById(`dept-${i}`)&&d.chart)d.chart.render();});
 
+    // Убираем skeleton
+    document.querySelectorAll('.stat-val.skeleton').forEach(el=>{el.classList.remove('skeleton');el.style.minWidth='';el.style.minHeight=''});
     console.log('✅ Live data loaded OK');
   }catch(e){
+    document.querySelectorAll('.stat-val.skeleton').forEach(el=>{el.classList.remove('skeleton');el.style.minWidth='';el.style.minHeight=''});
     console.warn('⚠️ Live data load failed:', e);
     // При ошибке всё равно перерисовываем с дефолтными данными
     document.getElementById('kfu-row1').innerHTML='';
