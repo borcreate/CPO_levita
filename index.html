@@ -1383,10 +1383,12 @@ function showTab(name,el){
   el.classList.add('active');
   if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
   if(name==='materials'){ renderMaterials(); }
-  // Скрываем фильтр на вкладках где он не нужен
+  // Скрываем фильтр и алерт-баннер на вкладках где они не нужны
   const hidePeriod = ['map','materials'];
   const periodBar = document.getElementById('period-bar');
   if(periodBar) periodBar.style.display = hidePeriod.includes(name) ? 'none' : '';
+  const alertBanner = document.getElementById('alert-banner');
+  if(alertBanner) alertBanner.classList.toggle('hidden-alerts', hidePeriod.includes(name));
 }
 
 // ── PERIOD FILTER ──────────────────────────────────────────────
@@ -1571,8 +1573,11 @@ function updateKFUCards(){
   KFU[0].metrics[0].hint=`LTV ${Math.round(ltvAvg).toLocaleString('ru-RU')} ${ltvAvg>cacAvg?'>':'<'} CAC ${Math.round(cacAvg).toLocaleString('ru-RU')} — маркетинг ${ltvAvg>cacAvg?'окупается':'не окупается'}`;
   KFU[0].metrics[1].f=getAvg(PROFIT);
 
-  KFU[1].metrics[0].f=getAvg(BRAND_F);
-  KFU[1].metrics[0].p=getAvg(BRAND_P);
+  const brandF=getAvg(BRAND_F);
+  const brandP=getAvg(BRAND_P);
+  KFU[1].metrics[0].f=brandF;
+  KFU[1].metrics[0].p=brandP;
+  KFU[1].metrics[0].hint=brandP>0?(brandF>=brandP?`${Math.round(brandF/brandP*100)}% плана — выше плана 🎉`:`Ниже плана — нужен рост (${Math.round(brandF/brandP*100)}%)`):'суммарный брендовый спрос';
 
   KFU[2].metrics[0].f=getAvg(CONV_F);
   KFU[2].metrics[0].p=getAvg(CONV_P);
