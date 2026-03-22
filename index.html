@@ -154,8 +154,8 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .kfu-bar{width:3px;flex-shrink:0}
 .kfu-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:10px}
 .kfu-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text)}
-.kfu-desc{font-size:11px;color:var(--muted);font-style:italic;line-height:1.5}
-.kfu-ckp{font-size:11px;color:var(--muted);line-height:1.6}
+.kfu-desc{font-size:11px;color:var(--text);opacity:.7;font-style:italic;line-height:1.5}
+.kfu-ckp{font-size:11px;color:var(--text);opacity:.75;line-height:1.6}
 .kfu-ckp-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);margin-bottom:4px}
 .kfu-divider{height:1px;background:var(--border)}
 .kfu-metrics{display:flex;flex-direction:column;gap:10px}
@@ -209,14 +209,14 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .stage-body{display:none;padding:16px 18px;border-top:1px solid var(--border)}
 .stage-card.open .stage-body{display:block}
 .stage-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.stage-col-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px}
+.stage-col-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text);opacity:.6;margin-bottom:8px}
 .stage-col-text{font-size:12px;line-height:1.7;color:var(--text)}
 .kfu-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
 .kfu-mini-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:.15s}
 .kfu-mini-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .kfu-mini-title{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px}
-.kfu-mini-ckp{font-size:11px;color:var(--muted);line-height:1.7}
-.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:16px}
+.kfu-mini-ckp{font-size:11px;color:var(--text);line-height:1.7;opacity:.8}
+.section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text);opacity:.6;margin-bottom:16px}
 /* SUMMARY TABLE */
 .summary-table{width:100%;border-collapse:collapse}
 .summary-table th{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg3)}
@@ -1437,7 +1437,7 @@ function renderMap(rows){
         <div style="width:8px;height:8px;border-radius:50%;background:${sc_color};box-shadow:0 0 6px ${sc_color};flex-shrink:0"></div>
         <div class="kfu-mini-title" style="margin-bottom:0">${n}</div>
       </div>
-      ${desc?`<div style="font-size:11px;color:var(--muted);font-style:italic;margin-bottom:10px;line-height:1.5">${desc.slice(0,110)}${desc.length>110?'…':''}</div>`:''}
+      ${desc?`<div style="font-size:11px;color:var(--text);opacity:.7;font-style:italic;margin-bottom:10px;line-height:1.5">${desc.slice(0,110)}${desc.length>110?'…':''}</div>`:''}
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px">Ценный конечный продукт</div>
       <div class="kfu-mini-ckp">${ckpText.replace(/\n/g,'<br>')||'—'}</div>
     </div>`;
