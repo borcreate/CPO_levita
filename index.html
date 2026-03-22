@@ -331,6 +331,25 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .task-add-btn{padding:7px 14px;background:var(--gold);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
 .task-add-btn:hover{background:#a07820}
 .task-empty{font-size:12px;color:var(--muted);font-style:italic;padding:4px 0}
+/* ══ OWNER STATUS ══ */
+.owner-status-dots{display:flex;gap:5px;align-items:center;margin-left:6px}
+.owner-status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.owner-status-dot.green{background:#16a34a}
+.owner-status-dot.yellow{background:#ca8a04}
+.owner-status-dot.red{background:#dc2626}
+.owner-status-dot.gray{background:#ccc}
+.owner-rate-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:5px;cursor:pointer;font-size:10px;font-family:inherit;transition:.15s;white-space:nowrap}
+.owner-rate-btn:hover{border-color:var(--gold);color:var(--gold)}
+.owners-panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:4px}
+.owners-panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px}
+.owners-panel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.owners-panel-card{background:var(--bg3);border-radius:8px;padding:10px 12px;border:1px solid var(--border);cursor:pointer;transition:.15s}
+.owners-panel-card:hover{border-color:var(--gold);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.owners-panel-card.stale{border-color:#f59e0b}
+.owners-panel-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.owners-panel-dept{font-size:10px;color:var(--muted);margin-bottom:6px}
+.owners-panel-dots{display:flex;gap:5px;align-items:center}
+.owners-panel-ind{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--muted)}
 /* ══ TEAM BLOCK ══ */
 .team-block{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
 .team-block-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px}
@@ -567,6 +586,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 
 <!-- ═══════════════════════════════════════════════ TAB 1: КФУ -->
 <div class="page active" id="tab-kfu">
+  <div id="owners-status-panel" style="margin-bottom:20px"></div>
   <div class="traffic-grid" id="kfu-traffic-grid" style="margin-bottom:20px"></div>
   <div class="kfu-grid" id="kfu-row1"></div>
   <div class="kfu-grid-4" id="kfu-row2"></div>
@@ -1237,9 +1257,14 @@ function restoreOwnerRow(i, name){
   const sess = currentSession();
   const isAdmin = sess && sess.role === 'admin';
   const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного">✏️</button>` : '';
+  const entry = getOwnerStatuses()[i];
+  const dots = name&&name!=='—' ? ownerDotsHtml(entry) : '';
+  const rateBtn = name&&name!=='—' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
   row.innerHTML = `
     <span class="dept-owner-label">Ответственный</span>
     <span class="dept-owner-name" id="dept-owner-name-${i}">${name}</span>
+    ${dots}
+    ${rateBtn}
     ${editBtn}
   `;
 }
@@ -2319,6 +2344,104 @@ function initTheme(){
 // PRESENTATION MODE
 // ══════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════
+// OWNER STATUS (прямые подчинённые CPO)
+// ══════════════════════════════════════════════════════════
+const OWNER_STATUS_KEY='levita_owners_status_v1';
+function getOwnerStatuses(){try{return JSON.parse(localStorage.getItem(OWNER_STATUS_KEY))||{};}catch{return{};}}
+function saveOwnerStatuses(d){localStorage.setItem(OWNER_STATUS_KEY,JSON.stringify(d));}
+
+function isOwnerStale(entry){
+  if(!entry||!entry.date)return true;
+  return(Date.now()-new Date(entry.date).getTime())>7*24*60*60*1000;
+}
+
+function ownerDotsHtml(entry){
+  const dc=v=>v==='green'?'green':v==='yellow'?'yellow':v==='red'?'red':'gray';
+  const e=entry||{};
+  return`<span class="owner-status-dots" title="Энергия / Исполнение / Нагрузка">
+    <span class="owner-status-dot ${dc(e.energy)}" title="Энергия"></span>
+    <span class="owner-status-dot ${dc(e.exec)}" title="Исполнение"></span>
+    <span class="owner-status-dot ${dc(e.load)}" title="Нагрузка"></span>
+  </span>`;
+}
+
+function renderOwnerStatusPanel(){
+  const panel=document.getElementById('owners-status-panel');
+  if(!panel)return;
+  const owners=getDeptOwners();
+  const statuses=getOwnerStatuses();
+  const deptNames=DEPTS.map(d=>d.name);
+  const cards=deptNames.map((dname,i)=>{
+    const name=owners[i]||null;
+    if(!name||name==='—')return null;
+    const entry=statuses[i];
+    const stale=isOwnerStale(entry);
+    const dc=v=>v==='green'?'green':v==='yellow'?'yellow':v==='red'?'red':'gray';
+    const e=entry||{};
+    const dotsRow=`
+      <div class="owners-panel-dots">
+        <span class="owners-panel-ind"><span class="owner-status-dot ${dc(e.energy)}" style="width:8px;height:8px"></span>Энергия</span>
+        <span class="owners-panel-ind"><span class="owner-status-dot ${dc(e.exec)}" style="width:8px;height:8px"></span>Исполнение</span>
+        <span class="owners-panel-ind"><span class="owner-status-dot ${dc(e.load)}" style="width:8px;height:8px"></span>Нагрузка</span>
+      </div>
+      ${stale?`<div style="font-size:10px;color:#d97706;margin-top:4px">⚠️ Нет обновления</div>`:''}
+      ${entry?.date&&!stale?`<div style="font-size:10px;color:var(--muted);margin-top:3px">${new Date(entry.date).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div>`:''}
+    `;
+    return`<div class="owners-panel-card${stale?' stale':''}" onclick="openOwnerRateModal(${i})" title="Нажмите чтобы обновить оценку">
+      <div class="owners-panel-name">${escHtml(name)}</div>
+      <div class="owners-panel-dept">${escHtml(dname)}</div>
+      ${dotsRow}
+    </div>`;
+  }).filter(Boolean);
+
+  if(!cards.length){panel.innerHTML='';return;}
+  panel.innerHTML=`<div class="owners-panel">
+    <div class="owners-panel-title">👤 Прямые подчинённые</div>
+    <div class="owners-panel-grid">${cards.join('')}</div>
+  </div>`;
+}
+
+// Модалка оценки ответственного
+let _ownerRateDeptIdx=null;
+let _ownerRateSt={energy:null,exec:null,load:null};
+
+function openOwnerRateModal(deptIdx){
+  const owners=getDeptOwners();
+  const name=owners[deptIdx]||'—';
+  const statuses=getOwnerStatuses();
+  const entry=statuses[deptIdx]||{};
+  _ownerRateDeptIdx=deptIdx;
+  _ownerRateSt={energy:entry.energy||null,exec:entry.exec||null,load:entry.load||null};
+  document.getElementById('owner-rate-name').textContent=name+' — '+DEPTS[deptIdx].name;
+  document.getElementById('owner-rate-focus').value=entry.focus||'';
+  document.getElementById('owner-rate-issues').value=entry.issues||'';
+  ['energy','exec','load'].forEach(k=>hlOwnerSt(k,_ownerRateSt[k]));
+  document.getElementById('owner-rate-modal').classList.add('open');
+}
+function closeOwnerRateModal(){document.getElementById('owner-rate-modal').classList.remove('open');}
+function selOwnerStatus(f,v){_ownerRateSt[f]=v;hlOwnerSt(f,v);}
+function hlOwnerSt(f,v){
+  const m={energy:'owner-rate-energy',exec:'owner-rate-exec',load:'owner-rate-load'};
+  const row=document.getElementById(m[f]);if(!row)return;
+  row.querySelectorAll('.team-status-btn').forEach(b=>{b.className='team-status-btn';if(b.dataset.val===v)b.className=`team-status-btn sel-${v}`;});
+}
+function saveOwnerRate(){
+  if(!_ownerRateSt.energy||!_ownerRateSt.exec||!_ownerRateSt.load){alert('Выберите все три индикатора');return;}
+  const d=getOwnerStatuses();
+  d[_ownerRateDeptIdx]={
+    energy:_ownerRateSt.energy,exec:_ownerRateSt.exec,load:_ownerRateSt.load,
+    focus:document.getElementById('owner-rate-focus').value.trim().slice(0,150),
+    issues:document.getElementById('owner-rate-issues').value.trim().slice(0,200),
+    date:new Date().toISOString()
+  };
+  saveOwnerStatuses(d);
+  closeOwnerRateModal();
+  renderOwnerStatusPanel();
+  // обновить строку ответственного в отделе
+  restoreOwnerRow(_ownerRateDeptIdx, getDeptOwners()[_ownerRateDeptIdx]||'—');
+}
+
+// ══════════════════════════════════════════════════════════
 // TEAM BLOCK
 // ══════════════════════════════════════════════════════════
 const TEAM_KEY='levita_team_v1';
@@ -2440,7 +2563,7 @@ function openTeamDetail(pid,di){
   document.getElementById('team-detail-modal').classList.add('open');
 }
 function closeTeamDetailModal(){document.getElementById('team-detail-modal').classList.remove('open');}
-['team-update-modal','team-add-person-modal','team-detail-modal'].forEach(id=>{
+['team-update-modal','team-add-person-modal','team-detail-modal','owner-rate-modal'].forEach(id=>{
   document.getElementById(id)?.addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});
 });
 
@@ -2646,12 +2769,46 @@ updateMobPeriodLabel(); // после initPeriod — теперь знает п�
 renderTrafficGrid();
 renderKFU();
 renderKFUTrafficGrid();
+renderOwnerStatusPanel();
 renderDepts();
 initKFUCharts();
 loadMap();
 loadLiveData(); // живые данные из Google Sheets
 setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
 </script>
+<!-- OWNER RATE MODAL -->
+<div class="team-modal-overlay" id="owner-rate-modal">
+  <div class="team-modal" style="max-width:440px">
+    <div class="team-modal-title">Оценка состояния</div>
+    <div id="owner-rate-name" style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:16px"></div>
+    <label class="team-modal-label">Энергия</label>
+    <div class="team-status-row" id="owner-rate-energy">
+      <button class="team-status-btn" data-val="green" onclick="selOwnerStatus('energy','green')">🟢 Зелёный</button>
+      <button class="team-status-btn" data-val="yellow" onclick="selOwnerStatus('energy','yellow')">🟡 Жёлтый</button>
+      <button class="team-status-btn" data-val="red" onclick="selOwnerStatus('energy','red')">🔴 Красный</button>
+    </div>
+    <label class="team-modal-label">Исполнение</label>
+    <div class="team-status-row" id="owner-rate-exec">
+      <button class="team-status-btn" data-val="green" onclick="selOwnerStatus('exec','green')">🟢 Зелёный</button>
+      <button class="team-status-btn" data-val="yellow" onclick="selOwnerStatus('exec','yellow')">🟡 Жёлтый</button>
+      <button class="team-status-btn" data-val="red" onclick="selOwnerStatus('exec','red')">🔴 Красный</button>
+    </div>
+    <label class="team-modal-label">Нагрузка</label>
+    <div class="team-status-row" id="owner-rate-load">
+      <button class="team-status-btn" data-val="green" onclick="selOwnerStatus('load','green')">🟢 Зелёный</button>
+      <button class="team-status-btn" data-val="yellow" onclick="selOwnerStatus('load','yellow')">🟡 Жёлтый</button>
+      <button class="team-status-btn" data-val="red" onclick="selOwnerStatus('load','red')">🔴 Красный</button>
+    </div>
+    <label class="team-modal-label">Фокус будущей недели <span style="font-weight:400">(до 150 симв.)</span></label>
+    <textarea class="team-modal-input" id="owner-rate-focus" rows="2" maxlength="150" placeholder="Что главное на следующей неделе"></textarea>
+    <label class="team-modal-label">Сложности <span style="font-weight:400">(до 200 симв.)</span></label>
+    <textarea class="team-modal-input" id="owner-rate-issues" rows="2" maxlength="200" placeholder="Что мешает или беспокоит"></textarea>
+    <div class="team-modal-footer">
+      <button class="team-btn" onclick="closeOwnerRateModal()">Отмена</button>
+      <button class="team-btn primary" onclick="saveOwnerRate()">Сохранить</button>
+    </div>
+  </div>
+</div>
 <!-- TEAM MODALS -->
 <div class="team-modal-overlay" id="team-update-modal">
   <div class="team-modal">
