@@ -488,13 +488,13 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
     <div class="mat-form-row">
       <label class="mat-form-label">Категория</label>
       <select class="mat-form-input" id="mat-cat">
-        <option value="Для руководителей">👑 Для руководителей</option>
-        <option value="Отдел открытий">🏗️ Отдел открытий</option>
-        <option value="Отдел ШМП">🎓 Отдел ШМП</option>
-        <option value="Маркетинг студий">📣 Маркетинг студий</option>
-        <option value="Террит. управляющие">🗺️ Террит. управляющие</option>
-        <option value="Продукт и качество">⭐ Продукт и качество</option>
-        <option value="Комьюнити">🤝 Комьюнити</option>
+        <option value="Для руководителей">Для руководителей</option>
+        <option value="Отдел открытий">Отдел открытий</option>
+        <option value="Отдел ШМП">Отдел ШМП</option>
+        <option value="Маркетинг студий">Маркетинг студий</option>
+        <option value="Террит. управляющие">Террит. управляющие</option>
+        <option value="Продукт и качество">Продукт и качество</option>
+        <option value="Комьюнити">Комьюнити</option>
       </select>
     </div>
     <div class="mat-modal-btns">
@@ -898,7 +898,7 @@ function renderKFUSummaryBar(){
     else{crit++;critNames.push(k.title);}
   });
   const total=good+warn+crit;
-  const critHtml=critNames.length?`<span style="color:#dc2626;font-weight:600">· ⚠️ Требует внимания: ${critNames.join(', ')}</span>`:'';
+  const critHtml=critNames.length?`<span style="color:#dc2626;font-weight:600;display:flex;align-items:center;gap:4px"><i data-lucide="alert-triangle" style="width:13px;height:13px;flex-shrink:0"></i> Требует внимания: ${critNames.join(', ')}</span>`:'';
   el.innerHTML=`<div style="background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);border:1px solid var(--border);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
     <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Состояние KFU</div>
     <div style="display:flex;gap:12px;align-items:center">
@@ -1580,9 +1580,9 @@ function initPeriod(){
     // Автовыбор текущего месяца при загрузке
     if(i === currentMonth){
       selectedMonths.add(i);
-      btn.style.background='rgba(184,144,42,0.1)';
-      btn.style.borderColor='#b8902a';
-      btn.style.color='#b8902a';
+      btn.style.background='rgba(201,162,39,0.1)';
+      btn.style.borderColor='var(--gold)';
+      btn.style.color='var(--gold)';
     }
   });
   updatePeriodLabel();
@@ -1596,9 +1596,9 @@ function toggleMonth(i,btn){
     btn.style.color='var(--muted)';
   } else {
     selectedMonths.add(i);
-    btn.style.background='rgba(184,144,42,0.1)';
-    btn.style.borderColor='#b8902a';
-    btn.style.color='#b8902a';
+    btn.style.background='rgba(201,162,39,0.1)';
+    btn.style.borderColor='var(--gold)';
+    btn.style.color='var(--gold)';
   }
   updatePeriodLabel();
   redrawCharts();
@@ -2061,7 +2061,7 @@ document.getElementById('users-modal').addEventListener('click', function(e) {
   if (e.target === this) closeUsersModal();
 });
 
-const ROLE_LABELS = { admin: '👑 Админ', user: '✏️ Редактор', observer: '👁 Наблюдатель' };
+const ROLE_LABELS = { admin: 'Админ', user: 'Редактор', observer: 'Наблюдатель' };
 
 function renderUsersTable() {
   const users = getUsers();
@@ -2073,7 +2073,7 @@ function renderUsersTable() {
         ${u.login === 'admin'
           ? `<span>${ROLE_LABELS[u.role]||u.role}</span>`
           : `<select id="nr-${i}" style="padding:3px 6px;border:1px solid var(--border);border-radius:5px;font-size:12px;font-family:inherit;outline:none" onchange="changeRole(${i})">
-              <option value="admin"${u.role==='admin'?' selected':''}>👑 Админ</option>
+              <option value="admin"${u.role==='admin'?' selected':''}>Админ</option>
               <option value="observer"${u.role==='observer'?' selected':''}>👁 Наблюдатель</option>
             </select>`}
       </td>
@@ -2145,8 +2145,13 @@ const MAT_CATS = ['Все','Для руководителей','Отдел от�
 let matActiveCat = 'Все';
 
 const MAT_ICONS = {
-  'Для руководителей':'👑','Отдел открытий':'🏗️','Отдел ШМП':'🎓',
-  'Маркетинг студий':'📣','Террит. управляющие':'🗺️','Продукт и качество':'⭐','Комьюнити':'🤝'
+  'Для руководителей':'<i data-lucide="crown" style="width:16px;height:16px"></i>',
+  'Отдел открытий':'<i data-lucide="building-2" style="width:16px;height:16px"></i>',
+  'Отдел ШМП':'<i data-lucide="graduation-cap" style="width:16px;height:16px"></i>',
+  'Маркетинг студий':'<i data-lucide="megaphone" style="width:16px;height:16px"></i>',
+  'Террит. управляющие':'<i data-lucide="map-pin" style="width:16px;height:16px"></i>',
+  'Продукт и качество':'<i data-lucide="star" style="width:16px;height:16px"></i>',
+  'Комьюнити':'<i data-lucide="handshake" style="width:16px;height:16px"></i>'
 };
 
 function getMaterials(){ try{ return JSON.parse(localStorage.getItem(MATERIALS_KEY))||[]; }catch{ return []; } }
@@ -2462,7 +2467,7 @@ function renderOwnerStatusPanel(){
         <span class="owners-panel-ind"><span class="owner-status-dot ${dc(e.exec)}" style="width:8px;height:8px"></span>Исполнение</span>
         <span class="owners-panel-ind"><span class="owner-status-dot ${dc(e.load)}" style="width:8px;height:8px"></span>Нагрузка</span>
       </div>
-      ${stale?`<div style="font-size:10px;color:#d97706;margin-top:4px">⚠️ Нет обновления</div>`:''}
+      ${stale?`<div style="font-size:10px;color:#d97706;margin-top:4px;display:flex;align-items:center;gap:3px"><i data-lucide="alert-triangle" style="width:10px;height:10px;flex-shrink:0"></i> Нет обновления</div>`:''}
       ${entry?.date&&!stale?`<div style="font-size:10px;color:var(--muted);margin-top:3px">${new Date(entry.date).toLocaleDateString('ru-RU',{day:'numeric',month:'short'})}</div>`:''}
     `;
     return`<div class="owners-panel-card${stale?' stale':''}" onclick="openOwnerRateModal(${i})" title="Нажмите чтобы обновить оценку">
@@ -2543,8 +2548,8 @@ function renderTeamBlock(deptIdx){
   // сводка
   let eC={green:0,yellow:0,red:0},xC={green:0,yellow:0,red:0},lC={green:0,yellow:0,red:0},st=0;
   people.forEach(p=>{const h=p.history||[],last=h[h.length-1];if(!last||isStale(p)){st++;return;}if(eC[last.energy]!=null)eC[last.energy]++;if(xC[last.exec]!=null)xC[last.exec]++;if(lC[last.load]!=null)lC[last.load]++;});
-  const sumHtml=people.length?`<div class="team-summary"><span class="team-summary-item"><b>${people.length}</b>&nbsp;чел.</span><span class="team-summary-item">Энергия:&nbsp;🟢<b>${eC.green}</b>&nbsp;🟡<b>${eC.yellow}</b>&nbsp;🔴<b>${eC.red}</b></span><span class="team-summary-item">Исполнение:&nbsp;🟢<b>${xC.green}</b>&nbsp;🟡<b>${xC.yellow}</b>&nbsp;🔴<b>${xC.red}</b></span><span class="team-summary-item">Нагрузка:&nbsp;🟢<b>${lC.green}</b>&nbsp;🟡<b>${lC.yellow}</b>&nbsp;🔴<b>${lC.red}</b></span>${st?`<span class="team-summary-item" style="color:#d97706">⚠️&nbsp;<b>${st}</b>&nbsp;без обновл.</span>`:''}</div>`:'';
-  const filtersHtml=people.length?`<div class="team-filters"><button class="team-filter-btn${af==='all'?' active':''}" onclick="setTF(${deptIdx},'all')">Все</button><button class="team-filter-btn${af==='red'?' active':''}" onclick="setTF(${deptIdx},'red')">🔴</button><button class="team-filter-btn${af==='yellow'?' active':''}" onclick="setTF(${deptIdx},'yellow')">🟡</button><button class="team-filter-btn${af==='green'?' active':''}" onclick="setTF(${deptIdx},'green')">🟢</button><button class="team-filter-btn${af==='stale'?' active':''}" onclick="setTF(${deptIdx},'stale')">⚠️</button><select style="margin-left:auto;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:6px;font-size:11px;font-family:inherit" onchange="setTS(${deptIdx},this.value)"><option value="date"${as==='date'?' selected':''}>По дате</option><option value="red"${as==='red'?' selected':''}>По красным</option><option value="name"${as==='name'?' selected':''}>По имени</option></select><input class="team-search" placeholder="Поиск…" value="${escHtml(sessionStorage.getItem(qk)||'')}" oninput="setTQ(${deptIdx},this.value)"></div>`:'';
+  const sumHtml=people.length?`<div class="team-summary"><span class="team-summary-item"><b>${people.length}</b>&nbsp;чел.</span><span class="team-summary-item">Энергия:&nbsp;🟢<b>${eC.green}</b>&nbsp;🟡<b>${eC.yellow}</b>&nbsp;🔴<b>${eC.red}</b></span><span class="team-summary-item">Исполнение:&nbsp;🟢<b>${xC.green}</b>&nbsp;🟡<b>${xC.yellow}</b>&nbsp;🔴<b>${xC.red}</b></span><span class="team-summary-item">Нагрузка:&nbsp;🟢<b>${lC.green}</b>&nbsp;🟡<b>${lC.yellow}</b>&nbsp;🔴<b>${lC.red}</b></span>${st?`<span class="team-summary-item" style="color:#d97706;display:flex;align-items:center;gap:3px"><i data-lucide="alert-triangle" style="width:11px;height:11px;flex-shrink:0"></i>&nbsp;<b>${st}</b>&nbsp;без обновл.</span>`:''}</div>`:'';
+  const filtersHtml=people.length?`<div class="team-filters"><button class="team-filter-btn${af==='all'?' active':''}" onclick="setTF(${deptIdx},'all')">Все</button><button class="team-filter-btn${af==='red'?' active':''}" onclick="setTF(${deptIdx},'red')">🔴</button><button class="team-filter-btn${af==='yellow'?' active':''}" onclick="setTF(${deptIdx},'yellow')">🟡</button><button class="team-filter-btn${af==='green'?' active':''}" onclick="setTF(${deptIdx},'green')">🟢</button><button class="team-filter-btn${af==='stale'?' active':''}" onclick="setTF(${deptIdx},'stale')" style="display:flex;align-items:center;gap:3px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i></button><select style="margin-left:auto;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:6px;font-size:11px;font-family:inherit" onchange="setTS(${deptIdx},this.value)"><option value="date"${as==='date'?' selected':''}>По дате</option><option value="red"${as==='red'?' selected':''}>По красным</option><option value="name"${as==='name'?' selected':''}>По имени</option></select><input class="team-search" placeholder="Поиск…" value="${escHtml(sessionStorage.getItem(qk)||'')}" oninput="setTQ(${deptIdx},this.value)"></div>`:'';
   // фильтр+сортировка
   let list=people.filter(p=>{if(aq&&!p.name.toLowerCase().includes(aq))return false;if(af==='stale')return isStale(p);if(af==='all')return true;const h=p.history||[],l=h[h.length-1];if(!l)return false;return l.energy===af||l.exec===af||l.load===af;});
   if(as==='date')list.sort((a,b)=>{const ah=a.history||[],bh=b.history||[];return new Date(bh[bh.length-1]?.date||0)-new Date(ah[ah.length-1]?.date||0);});
