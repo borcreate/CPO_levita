@@ -1404,7 +1404,7 @@ function initAnalyticsCharts(){
 
 // ── КАРТА ФРАНЧАЙЗИ ──────────────────────────────────────────────
 const STAGE_COLORS=['#b8902a','#2563eb','#16a34a','#ca8a04','#dc2626','#7c3aed'];
-const STAGE_EMOJI=['🌟','⚡','💰','🔥','⚖️','👑'];
+const STAGE_EMOJI_ICONS=['star','zap','banknote','flame','scale','crown'];
 
 function renderMap(rows){
   const stages=rows.slice(1,7);
@@ -1429,39 +1429,39 @@ function renderMap(rows){
     const shortState=state.slice(0,90)+(state.length>90?'…':'');
     return `<div class="stage-card" id="stage-${i}">
       <div class="stage-hdr" onclick="toggleStage(${i})">
-        <div class="stage-num" style="background:${c}22;color:${c}">${STAGE_EMOJI[i]}</div>
+        <div class="stage-num" style="background:${c}22;color:${c}"><i data-lucide="${STAGE_EMOJI_ICONS[i]}" style="width:16px;height:16px;display:block;stroke:${c}"></i></div>
         <div class="stage-info">
           <div class="stage-title">${title}</div>
           <div class="stage-state">${shortState}</div>
         </div>
-        <div class="stage-chevron">▼</div>
+        <div class="stage-chevron"><i data-lucide="chevron-down" style="width:14px;height:14px;display:block"></i></div>
       </div>
       <div class="stage-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
           <div>
-            <div class="stage-col-title">😤 Триггерные мысли</div>
+            <div class="stage-col-title"><i data-lucide="message-circle" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Триггерные мысли</div>
             <div class="stage-col-text">${thoughts||'—'}</div>
           </div>
           <div>
-            <div class="stage-col-title">⚠️ Триггер выхода</div>
+            <div class="stage-col-title"><i data-lucide="alert-triangle" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Триггер выхода</div>
             <div class="stage-col-text">${trigger||'—'}</div>
           </div>
           <div>
-            <div class="stage-col-title">💚 Как должно ощущаться</div>
+            <div class="stage-col-title"><i data-lucide="heart" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Как должно ощущаться</div>
             <div class="stage-col-text">${feeling||'—'}</div>
           </div>
           <div>
-            <div class="stage-col-title">👀 Поведенческие маркеры</div>
+            <div class="stage-col-title"><i data-lucide="eye" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Поведенческие маркеры</div>
             <div class="stage-col-text" style="color:var(--muted);font-style:italic">↓ Смотри раздел ниже</div>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
-            <div class="stage-col-title">✅ Что делать</div>
+            <div class="stage-col-title"><i data-lucide="check-circle" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Что делать</div>
             <div class="stage-col-text">${todo||'—'}</div>
           </div>
           <div>
-            <div class="stage-col-title">💬 Как общаться</div>
+            <div class="stage-col-title"><i data-lucide="message-square" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Как общаться</div>
             <div class="stage-col-text">${tone||'—'}</div>
           </div>
         </div>
@@ -1540,6 +1540,7 @@ async function loadMap(){
     const data=JSON.parse(m[1]);
     const rows=data.table.rows.map(r=>r.c.map(c=>!c?'':(c.f!=null?c.f:(c.v!=null?String(c.v):''))));
     renderMap(rows);
+    setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 100);
   }catch(e){
     document.getElementById('map-timeline').innerHTML=`<div class="loading-state">Не удалось загрузить данные карты.<br><span style="font-size:11px">Проверьте доступ к таблице.</span></div>`;
   }
