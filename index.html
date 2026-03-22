@@ -472,6 +472,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
     <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👥</button>
     <button class="theme-btn" id="hdr-theme-btn" onclick="toggleTheme()" title="Тёмная тема">🌙</button>
     <button class="present-btn" onclick="togglePresent()" title="Режим презентации">⛶</button>
+    <button onclick="exportPDF()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="Скачать PDF-отчёт по фокусным метрикам">📄</button>
     <button id="hdr-refresh-btn" onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻</button>
     <button id="hdr-logout-btn" onclick="logout()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Выйти</button>
   </div>
@@ -2260,6 +2261,100 @@ function initTheme(){
 // ══════════════════════════════════════════════════════════
 function togglePresent(){
   document.body.classList.toggle('present');
+}
+
+function exportPDF(){
+  // Формируем период
+  const months=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const selArr=[...selectedMonths].sort((a,b)=>a-b);
+  const periodStr = selArr.length===0 ? 'Весь год' : selArr.length===1 ? months[selArr[0]] : selArr.map(i=>months[i]).join(', ');
+
+  // Статус → значок и цвет
+  const statusIcon = (p)=> p>=85?'✅':p>=60?'⚠️':'❌';
+  const statusColor = (p)=> p>=85?'#16a34a':p>=60?'#ca8a04':'#dc2626';
+
+  // Строим HTML отчёта
+  const kfuRows = KFU.map(k=>{
+    const metricsHtml = k.metrics.map(m=>{
+      if(m.type==='gt'){
+        const ok = m.f > m.cmp;
+        return `<tr>
+          <td style="padding:7px 12px;font-size:13px;color:#444">${m.l}</td>
+          <td style="padding:7px 12px;font-size:13px;font-weight:600;color:${ok?'#16a34a':'#dc2626'}">${m.f.toLocaleString('ru-RU')} ₽</td>
+          <td style="padding:7px 12px;font-size:13px;color:#888">vs ${m.cmp.toLocaleString('ru-RU')} ₽</td>
+          <td style="padding:7px 12px;font-size:13px;font-weight:700;color:${ok?'#16a34a':'#dc2626'}">${ok?'✅':'❌'}</td>
+        </tr>`;
+      }
+      const p = (typeof m.f==='number'&&m.p!=null) ? Math.round(m.f/m.p*100) : null;
+      return `<tr>
+        <td style="padding:7px 12px;font-size:13px;color:#444">${m.l}</td>
+        <td style="padding:7px 12px;font-size:13px;font-weight:600">${fmtNum(m.f,m.u)}</td>
+        <td style="padding:7px 12px;font-size:13px;color:#888">${m.p!=null?'план '+fmtNum(m.p,m.u):'—'}</td>
+        <td style="padding:7px 12px;font-size:13px;font-weight:700;color:${p!==null?statusColor(p):'#888'}">${p!==null?p+'% '+statusIcon(p):'—'}</td>
+      </tr>`;
+    }).join('');
+    const avgPcts = k.metrics.map(m=>{
+      if(m.type==='gt') return m.f>m.cmp?100:50;
+      return (typeof m.f==='number'&&m.p!=null)?Math.round(m.f/m.p*100):null;
+    }).filter(v=>v!==null);
+    const avg = avgPcts.length ? Math.round(avgPcts.reduce((a,b)=>a+b,0)/avgPcts.length) : null;
+    const sc = avg!==null?statusColor(avg):'#888';
+    return `
+      <div style="margin-bottom:20px;break-inside:avoid">
+        <div style="background:#f7f7f7;border-left:4px solid ${sc};padding:10px 16px;border-radius:0 8px 8px 0;margin-bottom:6px;display:flex;align-items:center;gap:10px">
+          <div style="width:10px;height:10px;border-radius:50%;background:${sc};flex-shrink:0"></div>
+          <div style="font-size:15px;font-weight:700;color:#101a25">${k.title}</div>
+          ${avg!==null?`<div style="margin-left:auto;font-size:13px;font-weight:600;color:${sc}">${avg}% плана</div>`:''}
+        </div>
+        <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0">
+          <thead>
+            <tr style="background:#f7f7f7">
+              <th style="padding:7px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#888;text-align:left;font-weight:600">Метрика</th>
+              <th style="padding:7px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#888;text-align:left;font-weight:600">Факт</th>
+              <th style="padding:7px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#888;text-align:left;font-weight:600">План</th>
+              <th style="padding:7px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#888;text-align:left;font-weight:600">%</th>
+            </tr>
+          </thead>
+          <tbody>${metricsHtml}</tbody>
+        </table>
+        <div style="font-size:11px;color:#888;margin-top:6px;padding:0 4px;font-style:italic;line-height:1.6">${k.desc}</div>
+      </div>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>LEVITA CPO — Фокусные метрики — ${periodStr}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Georgia',serif;color:#101a25;background:#fff;padding:40px}
+  @media print{body{padding:20px}@page{margin:20mm}}
+</style>
+</head>
+<body>
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:2px solid #eec95c">
+    <div>
+      <div style="font-size:28px;letter-spacing:6px;font-weight:normal;color:#eec95c">LEVITA</div>
+      <div style="font-size:13px;color:#888;margin-top:4px">CPO Dashboard — Фокусные метрики</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:15px;font-weight:600">Период: ${periodStr}</div>
+      <div style="font-size:12px;color:#888;margin-top:2px">Сформирован: ${new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})}</div>
+    </div>
+  </div>
+  ${kfuRows}
+  <div style="margin-top:32px;padding-top:16px;border-top:1px solid #e0e0e0;font-size:11px;color:#aaa;text-align:center">
+    LEVITA CPO Dashboard · Конфиденциально
+  </div>
+</body>
+</html>`;
+
+  const win = window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(), 600);
 }
 document.addEventListener('keydown', e => {
   if(e.key === 'F' && !e.ctrlKey && !e.metaKey && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
