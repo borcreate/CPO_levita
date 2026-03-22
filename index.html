@@ -31,6 +31,7 @@
   --green:#059669;--yellow:#d97706;--red:#e11d48;--blue:#2563eb;--purple:#7c3aed;
   --border:#e0e0e0;--r-sm:8px;--r-md:12px;--r-lg:16px;--r:14px;
 }
+html{background:var(--bg)}
 html,body{background:var(--bg);color:var(--text);font-family:'Spectral','Georgia',serif;min-height:100vh;transition:background .3s,color .3s}
 
 /* ══ DARK THEME ══ */
@@ -87,7 +88,8 @@ body.present #period-bar{display:none!important}
 body.present .hdr{display:none}
 body.present .nav{top:0}
 body.present #period-bar{display:none}
-body.dark #period-bar{background:rgba(15,17,23,0.88)!important;border-bottom-color:rgba(255,255,255,0.06)!important}
+body.dark #period-bar{background:rgba(15,17,23,0.96)!important;border-bottom-color:rgba(255,255,255,0.06)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.dark .hdr{background:rgba(15,17,23,0.96)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body.present #alert-banner{display:none}
 body.present #exit-present-btn{display:flex!important}
 .present-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:.15s}
