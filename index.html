@@ -72,9 +72,8 @@ body.dark{
 .traffic-sub{font-size:10px;color:var(--muted)}
 
 /* ══ ALERT BANNER ══ */
-#alert-banner{display:none;background:#fef2f2;border-bottom:2px solid #dc2626;padding:10px 28px;font-size:13px;color:#b91c1c;font-weight:500;position:sticky;top:168px;z-index:196}
+#alert-banner{display:none;background:#fef2f2;border-bottom:2px solid #dc2626;padding:10px 28px;font-size:13px;color:#b91c1c;font-weight:500}
 body.dark #alert-banner{background:#3b1515;border-color:#991b1b;color:#fca5a5}
-@media(max-width:640px){#alert-banner{top:112px}}
 #alert-banner.show{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .alert-item{margin-right:16px}
 #alert-banner.hidden-alerts{display:none!important}
@@ -83,7 +82,7 @@ body.dark #alert-banner{background:#3b1515;border-color:#991b1b;color:#fca5a5}
 body.present .hdr{display:none}
 body.present .nav{top:0}
 body.present #period-bar{display:none}
-body.present #alert-banner{top:56px}
+body.present #alert-banner{display:none}
 body.present #exit-present-btn{display:flex!important}
 .present-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;transition:.15s}
 .present-btn:hover{border-color:var(--gold);color:var(--gold)}
@@ -2210,11 +2209,13 @@ function checkAlerts(){
     alerts.push(`⚠️ Отдел ШМП: ${Math.round(shmpFact/shmpPlan*100)}% плана`);
   }
 
-  if(alerts.length > 0){
-    banner.innerHTML = alerts.map(a=>`<span class="alert-item">${a}</span>`).join('');
+  if(alerts.length > 0 && !banner.classList.contains('hidden-alerts')){
+    banner.innerHTML = alerts.map(a=>`<span class="alert-item">${a}</span>`).join('')
+      + `<button onclick="document.getElementById('alert-banner').classList.add('hidden-alerts')" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#b91c1c;font-size:16px;line-height:1;padding:0 4px" title="Закрыть">✕</button>`;
     banner.classList.add('show');
-  } else {
+  } else if(!alerts.length) {
     banner.classList.remove('show');
+    banner.classList.remove('hidden-alerts');
   }
 }
 
