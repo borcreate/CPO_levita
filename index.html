@@ -2329,10 +2329,14 @@ function exportPDF(){
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Georgia',serif;color:#101a25;background:#fff;padding:40px}
-  @media print{body{padding:20px}@page{margin:20mm}}
+  @media print{body{padding:20px}@page{margin:20mm}.no-print{display:none!important}}
 </style>
 </head>
 <body>
+  <div class="no-print" style="display:flex;gap:8px;margin-bottom:20px">
+    <button onclick="window.print()" style="background:#eec95c;color:#101a25;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:Georgia,serif">🖨️ Печать / PDF</button>
+    <button onclick="window.close()" style="background:#f7f7f7;color:#444;border:1px solid #e0e0e0;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:Georgia,serif">✕ Закрыть</button>
+  </div>
   <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:2px solid #eec95c">
     <div>
       <div style="font-size:28px;letter-spacing:6px;font-weight:normal;color:#eec95c">LEVITA</div>
