@@ -20,6 +20,7 @@
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -549,12 +550,12 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div style="display:flex;align-items:center;gap:12px">
     <div class="hdr-date" id="hdrDate"></div>
     <span id="hdr-username" style="font-size:12px;color:var(--muted)"></span>
-    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">👥</button>
-    <button class="theme-btn" id="hdr-theme-btn" onclick="toggleTheme()" title="Тёмная тема">🌙</button>
-    <button class="present-btn" onclick="togglePresent()" title="Режим презентации">⛶</button>
-    <button onclick="exportPDF()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="Скачать PDF-отчёт по фокусным метрикам">📄</button>
-    <button id="hdr-refresh-btn" onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻</button>
-    <button id="hdr-logout-btn" onclick="logout()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Выйти</button>
+    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'"><i data-lucide="users" style="width:14px;height:14px;display:block"></i></button>
+    <button class="theme-btn" id="hdr-theme-btn" onclick="toggleTheme()" title="Тёмная тема"><i data-lucide="moon" style="width:14px;height:14px;display:block"></i></button>
+    <button class="present-btn" onclick="togglePresent()" title="Режим презентации"><i data-lucide="maximize-2" style="width:14px;height:14px;display:block"></i></button>
+    <button onclick="exportPDF()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="Скачать PDF-отчёт по фокусным метрикам"><i data-lucide="file-text" style="width:14px;height:14px;display:block"></i></button>
+    <button id="hdr-refresh-btn" onclick="refreshData()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'"><i data-lucide="refresh-cw" style="width:14px;height:14px;display:block"></i></button>
+    <button id="hdr-logout-btn" onclick="logout()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s;display:flex;align-items:center;gap:6px" onmouseover="this.style.borderColor='#dc2626';this.style.color='#dc2626'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'"><i data-lucide="log-out" style="width:13px;height:13px"></i> Выйти</button>
   </div>
 </div>
 
@@ -563,7 +564,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div class="nav-tab" onclick="showTab('depts',this)">Все отделы</div>
   <div class="nav-tab" onclick="showTab('analytics',this)">Аналитика года</div>
   <div class="nav-tab" onclick="showTab('map',this)">Карта франчайзи</div>
-  <div class="nav-tab" onclick="showTab('materials',this)">📎 Материалы</div>
+  <div class="nav-tab" onclick="showTab('materials',this)" style="display:flex;align-items:center;gap:6px"><i data-lucide="paperclip" style="width:14px;height:14px"></i> Материалы</div>
 </nav>
 
 <div id="period-bar" style="background:rgba(247,247,247,0.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:10px 28px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
@@ -805,6 +806,9 @@ const KFU = [
 ];
 
 // ── HELPERS ──────────────────────────────────────────────
+function icon(name, size=16, color='currentColor'){
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" data-lucide="${name}" style="display:inline-block;vertical-align:middle;flex-shrink:0"></svg>`;
+}
 function pct(f,p){ if(!p||p===0) return null; return Math.round(f/p*100); }
 // type='gt': f > cmp = зелёный (LTV > CAC), иначе красный
 function scMetric(m){
@@ -1191,7 +1195,7 @@ function renderTasksBlock(deptIdx){
     </div>` : '';
 
   return `<div class="tasks-section" id="tasks-section-${deptIdx}">
-    <div class="tasks-title">🎯 Фокусы и задачи <span style="background:var(--gold-dim);color:var(--gold);padding:1px 7px;border-radius:10px;font-size:10px">${tasks.length}</span></div>
+    <div class="tasks-title"><i data-lucide="target" style="width:13px;height:13px;margin-right:4px"></i>Фокусы и задачи <span style="background:var(--gold-dim);color:var(--gold);padding:1px 7px;border-radius:10px;font-size:10px">${tasks.length}</span></div>
     <div class="tasks-list" id="tasks-list-${deptIdx}">${listHtml}</div>
     ${addRow}
   </div>`;
@@ -1261,7 +1265,7 @@ function renderDepts(){
     el.id=`dept-${i}`;
 
     const ownerName = owners[i] || '—';
-    const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного">✏️</button>` : '';
+    const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного"><i data-lucide="pencil" style="width:13px;height:13px;display:block"></i></button>` : '';
     const ownerEntry = getOwnerStatuses()[i];
     const ownerDots = ownerName&&ownerName!=='—' ? ownerDotsHtml(ownerEntry) : '';
     const ownerRateBtn = ownerName&&ownerName!=='—' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
@@ -1295,7 +1299,7 @@ function renderDepts(){
 
     el.innerHTML=`<div class="dept-hdr" onclick="toggleDept(${i})">
       <div class="dept-hdr-l"><div class="dept-num">${d.num}</div><div class="dept-name">${d.name}</div></div>
-      <div class="dept-arrow">▲</div></div>
+      <div class="dept-arrow"><i data-lucide="chevron-up" style="width:14px;height:14px;display:block"></i></div></div>
     <div class="dept-body">${ownerHtml}${tasksHtml}${teamHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
     list.appendChild(el);
   });
@@ -1306,6 +1310,7 @@ function renderDepts(){
     const inp = document.getElementById(`task-inp-${i}`);
     if(inp) inp.addEventListener('keydown', e=>{ if(e.key==='Enter') addTask(i); });
   });
+  setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50);
 }
 
 function startEditOwner(i){
@@ -1338,7 +1343,7 @@ function restoreOwnerRow(i, name){
   const row = document.getElementById(`dept-owner-row-${i}`);
   const sess = currentSession();
   const isAdmin = sess && sess.role === 'admin';
-  const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного">✏️</button>` : '';
+  const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного"><i data-lucide="pencil" style="width:13px;height:13px;display:block"></i></button>` : '';
   const entry = getOwnerStatuses()[i];
   const dots = name&&name!=='—' ? ownerDotsHtml(entry) : '';
   const rateBtn = name&&name!=='—' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
@@ -1349,6 +1354,7 @@ function restoreOwnerRow(i, name){
     ${rateBtn}
     ${editBtn}
   `;
+  setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50);
 }
 
 function toggleDept(i){
@@ -2398,7 +2404,8 @@ const THEME_KEY = 'levita_theme_v1';
 function toggleTheme(){
   const isDark = document.body.classList.toggle('dark');
   localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
-  document.getElementById('hdr-theme-btn').textContent = isDark ? '☀️' : '🌙';
+  document.getElementById('hdr-theme-btn').innerHTML = isDark ? '<i data-lucide="sun" style="width:14px;height:14px;display:block"></i>' : '<i data-lucide="moon" style="width:14px;height:14px;display:block"></i>';
+  if(window.lucide) lucide.createIcons();
 }
 
 function initTheme(){
@@ -2466,9 +2473,10 @@ function renderOwnerStatusPanel(){
 
   if(!cards.length){panel.innerHTML='';return;}
   panel.innerHTML=`<div class="owners-panel">
-    <div class="owners-panel-title">👤 Прямые подчинённые</div>
+    <div class="owners-panel-title"><i data-lucide="user" style="width:13px;height:13px;margin-right:4px"></i>Прямые подчинённые</div>
     <div class="owners-panel-grid">${cards.join('')}</div>
   </div>`;
+  setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50);
 }
 
 // Модалка оценки ответственного
@@ -2566,13 +2574,13 @@ function renderTeamBlock(deptIdx){
   }).join('');
   const empty=list.length===0&&people.length>0?`<div style="font-size:12px;color:var(--muted);padding:8px 0">Никого нет по фильтру</div>`:people.length===0?`<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0">Команда не добавлена</div>`:'';
   const addBtn=isAdmin?`<button class="team-add-person-btn" onclick="openTeamAddPerson(${deptIdx})">+ Добавить человека</button>`:'';
-  return`<div class="team-block" id="team-block-${deptIdx}"><div class="team-block-title">👥 Команда</div>${sumHtml}${filtersHtml}<div class="team-cards">${cards}${empty}</div>${addBtn}</div>`;
+  return`<div class="team-block" id="team-block-${deptIdx}"><div class="team-block-title"><i data-lucide="users" style="width:13px;height:13px;margin-right:4px"></i>Команда</div>${sumHtml}${filtersHtml}<div class="team-cards">${cards}${empty}</div>${addBtn}</div>`;
 }
 
 function setTF(i,v){sessionStorage.setItem(`tf_${i}`,v);rTB(i);}
 function setTS(i,v){sessionStorage.setItem(`ts_${i}`,v);rTB(i);}
 function setTQ(i,v){sessionStorage.setItem(`tq_${i}`,v);rTB(i);}
-function rTB(i){const el=document.getElementById(`team-block-${i}`);if(el)el.outerHTML=renderTeamBlock(i);}
+function rTB(i){const el=document.getElementById(`team-block-${i}`);if(el){el.outerHTML=renderTeamBlock(i);setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50);}}
 
 let _tDept=null,_tPid=null,_tSt={energy:null,exec:null,load:null};
 function openTeamUpdate(pid,di){
@@ -2844,6 +2852,7 @@ renderKFUTrafficGrid();
 renderOwnerStatusPanel();
 renderDepts();
 initKFUCharts();
+if(window.lucide) lucide.createIcons();
 loadMap();
 loadLiveData(); // живые данные из Google Sheets
 setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
