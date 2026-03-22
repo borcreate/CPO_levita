@@ -165,14 +165,14 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .kfu-bar{width:3px;flex-shrink:0}
 .kfu-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:10px}
 .kfu-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text);letter-spacing:-0.02em}
-.kfu-desc{font-size:11px;color:var(--text);opacity:.7;font-style:italic;line-height:1.5}
-.kfu-ckp{font-size:11px;color:var(--text);opacity:.75;line-height:1.6}
+.kfu-desc{font-size:12px;color:var(--muted);font-style:normal;line-height:1.6;margin-bottom:4px}
+.kfu-ckp{font-size:12px;color:var(--text);opacity:.8;line-height:1.6}
 .kfu-ckp-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);margin-bottom:4px}
 .kfu-divider{height:1px;background:var(--border)}
 .kfu-metrics{display:flex;flex-direction:column;gap:10px;flex:1}
 .kfu-metric{}
 .kfu-m-label{font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
-.kfu-m-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
+.kfu-m-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
 .kfu-m-val{font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1}
 .kfu-m-plan{font-size:11px;color:var(--muted)}
 .kfu-prog{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
@@ -889,6 +889,39 @@ const currentMonthPlugin={
   }
 };
 
+function scrollToKFUStatus(type){
+  const rows=[document.getElementById('kfu-row1'),document.getElementById('kfu-row2')];
+  const cards=[...rows[0].querySelectorAll('.kfu-card'),...rows[1].querySelectorAll('.kfu-card')];
+  for(const card of cards){
+    const bar=card.querySelector('.kfu-bar');
+    if(!bar)continue;
+    const bg=bar.style.background||'';
+    const isGood=bg.includes('#059669')||bg.includes('#34d399');
+    const isCrit=bg.includes('#e11d48')||bg.includes('#fb7185');
+    const isWarn=bg.includes('#d97706')||bg.includes('#fbbf24');
+    if((type==='good'&&isGood)||(type==='crit'&&isCrit)||(type==='warn'&&isWarn)){
+      card.scrollIntoView({behavior:'smooth',block:'center'});
+      card.style.transition='box-shadow .3s';
+      card.style.boxShadow='0 0 0 3px var(--gold)';
+      setTimeout(()=>card.style.boxShadow='',1500);
+      return;
+    }
+  }
+}
+function scrollToKFUByName(name){
+  const rows=[document.getElementById('kfu-row1'),document.getElementById('kfu-row2')];
+  const cards=[...rows[0].querySelectorAll('.kfu-card'),...rows[1].querySelectorAll('.kfu-card')];
+  for(const card of cards){
+    const title=card.querySelector('.kfu-title');
+    if(title&&title.textContent.trim()===name){
+      card.scrollIntoView({behavior:'smooth',block:'center'});
+      card.style.transition='box-shadow .3s';
+      card.style.boxShadow='0 0 0 3px var(--gold)';
+      setTimeout(()=>card.style.boxShadow='',1500);
+      return;
+    }
+  }
+}
 function renderKFUSummaryBar(){
   const el=document.getElementById('kfu-summary-bar');
   if(!el)return;
@@ -906,13 +939,13 @@ function renderKFUSummaryBar(){
     else{crit++;critNames.push(k.title);}
   });
   const total=good+warn+crit;
-  const critHtml=critNames.length?`<span style="color:#dc2626;font-weight:600;display:flex;align-items:center;gap:4px"><i data-lucide="alert-triangle" style="width:13px;height:13px;flex-shrink:0"></i> Требует внимания: ${critNames.join(', ')}</span>`:'';
+  const critHtml=critNames.length?`<span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${critNames.map((n,i)=>`<span onclick="scrollToKFUByName('${n}')" style="color:#e11d48;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-size:12px">${n}</span>`).join('<span style="color:var(--muted)">·</span>')}</span>`:'';
   el.innerHTML=`<div style="background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);border:1px solid var(--border);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
     <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Состояние KFU</div>
     <div style="display:flex;gap:12px;align-items:center">
-      <span style="display:flex;align-items:center;gap:5px;font-size:13px"><span style="width:10px;height:10px;border-radius:50%;background:#16a34a;display:inline-block;box-shadow:0 0 6px #16a34a"></span><b style="color:#16a34a">${good}</b><span style="color:var(--muted)">в норме</span></span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:13px"><span style="width:10px;height:10px;border-radius:50%;background:#ca8a04;display:inline-block;box-shadow:0 0 6px #ca8a04"></span><b style="color:#ca8a04">${warn}</b><span style="color:var(--muted)">под риском</span></span>
-      <span style="display:flex;align-items:center;gap:5px;font-size:13px"><span style="width:10px;height:10px;border-radius:50%;background:#dc2626;display:inline-block;box-shadow:0 0 6px #dc2626"></span><b style="color:#dc2626">${crit}</b><span style="color:var(--muted)">критично</span></span>
+      <span onclick="scrollToKFUStatus('good')" style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.15s" onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='transparent'"><span style="width:10px;height:10px;border-radius:50%;background:#16a34a;display:inline-block;box-shadow:0 0 6px #16a34a"></span><b style="color:#16a34a">${good}</b><span style="color:var(--muted)">в норме</span></span>
+      <span onclick="scrollToKFUStatus('warn')" style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.15s" onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='transparent'"><span style="width:10px;height:10px;border-radius:50%;background:#ca8a04;display:inline-block;box-shadow:0 0 6px #ca8a04"></span><b style="color:#ca8a04">${warn}</b><span style="color:var(--muted)">под риском</span></span>
+      <span onclick="scrollToKFUStatus('crit')" style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:.15s" onmouseover="this.style.background='var(--bg4)'" onmouseout="this.style.background='transparent'"><span style="width:10px;height:10px;border-radius:50%;background:#dc2626;display:inline-block;box-shadow:0 0 6px #dc2626"></span><b style="color:#dc2626">${crit}</b><span style="color:var(--muted)">критично</span></span>
     </div>
     <div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;min-width:120px">
       <div style="height:100%;display:flex">
@@ -943,6 +976,7 @@ function sparkline(data, color, width=60, height=20){
 }
 
 // ── RENDER KFU ──────────────────────────────────────────────
+const KFU_CHART_IDS=['c-ltv','c-brand',null,null,null,'c-nps',null];
 function renderKFU(){
   const rows = [document.getElementById('kfu-row1'), document.getElementById('kfu-row2')];
   KFU.forEach((k,i)=>{
@@ -965,9 +999,9 @@ function renderKFU(){
       const hintHtml = m.hint ? `<div style="font-size:11px;color:${mc};margin-top:3px;font-style:italic">${m.hint}</div>` : '';
       return `<div class="kfu-metric">
         <div class="kfu-m-label">${m.l}</div>
-        <div class="kfu-m-row">
+        <div class="kfu-m-row" style="flex-direction:column;align-items:flex-start;gap:2px">
           <div class="kfu-m-val" style="color:${mc}">${valDisplay}</div>
-          ${m.p!=null&&!m.type?`<span class="kfu-m-plan">план ${fmtNum(m.p,m.u)}</span>`:''}
+          ${m.p!=null&&!m.type?`<div class="kfu-m-plan" style="font-size:11px;color:var(--muted)">план: ${fmtNum(m.p,m.u)} · ${p!==null?p+'%':'—'}</div>`:''}
         </div>
         ${hintHtml}
         ${p!==null?`<div class="kfu-prog"><div class="kfu-prog-fill" style="width:${fill}%;background:${mc}"></div></div>`:''}
@@ -1003,6 +1037,7 @@ function renderKFU(){
         <div class="kfu-divider"></div>
         <div class="kfu-metrics">${metricsHtml}</div>
         ${kfuProgHtml}
+        ${KFU_CHART_IDS[k._idx]?`<div style="margin-top:8px"><button onclick="document.getElementById('${KFU_CHART_IDS[k._idx]}')?.closest('.card')?.scrollIntoView({behavior:'smooth',block:'center'})" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px"><i data-lucide="trending-up" style="width:12px;height:12px"></i> смотреть тренд</button></div>`:''}
       </div>`;
     rows[i<3?0:1].appendChild(el);
   });
