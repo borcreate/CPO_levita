@@ -146,7 +146,7 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .bg-red{background:rgba(220,38,38,.1);color:var(--red)}
 .bg-blue{background:rgba(37,99,235,.1);color:var(--blue)}
 /* CHARTS */
-.chart-wrap{position:relative;height:220px}
+.chart-wrap{position:relative;height:240px}
 .chart-wrap-sm{position:relative;height:180px}
 .chart-wrap-lg{position:relative;height:260px}
 .chart-title{font-size:13px;font-weight:600;margin-bottom:4px}
@@ -158,22 +158,22 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .cols-3{grid-template-columns:repeat(3,1fr)}
 .cols-2{grid-template-columns:repeat(2,1fr)}
 /* KFU */
-.kfu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
-.kfu-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
-.kfu-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);display:flex;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.06),0 12px 24px rgba(0,0,0,0.04);transition:.15s}
+.kfu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;align-items:stretch}
+.kfu-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch;margin-bottom:24px}
+.kfu-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);display:flex;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.06),0 12px 24px rgba(0,0,0,0.04);transition:.15s;align-self:stretch}
 .kfu-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.09);transform:translateY(-1px)}
 .kfu-bar{width:3px;flex-shrink:0}
-.kfu-body{padding:16px;flex:1;display:flex;flex-direction:column;gap:10px}
+.kfu-body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:10px}
 .kfu-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text);letter-spacing:-0.02em}
 .kfu-desc{font-size:11px;color:var(--text);opacity:.7;font-style:italic;line-height:1.5}
 .kfu-ckp{font-size:11px;color:var(--text);opacity:.75;line-height:1.6}
 .kfu-ckp-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);margin-bottom:4px}
 .kfu-divider{height:1px;background:var(--border)}
-.kfu-metrics{display:flex;flex-direction:column;gap:10px}
+.kfu-metrics{display:flex;flex-direction:column;gap:10px;flex:1}
 .kfu-metric{}
-.kfu-m-label{font-size:11px;color:var(--muted);margin-bottom:4px}
+.kfu-m-label{font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
 .kfu-m-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:5px}
-.kfu-m-val{font-size:24px;font-weight:700;line-height:1}
+.kfu-m-val{font-size:28px;font-weight:700;letter-spacing:-0.02em;line-height:1}
 .kfu-m-plan{font-size:11px;color:var(--muted)}
 .kfu-prog{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
 .kfu-prog-fill{height:100%;border-radius:2px}
@@ -607,7 +607,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div class="kfu-grid-4" id="kfu-row2"></div>
   <div class="charts-row cols-3">
     <div class="card card-pad">
-      <div class="chart-title">LTV vs CAC</div>
+      <div class="chart-title" id="ltv-chart-title">LTV vs CAC</div>
       <div class="chart-sub">Окупаемость маркетинга — LTV должен быть выше CAC</div>
       <div class="chart-wrap"><canvas id="c-ltv"></canvas></div>
       <div class="chart-legend">
@@ -761,7 +761,7 @@ const PIE_D  = [128691,72936,28154,25065,11456,10556,9071,15154];
 // Логика статуса: для KFU Бизнес-модель LTV > CAC это ХОРОШО (зелёный)
 // Специальный тип 'ratio': f > threshold => зелёный
 const KFU = [
-  { title:'Бизнес-модель',
+  { _idx:0, title:'Бизнес-модель',
     desc:'Оптимизация внутри модели, рычаги прибыли — сходится ли экономика у партнёра',
     ckp:'Партнёр понимает как растут метрики, регламенты, как работать по бизнес-модели, как тратить финансы. При стагнации прибыли — пересборка: меняем что, как, кому продаём, устройство точки и канала прибыли.',
     // LTV сравниваем с CAC (не с планом) — если выше, хорошо
@@ -769,42 +769,42 @@ const KFU = [
       {l:'LTV vs CAC',f:3593,cmp:3956,u:'₽',hint:'LTV 3 593 < CAC 3 956 — маркетинг не окупается',type:'gt'},
       {l:'Партнёры с ЧП ≥300К',f:75,p:80,u:'%'},
     ] },
-  { title:'Спрос / PR',
+  { _idx:1, title:'Спрос / PR',
     desc:'Бренд даёт доверие и конверсию, есть стабильный "фундамент" входящего трафика',
     ckp:'Бренд даёт доверие и конверсию, стабильный "фон спроса". Центральные медиа продают и утепляют, единый бренд гайд, PR пакеты на сеть и локальные. Глубокое изучение ЦА, детальная работа с репутацией, партнёрские каналы по лидам на сеть.',
     metrics:[
       {l:'Брендовый спрос',f:4223,p:4916,u:'',hint:'Ниже плана — нужен рост'},
       {l:'Охват соц.сетей',f:'4M',hint:'суммарный охват центральных каналов'},
     ] },
-  { title:'Стандарты управления',
+  { _idx:2, title:'Стандарты управления',
     desc:'Партнёр умеет делать плановые деньги по системе, а не вопреки ей',
     ckp:'Партнёр делает плановые деньги по системе. Команда управляется по результативным регламентам, любая студия управляется по одинаковым метрикам и видно прозрачно что сломалось. Найдём партнёру выстроенный менеджмент, финансы прозрачны и нет перерасходов.',
     metrics:[
       {l:'Конверсия лид→покупка',f:8,p:14,u:'%'},
       {l:'Выручка с постоянных',f:4953,p:4385,u:'₽'},
     ] },
-  { title:'Продукт и качество',
+  { _idx:3, title:'Продукт и качество',
     desc:'Клиент реально получает ощущаемый результат и возвращается снова',
     ckp:'Клиент получает ощущаемый результат, минимальная негативная и высокая доля удержания. Педагоги работают по регламентам, постоянно собирается обратная связь от клиентов и тайных покупателей. Доля амбасадорских направлений растёт от года к году.',
     metrics:[
       {l:'NPS занятий',f:92,p:85,u:'%'},
       {l:'% амб. направлений',f:17,p:25,u:'%'},
     ] },
-  { title:'IT + данные',
+  { _idx:4, title:'IT + данные',
     desc:'В любой момент видно — где дырка, кто не выполняет, что делать прямо сейчас',
     ckp:'В любой момент партнёру видно — где дырка, куда утекли деньги, по какому показателю нужно поднажать для увеличения прибыли. Все оцифровано по источникам лидов и метрикам бизнеса. УК видит все метрики партнёров и точно реагирует на спады компетентной помощью. Безопасность систем присутствует везде.',
     metrics:[
       {l:'% студий в CRM',f:93,p:91,u:'%'},
       {l:'% сдачи отчётности',f:99,p:95,u:'%'},
     ] },
-  { title:'Справедливость управления',
+  { _idx:5, title:'Справедливость управления',
     desc:'"Со мной честны, правила понятны, ко мне относятся уважительно" — так должен чувствовать партнёр',
     ckp:'Партнёр чувствует "со мной честны, правила понятны, изменения предсказуемы и логичны". Нет ощущения что сеть просто собирает деньги. Конфликты решаются быстро и по процедуре, без эмоций и унижения. Хорошие партнёры получают больше возможностей, плохие не паразитируют.',
     metrics:[
       {l:'NPS партнёров',f:95,p:80,u:'%'},
       {l:'Индекс доверия',f:92,p:90,u:'%'},
     ] },
-  { title:'Качественное сообщество',
+  { _idx:6, title:'Качественное сообщество',
     desc:'Партнёр не один, есть обмен решениями, поддержка, принадлежность к чему-то большему',
     ckp:'Партнёр не один — есть обмен решениями, поддержка, статус, энергия. Лучшие практики расходятся быстро, ошибки не повторяются. В кризис сообщество удерживает людей от паники и выхода.',
     metrics:[
@@ -925,6 +925,23 @@ function renderKFUSummaryBar(){
   </div>`;
 }
 
+// ── SPARKLINE ──────────────────────────────────────────────
+function sparkline(data, color, width=60, height=20){
+  if(!data||data.length<2) return '';
+  const vals=data.filter(v=>v!=null&&v!==0);
+  if(vals.length<2) return '';
+  const min=Math.min(...vals), max=Math.max(...vals);
+  const range=max-min||1;
+  const pts=vals.slice(-6).map((v,i,arr)=>{
+    const x=Math.round(i/(arr.length-1)*(width-4))+2;
+    const y=Math.round((1-(v-min)/range)*(height-4))+2;
+    return `${x},${y}`;
+  }).join(' ');
+  const last=vals[vals.length-1], prev=vals[vals.length-2];
+  const trend=last>=prev?color:'#fb7185';
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="display:inline-block;vertical-align:middle;opacity:0.8"><polyline points="${pts}" fill="none" stroke="${trend}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
 // ── RENDER KFU ──────────────────────────────────────────────
 function renderKFU(){
   const rows = [document.getElementById('kfu-row1'), document.getElementById('kfu-row2')];
@@ -935,6 +952,8 @@ function renderKFU(){
     const _cardPcts=[];k.metrics.forEach(m=>{if(m.type==='gt')_cardPcts.push(m.f>m.cmp?100:50);else if(typeof m.f==='number'&&m.p!=null&&m.p!==0)_cardPcts.push(Math.round(m.f/m.p*100));});
     const _cardAvg=_cardPcts.length?Math.round(_cardPcts.reduce((a,b)=>a+b,0)/_cardPcts.length):null;
     const color=_cardAvg!==null?sc(_cardAvg):C.green;
+    const _sparkSources=[LTV,BRAND_F,CONV_F,NPS_ZAN_F,CRM_F,NPS_PF,null];
+    const _sparkSvg=(_sparkSources[k._idx]&&_sparkSources[k._idx].some(v=>v))?sparkline(_sparkSources[k._idx],color):'';
     const metricsHtml = k.metrics.map(m=>{
       const mc = scMetric(m);
       const p = (typeof m.f==='number'&&m.p!=null&&!m.type) ? pct(m.f,m.p) : null;
@@ -961,13 +980,24 @@ function renderKFU(){
       else if(typeof m.f==='number'&&m.p!=null) kfuPcts.push(Math.round(m.f/m.p*100));
     });
     const kfuAvg=kfuPcts.length?Math.round(kfuPcts.reduce((a,b)=>a+b,0)/kfuPcts.length):null;
-    const kfuProgFill=kfuAvg!==null?Math.min(kfuAvg,100):0;
-    const kfuProgHtml=kfuAvg!==null?`<div style="margin-top:10px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px"><span>Выполнение плана</span><span style="font-weight:700;color:${color}">${kfuAvg}%</span></div><div style="height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="height:100%;width:${kfuProgFill}%;background:linear-gradient(90deg,${color},${color}88);border-radius:3px;transition:width .6s ease"></div></div></div>`:'';
+    const kfuProgColor = kfuAvg===null?'var(--muted)':kfuAvg>=105?'#059669':kfuAvg>=90?'#34d399':kfuAvg>=70?'#fbbf24':'#fb7185';
+    const kfuProgLabel = kfuAvg===null?'—':kfuAvg>=105?`${kfuAvg}% — перевыполнено 🎉`:kfuAvg>=90?`${kfuAvg}% плана`:kfuAvg>=70?`${kfuAvg}% — под риском`:`${kfuAvg}% — критично`;
+    const kfuProgFill2 = kfuAvg!==null?Math.min(kfuAvg,100):0;
+    const kfuProgHtml=kfuAvg!==null?`<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <span style="font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600">Выполнение плана</span>
+    <span style="font-size:13px;font-weight:700;color:${kfuProgColor}">${kfuProgLabel}</span>
+  </div>
+  <div style="height:6px;background:var(--bg4);border-radius:4px;overflow:hidden">
+    <div style="height:100%;width:${kfuProgFill2}%;background:linear-gradient(90deg,${kfuProgColor},${kfuProgColor}cc);border-radius:4px;transition:width .8s cubic-bezier(.34,1.56,.64,1)"></div>
+  </div>
+  ${kfuAvg>=105?`<div style="font-size:10px;color:#059669;margin-top:4px;text-align:right">+${kfuAvg-100}% сверх плана</div>`:''}
+</div>`:'';
     el.innerHTML=`<div class="kfu-bar" style="background:${color}"></div>
       <div class="kfu-body">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
           <div style="width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color};flex-shrink:0"></div>
-          <div class="kfu-title" style="margin-bottom:0">${k.title}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex:1"><div class="kfu-title" style="margin-bottom:0">${k.title}</div>${_sparkSvg}</div>
         </div>
         <div class="kfu-desc">${k.desc}</div>
         <div class="kfu-divider"></div>
@@ -1754,6 +1784,13 @@ function updateKFUCards(){
   KFU[0].metrics[0].f  =ltvAvg;
   KFU[0].metrics[0].cmp=cacAvg;
   KFU[0].metrics[0].hint=`LTV ${Math.round(ltvAvg).toLocaleString('ru-RU')} ${ltvAvg>cacAvg?'>':'<'} CAC ${Math.round(cacAvg).toLocaleString('ru-RU')} — маркетинг ${ltvAvg>cacAvg?'окупается':'не окупается'}`;
+  const ltvRatio=cacAvg>0?(ltvAvg/cacAvg).toFixed(2):null;
+  const ltvEl=document.getElementById('ltv-chart-title');
+  if(ltvEl&&ltvRatio){
+    const ratioColor=ltvAvg>=cacAvg?'#34d399':'#fb7185';
+    const arrow=ltvAvg>=cacAvg?'↑':'↓';
+    ltvEl.innerHTML=`LTV vs CAC <span style="font-size:12px;font-weight:600;color:${ratioColor};margin-left:6px">${arrow} ${ltvRatio}×</span>`;
+  }
   KFU[0].metrics[1].f=getAvg(PROFIT);
 
   const brandF=getAvg(BRAND_F);
