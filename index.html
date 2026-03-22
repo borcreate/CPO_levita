@@ -914,8 +914,10 @@ function renderKFU(){
   KFU.forEach((k,i)=>{
     const el = document.createElement('div');
     el.className='kfu-card';
-    // Используем scMetric — он знает про type:'gt' (LTV vs CAC) и обычный план/факт
-    const color = scMetric(k.metrics[0]);
+    // Цвет карточки = среднее по всем метрикам (как в светофоре и summary bar)
+    const _cardPcts=[];k.metrics.forEach(m=>{if(m.type==='gt')_cardPcts.push(m.f>m.cmp?100:50);else if(typeof m.f==='number'&&m.p!=null)_cardPcts.push(Math.round(m.f/m.p*100));});
+    const _cardAvg=_cardPcts.length?Math.round(_cardPcts.reduce((a,b)=>a+b,0)/_cardPcts.length):null;
+    const color=_cardAvg!==null?sc(_cardAvg):scMetric(k.metrics[0]);
     const metricsHtml = k.metrics.map(m=>{
       const mc = scMetric(m);
       const p = (typeof m.f==='number'&&m.p!=null&&!m.type) ? pct(m.f,m.p) : null;
