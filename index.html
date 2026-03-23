@@ -722,39 +722,15 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 
 <!-- ═══════════════════════════════════════════════ TAB: КОНТРОЛЬ КАЧЕСТВА -->
 <div class="page" id="tab-qa">
-  <!-- ── Zoom саммери ── -->
-  <div style="margin-bottom:32px">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
-      <div class="section-title" style="margin-bottom:0;border:none;padding:0">
-        <i data-lucide="video" style="width:16px;height:16px;color:var(--gold)"></i>
-        Zoom встречи
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <input type="date" id="qa-zoom-date" class="team-modal-input" style="width:auto;padding:6px 10px;font-size:12px" onchange="renderQAZoom()">
-        <button class="team-btn primary" onclick="openAddZoomModal()" style="display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 14px">
-          <i data-lucide="plus" style="width:14px;height:14px"></i> Добавить
-        </button>
-      </div>
-    </div>
-    <div id="qa-zoom-list"></div>
+  <!-- ── Фильтр по дате ── -->
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:28px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+    <i data-lucide="calendar-days" style="width:16px;height:16px;color:var(--gold);flex-shrink:0"></i>
+    <span style="font-size:13px;font-weight:600;color:var(--text)">Фильтр:</span>
+    <button id="qa-all-days-btn" class="team-btn primary" onclick="qaSetAllDays()" style="font-size:12px;padding:5px 14px">Все дни</button>
+    <input type="date" id="qa-date-filter" class="team-modal-input" style="width:auto;padding:5px 10px;font-size:12px" onchange="qaSetDate()">
   </div>
-
-  <!-- ── Чат саммери ── -->
-  <div>
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
-      <div class="section-title" style="margin-bottom:0;border:none;padding:0">
-        <i data-lucide="message-square" style="width:16px;height:16px;color:var(--gold)"></i>
-        Чаты
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <input type="date" id="qa-chat-date" class="team-modal-input" style="width:auto;padding:6px 10px;font-size:12px" onchange="renderQAChat()">
-        <button class="team-btn primary" onclick="openAddChatModal()" style="display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 14px">
-          <i data-lucide="plus" style="width:14px;height:14px"></i> Добавить
-        </button>
-      </div>
-    </div>
-    <div id="qa-chat-list"></div>
-  </div>
+  <!-- ── Блоки по отделам ── -->
+  <div id="qa-depts-list"></div>
 </div>
 
 </main>
@@ -1691,7 +1667,7 @@ function showTab(name,el){
   el.classList.add('active');
   if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
   if(name==='materials'){ renderMaterials(); }
-  if(name==='qa'){ initQADemoData(); renderQAZoom(); renderQAChat(); setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50); }
+  if(name==='qa'){ initQADemoData(); qaInitFilter(); renderQAByDepts(); setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50); }
   // Скрываем фильтр и алерт-баннер на вкладках где они не нужны
   const hidePeriod = ['map','materials','qa'];
   const periodBar = document.getElementById('period-bar');
@@ -2996,18 +2972,31 @@ function mobNav(tabName, el){
 const QA_ZOOM_KEY = 'levita_zoom_summaries_v1';
 const QA_CHAT_KEY = 'levita_chat_summaries_v1';
 
-const DEPT_COLORS = {
-  'Маркетинг': '#7c3aed',
-  'Продажи':   '#2563eb',
-  'Продукт':   '#0891b2',
-  'HR':        '#059669',
-  'Операции':  '#d97706',
-  'Технологии':'#dc2626',
-  'Финансы':   '#ca8a04',
+// Названия отделов — синхронизированы с массивом DEPTS
+const QA_DEPTS = [
+  'Отдел открытий',
+  'Отдел ШМП',
+  'Маркетинг партнёров',
+  'Территориальные управляющие',
+  'Комьюнити менеджер',
+  'Обучение и контроль качества',
+  'Академия администраторов',
+  'Академия педагогов',
+];
+
+const QA_DEPT_COLORS = {
+  'Отдел открытий':                '#b8902a',
+  'Отдел ШМП':                     '#2563eb',
+  'Маркетинг партнёров':           '#7c3aed',
+  'Территориальные управляющие':   '#0891b2',
+  'Комьюнити менеджер':            '#059669',
+  'Обучение и контроль качества':  '#dc2626',
+  'Академия администраторов':      '#d97706',
+  'Академия педагогов':            '#ca8a04',
 };
 
 function deptBadge(dept){
-  const color = DEPT_COLORS[dept] || '#6b7280';
+  const color = QA_DEPT_COLORS[dept] || '#6b7280';
   return `<span style="display:inline-flex;align-items:center;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 10px;text-transform:uppercase">${dept}</span>`;
 }
 
@@ -3019,130 +3008,187 @@ function saveQAChat(d){ localStorage.setItem(QA_CHAT_KEY, JSON.stringify(d)); }
 function initQADemoData(){
   if(!getQAZoom().length){
     const demos = [
-      {id:'z1', title:'Синхронизация отдела маркетинга', date:'2026-03-20T10:00', participants:['Анна Иванова','Михаил Петров','Ольга Смирнова'], summary:'Обсудили план контента на апрель. Утвердили бюджет для рекламных кампаний. Назначили ответственных за соцсети.', dept:'Маркетинг'},
-      {id:'z2', title:'Планёрка отдела продаж', date:'2026-03-20T11:30', participants:['Сергей Козлов','Татьяна Новикова'], summary:'Разобрали воронку за прошлую неделю. Конверсия выросла на 3%. Внедряем новый скрипт для холодных звонков.', dept:'Продажи'},
-      {id:'z3', title:'Product review Q1', date:'2026-03-19T14:00', participants:['Дмитрий Лебедев','Анна Иванова','Роман Федоров','Светлана Кузнецова'], summary:'Ревью итогов Q1 по продукту. Закрыли 12 из 15 задач спринта. Приоритизировали бэклог на Q2. Обсудили UX-исследование.', dept:'Продукт'},
-      {id:'z4', title:'HR: адаптация новых сотрудников', date:'2026-03-18T09:00', participants:['Елена Морозова','Игорь Волков'], summary:'Обновили онбординг-программу. Добавили ментора для новых педагогов. Сроки адаптации сократили с 30 до 21 дня.', dept:'HR'},
+      {id:'z1', title:'Планёрка отдела открытий', date:'2026-03-20T10:00', participants:['Анна Иванова','Михаил Петров'], summary:'Обсудили статус 3 новых локаций. Согласовали дедлайн по Казани — 15 апреля. Документация отправлена в юр. отдел.', dept:'Отдел открытий'},
+      {id:'z2', title:'Синхрон по курсам ШМП', date:'2026-03-20T11:30', participants:['Сергей Козлов','Татьяна Новикова','Дмитрий Лебедев'], summary:'Разобрали выполнение плана по выручке: 57% за март. Решили усилить работу с 3 курсом. Обновили скрипты продаж.', dept:'Отдел ШМП'},
+      {id:'z3', title:'Маркетинговый синк: охваты и лиды', date:'2026-03-19T14:00', participants:['Ольга Смирнова','Роман Федоров'], summary:'Охват Instagram — 24 224, Telegram — 51 039. Запустили 4 гипотезы по трафику. Бюджет на апрель согласован.', dept:'Маркетинг партнёров'},
+      {id:'z4', title:'Совещание территориальных управляющих', date:'2026-03-18T09:00', participants:['Елена Морозова','Игорь Волков','Светлана Кузнецова'], summary:'Клиентская база снизилась на 2 776 за февраль. Обсудили причины оттока. NPS партнёров — 80%. Запланировали выездные аудиты.', dept:'Территориальные управляющие'},
+      {id:'z5', title:'Онбординг новых участников комьюнити', date:'2026-03-22T10:00', participants:['Анна Иванова','Михаил Петров'], summary:'Обсудили программу мероприятий на год. Уточнили критерии для амбасадоров сети. Запланировали первое событие на май.', dept:'Комьюнити менеджер'},
+      {id:'z6', title:'Разбор результатов NPS и тайных покупателей', date:'2026-03-21T12:00', participants:['Татьяна Новикова','Дмитрий Лебедев'], summary:'NPS занятий — 92%, план перевыполнен. Тайные покупатели: 8 из 20 по плану. Качество занятий — 86%. Индекс групп — 51.', dept:'Обучение и контроль качества'},
+      {id:'z7', title:'Итоги академии администраторов за февраль', date:'2026-03-20T15:00', participants:['Елена Морозова','Роман Федоров'], summary:'Зашло 106 человек, получили сертификат — 39 (37%). NPS академии — 73. Обсудили доработку финального теста.', dept:'Академия администраторов'},
+      {id:'z8', title:'Педагогическая академия: итоги и планы', date:'2026-03-19T11:00', participants:['Игорь Волков','Светлана Кузнецова'], summary:'Зашли 159 педагогов, 86% дошли до аттестации. Договоров — 112. Запланировали улучшение вводного модуля.', dept:'Академия педагогов'},
     ];
     saveQAZoom(demos);
   }
   if(!getQAChat().length){
     const demos = [
-      {id:'c1', chatName:'#маркетинг-команда', date:'2026-03-20', summary:'Обсуждали запуск новой рекламной кампании. Согласовали креативы. Дедлайн — 25 марта. Ответственный: Михаил.', dept:'Маркетинг'},
-      {id:'c2', chatName:'#продажи-общий', date:'2026-03-20', summary:'Поступило 3 заявки от новых партнёров. Сергей взял в работу. Передали чек-лист по первичной квалификации лидов.', dept:'Продажи'},
-      {id:'c3', chatName:'#product-dev', date:'2026-03-19', summary:'Фикс критического бага в CRM-модуле. Деплой прошёл успешно. Проблема с импортом данных у партнёра — в работе.', dept:'Технологии'},
-      {id:'c4', chatName:'#hr-рекрутинг', date:'2026-03-18', summary:'Закрыли вакансию тренера-педагога в Москве. 2 оффера в рассмотрении. Обсудили изменение грейдовой системы.', dept:'HR'},
+      {id:'c1', chatName:'#отдел-открытий', date:'2026-03-20', summary:'Согласовали документы для новой студии в Екатеринбурге. Партнёр подтвердил аванс. Ждём подписания договора.', dept:'Отдел открытий'},
+      {id:'c2', chatName:'#шмп-команда', date:'2026-03-20', summary:'Поступили вопросы по 3 курсу от 12 студентов. Куратор взял в работу. Дополнительный вебинар — в пятницу.', dept:'Отдел ШМП'},
+      {id:'c3', chatName:'#маркетинг-партнёров', date:'2026-03-19', summary:'Новый PR-выход в региональном СМИ согласован. Пресс-релиз готов. Публикация запланирована на 25 марта.', dept:'Маркетинг партнёров'},
+      {id:'c4', chatName:'#территориальные', date:'2026-03-19', summary:'Аттестации по управлению завершены в 4 регионах: средний результат — 82%. Ещё 3 региона на следующей неделе.', dept:'Территориальные управляющие'},
+      {id:'c5', chatName:'#комьюнити-общий', date:'2026-03-21', summary:'Согласовали тему следующего онлайн-события. Собрали заявки от 18 амбасадоров. Старт регистрации — завтра.', dept:'Комьюнити менеджер'},
+      {id:'c6', chatName:'#качество-обучения', date:'2026-03-21', summary:'Получили 3 жалобы на занятия в одной студии. Тайный покупатель направлен. Результат — через 5 дней.', dept:'Обучение и контроль качества'},
+      {id:'c7', chatName:'#академия-администраторов', date:'2026-03-20', summary:'Загрузили новый модуль по работе с клиентами. Уведомления разосланы всем участникам. 28 человек уже начали.', dept:'Академия администраторов'},
+      {id:'c8', chatName:'#академия-педагогов', date:'2026-03-19', summary:'Обновили блок по методике преподавания. Получили 14 новых заявок на курс. Старт следующего потока — 1 апреля.', dept:'Академия педагогов'},
     ];
     saveQAChat(demos);
   }
 }
 
-function renderQAZoom(){
-  const list = document.getElementById('qa-zoom-list');
-  if(!list) return;
-  const dateInput = document.getElementById('qa-zoom-date');
-  const filterDate = dateInput ? dateInput.value : '';
-  let items = getQAZoom();
-  if(filterDate){
-    items = items.filter(z => z.date && z.date.startsWith(filterDate));
+// ── Состояние фильтра ──
+let qaFilterDate = null; // null = все дни, 'YYYY-MM-DD' = конкретный день
+
+function qaInitFilter(){
+  // По умолчанию — сегодня
+  if(qaFilterDate === null){
+    const now = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+    qaFilterDate = today;
+    const inp = document.getElementById('qa-date-filter');
+    if(inp) inp.value = today;
+    const btn = document.getElementById('qa-all-days-btn');
+    if(btn) btn.classList.remove('primary');
   }
-  if(!items.length){
-    list.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;padding:48px 0;color:var(--muted);gap:12px">
-      <i data-lucide="calendar-x" style="width:40px;height:40px;opacity:0.35"></i>
-      <div style="font-size:14px">${filterDate ? 'Нет встреч за этот день' : 'Нет встреч'}</div>
-    </div>`;
-    if(window.lucide) lucide.createIcons();
-    return;
-  }
-  list.innerHTML = items.map(z => {
-    const d = new Date(z.date);
-    const dateStr = isNaN(d) ? z.date : d.toLocaleString('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    const parts = Array.isArray(z.participants) ? z.participants : [];
-    return `<div class="dept-card" style="margin-bottom:12px;padding:18px 20px;cursor:default">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">${escHtml(z.title)}</div>
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
-            <i data-lucide="clock" style="width:13px;height:13px"></i>
-            ${escHtml(dateStr)}
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          ${deptBadge(z.dept)}
-          <button class="team-btn" onclick="deleteQAZoom('${z.id}')" style="color:#dc2626;padding:4px 8px;font-size:11px"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>
-        </div>
-      </div>
-      ${parts.length ? `<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap">
-        <i data-lucide="users" style="width:13px;height:13px;color:var(--muted);flex-shrink:0"></i>
-        ${parts.map(p=>`<span style="font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 10px;color:var(--text)">${escHtml(p.trim())}</span>`).join('')}
-      </div>` : ''}
-      <div style="font-size:13px;color:var(--muted);line-height:1.6">${escHtml(z.summary)}</div>
-    </div>`;
-  }).join('');
-  if(window.lucide) lucide.createIcons();
 }
 
-function renderQAChat(){
-  const list = document.getElementById('qa-chat-list');
-  if(!list) return;
-  const dateInput = document.getElementById('qa-chat-date');
-  const filterDate = dateInput ? dateInput.value : '';
-  let items = getQAChat();
-  if(filterDate){
-    items = items.filter(c => c.date && c.date.startsWith(filterDate));
-  }
-  if(!items.length){
-    list.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;padding:48px 0;color:var(--muted);gap:12px">
-      <i data-lucide="message-circle-off" style="width:40px;height:40px;opacity:0.35"></i>
-      <div style="font-size:14px">${filterDate ? 'Нет саммери за этот день' : 'Нет саммери'}</div>
-    </div>`;
-    if(window.lucide) lucide.createIcons();
-    return;
-  }
-  list.innerHTML = items.map(c => {
-    const d = new Date(c.date);
-    const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
-    return `<div class="dept-card" style="margin-bottom:12px;padding:18px 20px;cursor:default">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-        <div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">
-            <i data-lucide="hash" style="width:14px;height:14px;vertical-align:middle;opacity:0.5"></i>
-            ${escHtml(c.chatName)}
+function qaSetAllDays(){
+  qaFilterDate = null;
+  document.getElementById('qa-date-filter').value = '';
+  document.getElementById('qa-all-days-btn').classList.add('primary');
+  renderQAByDepts();
+}
+
+function qaSetDate(){
+  const val = document.getElementById('qa-date-filter').value;
+  qaFilterDate = val || null;
+  const btn = document.getElementById('qa-all-days-btn');
+  if(qaFilterDate) btn.classList.remove('primary');
+  else btn.classList.add('primary');
+  renderQAByDepts();
+}
+
+// ── Главный рендер: блоки по отделам ──
+function renderQAByDepts(){
+  const container = document.getElementById('qa-depts-list');
+  if(!container) return;
+
+  const allZooms = getQAZoom();
+  const allChats = getQAChat();
+
+  const html = QA_DEPTS.map(deptName => {
+    const zooms = allZooms.filter(z => z.dept === deptName && (!qaFilterDate || (z.date && z.date.startsWith(qaFilterDate))));
+    const chats = allChats.filter(c => c.dept === deptName && (!qaFilterDate || (c.date && c.date.startsWith(qaFilterDate))));
+    const color = QA_DEPT_COLORS[deptName] || '#6b7280';
+    const hasContent = zooms.length > 0 || chats.length > 0;
+
+    const zoomCards = zooms.map(z => {
+      const d = new Date(z.date);
+      const dateStr = isNaN(d) ? z.date : d.toLocaleString('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      const parts = Array.isArray(z.participants) ? z.participants : [];
+      return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${escHtml(z.title)}</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)">
+              <i data-lucide="clock" style="width:11px;height:11px"></i>${escHtml(dateStr)}
+            </div>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
-            <i data-lucide="calendar" style="width:13px;height:13px"></i>
-            ${escHtml(dateStr)}
-          </div>
+          <button class="team-btn" onclick="deleteQAZoom('${z.id}')" style="color:#dc2626;padding:3px 7px;font-size:11px;flex-shrink:0"><i data-lucide="trash-2" style="width:11px;height:11px"></i></button>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          ${deptBadge(c.dept)}
-          <button class="team-btn" onclick="deleteQAChat('${c.id}')" style="color:#dc2626;padding:4px 8px;font-size:11px"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>
+        ${parts.length ? `<div style="display:flex;align-items:center;gap:5px;margin-bottom:8px;flex-wrap:wrap">
+          <i data-lucide="users" style="width:11px;height:11px;color:var(--muted);flex-shrink:0"></i>
+          ${parts.map(p=>`<span style="font-size:10px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 8px;color:var(--text)">${escHtml(p.trim())}</span>`).join('')}
+        </div>` : ''}
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(z.summary)}</div>
+      </div>`;
+    }).join('');
+
+    const chatCards = chats.map(c => {
+      const d = new Date(c.date);
+      const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+      return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">
+              <i data-lucide="hash" style="width:13px;height:13px;vertical-align:middle;opacity:0.5"></i>${escHtml(c.chatName)}
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)">
+              <i data-lucide="calendar" style="width:11px;height:11px"></i>${escHtml(dateStr)}
+            </div>
+          </div>
+          <button class="team-btn" onclick="deleteQAChat('${c.id}')" style="color:#dc2626;padding:3px 7px;font-size:11px;flex-shrink:0"><i data-lucide="trash-2" style="width:11px;height:11px"></i></button>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
+      </div>`;
+    }).join('');
+
+    const emptyState = !hasContent ? `<div style="display:flex;align-items:center;gap:8px;padding:18px 0;color:var(--muted);font-size:13px">
+      <i data-lucide="inbox" style="width:16px;height:16px;opacity:0.4"></i>
+      Нет записей${qaFilterDate ? ' за этот день' : ''}
+    </div>` : '';
+
+    return `<div style="margin-bottom:20px;border:1px solid ${color}33;border-radius:14px;overflow:hidden">
+      <!-- Заголовок отдела -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;background:${color}11;border-bottom:1px solid ${color}22;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:3px;height:22px;background:${color};border-radius:2px;display:inline-block;flex-shrink:0"></span>
+          <span style="font-size:15px;font-weight:700;color:var(--text)">${deptName}</span>
+          ${zooms.length ? `<span style="font-size:11px;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:20px;padding:1px 8px;font-weight:600"><i data-lucide="video" style="width:10px;height:10px;vertical-align:middle"></i> ${zooms.length}</span>` : ''}
+          ${chats.length ? `<span style="font-size:11px;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:20px;padding:1px 8px;font-weight:600"><i data-lucide="message-square" style="width:10px;height:10px;vertical-align:middle"></i> ${chats.length}</span>` : ''}
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="team-btn" onclick="openAddZoomModal('${deptName}')" style="font-size:11px;padding:4px 12px;display:flex;align-items:center;gap:4px"><i data-lucide="video" style="width:12px;height:12px"></i> + Zoom</button>
+          <button class="team-btn" onclick="openAddChatModal('${deptName}')" style="font-size:11px;padding:4px 12px;display:flex;align-items:center;gap:4px"><i data-lucide="message-square" style="width:12px;height:12px"></i> + Чат</button>
         </div>
       </div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
+      <!-- Контент отдела -->
+      <div style="padding:16px 18px">
+        ${emptyState}
+        ${zooms.length ? `<div style="margin-bottom:${chats.length ? '16px' : '0'}">
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">
+            <i data-lucide="video" style="width:12px;height:12px"></i> Zoom встречи
+          </div>
+          ${zoomCards}
+        </div>` : ''}
+        ${chats.length ? `<div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">
+            <i data-lucide="message-square" style="width:12px;height:12px"></i> Чаты
+          </div>
+          ${chatCards}
+        </div>` : ''}
+      </div>
     </div>`;
   }).join('');
+
+  container.innerHTML = html;
   if(window.lucide) lucide.createIcons();
 }
 
 function deleteQAZoom(id){
   if(!confirm('Удалить встречу?')) return;
   saveQAZoom(getQAZoom().filter(z=>z.id!==id));
-  renderQAZoom();
+  renderQAByDepts();
 }
 function deleteQAChat(id){
   if(!confirm('Удалить саммери?')) return;
   saveQAChat(getQAChat().filter(c=>c.id!==id));
-  renderQAChat();
+  renderQAByDepts();
 }
 
-function openAddZoomModal(){
+// Текущий отдел для модалки (передаётся через openAddZoomModal / openAddChatModal)
+let _qaDeptForModal = '';
+
+function openAddZoomModal(deptName){
+  _qaDeptForModal = deptName || QA_DEPTS[0];
   const now = new Date();
   const pad = n => String(n).padStart(2,'0');
   document.getElementById('qa-z-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   document.getElementById('qa-z-title').value = '';
   document.getElementById('qa-z-participants').value = '';
   document.getElementById('qa-z-summary').value = '';
+  // Установить отдел в select
+  const sel = document.getElementById('qa-z-dept');
+  if(sel) sel.value = _qaDeptForModal;
   document.getElementById('qa-zoom-add-modal').classList.add('open');
   setTimeout(()=>document.getElementById('qa-z-title').focus(), 50);
 }
@@ -3164,15 +3210,19 @@ function saveZoomSummary(){
   items.unshift(item);
   saveQAZoom(items);
   closeAddZoomModal();
-  renderQAZoom();
+  renderQAByDepts();
 }
 
-function openAddChatModal(){
+function openAddChatModal(deptName){
+  _qaDeptForModal = deptName || QA_DEPTS[0];
   const now = new Date();
   const pad = n => String(n).padStart(2,'0');
   document.getElementById('qa-c-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
   document.getElementById('qa-c-name').value = '';
   document.getElementById('qa-c-summary').value = '';
+  // Установить отдел в select
+  const sel = document.getElementById('qa-c-dept');
+  if(sel) sel.value = _qaDeptForModal;
   document.getElementById('qa-chat-add-modal').classList.add('open');
   setTimeout(()=>document.getElementById('qa-c-name').focus(), 50);
 }
@@ -3192,7 +3242,7 @@ function saveChatSummary(){
   items.unshift(item);
   saveQAChat(items);
   closeAddChatModal();
-  renderQAChat();
+  renderQAByDepts();
 }
 
 // Close on overlay click
@@ -3321,13 +3371,14 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
     <input class="team-modal-input" id="qa-z-participants" type="text" placeholder="Анна Иванова, Михаил Петров">
     <label class="team-modal-label">Отдел</label>
     <select class="team-modal-input" id="qa-z-dept">
-      <option value="Маркетинг">Маркетинг</option>
-      <option value="Продажи">Продажи</option>
-      <option value="Продукт">Продукт</option>
-      <option value="HR">HR</option>
-      <option value="Операции">Операции</option>
-      <option value="Технологии">Технологии</option>
-      <option value="Финансы">Финансы</option>
+      <option>Отдел открытий</option>
+      <option>Отдел ШМП</option>
+      <option>Маркетинг партнёров</option>
+      <option>Территориальные управляющие</option>
+      <option>Комьюнити менеджер</option>
+      <option>Обучение и контроль качества</option>
+      <option>Академия администраторов</option>
+      <option>Академия педагогов</option>
     </select>
     <label class="team-modal-label">Саммери</label>
     <textarea class="team-modal-input" id="qa-z-summary" rows="4" placeholder="Что обсуждалось на встрече..."></textarea>
@@ -3348,13 +3399,14 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
     <input class="team-modal-input" id="qa-c-date" type="date">
     <label class="team-modal-label">Отдел</label>
     <select class="team-modal-input" id="qa-c-dept">
-      <option value="Маркетинг">Маркетинг</option>
-      <option value="Продажи">Продажи</option>
-      <option value="Продукт">Продукт</option>
-      <option value="HR">HR</option>
-      <option value="Операции">Операции</option>
-      <option value="Технологии">Технологии</option>
-      <option value="Финансы">Финансы</option>
+      <option>Отдел открытий</option>
+      <option>Отдел ШМП</option>
+      <option>Маркетинг партнёров</option>
+      <option>Территориальные управляющие</option>
+      <option>Комьюнити менеджер</option>
+      <option>Обучение и контроль качества</option>
+      <option>Академия администраторов</option>
+      <option>Академия педагогов</option>
     </select>
     <label class="team-modal-label">Саммери</label>
     <textarea class="team-modal-input" id="qa-c-summary" rows="4" placeholder="Ключевые темы и решения из чата..."></textarea>
