@@ -722,12 +722,36 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 
 <!-- ═══════════════════════════════════════════════ TAB: КОНТРОЛЬ КАЧЕСТВА -->
 <div class="page" id="tab-qa">
-  <!-- ── Фильтр по дате ── -->
-  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:28px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
-    <i data-lucide="calendar-days" style="width:16px;height:16px;color:var(--gold);flex-shrink:0"></i>
-    <span style="font-size:13px;font-weight:600;color:var(--text)">Фильтр:</span>
-    <button id="qa-all-days-btn" class="team-btn primary" onclick="qaSetAllDays()" style="font-size:12px;padding:5px 14px">Все дни</button>
-    <input type="date" id="qa-date-filter" class="team-modal-input" style="width:auto;padding:5px 10px;font-size:12px" onchange="qaSetDate()">
+  <!-- ── Переключатель периода ── -->
+  <div style="margin-bottom:20px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+    <!-- Tab switcher -->
+    <div style="display:flex;align-items:center;gap:0;margin-bottom:14px;border-bottom:1px solid var(--border)">
+      <button id="qa-period-day" onclick="qaSetPeriod('day')" style="background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;padding:7px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:6px">
+        <i data-lucide="calendar" style="width:14px;height:14px"></i> День
+      </button>
+      <button id="qa-period-week" onclick="qaSetPeriod('week')" style="background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;padding:7px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:6px">
+        <i data-lucide="calendar-range" style="width:14px;height:14px"></i> Неделя
+      </button>
+      <button id="qa-period-month" onclick="qaSetPeriod('month')" style="background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;padding:7px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:6px">
+        <i data-lucide="calendar-days" style="width:14px;height:14px"></i> Месяц
+      </button>
+    </div>
+    <!-- Picker row -->
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <i data-lucide="filter" style="width:14px;height:14px;color:var(--gold);flex-shrink:0"></i>
+      <!-- Day picker -->
+      <input type="date" id="qa-date-filter" class="team-modal-input" style="width:auto;padding:5px 10px;font-size:12px;display:block" onchange="qaPickerChanged()">
+      <!-- Week picker -->
+      <input type="week" id="qa-week-filter" class="team-modal-input" style="width:auto;padding:5px 10px;font-size:12px;display:none" onchange="qaPickerChanged()">
+      <!-- Month picker -->
+      <input type="month" id="qa-month-filter" class="team-modal-input" style="width:auto;padding:5px 10px;font-size:12px;display:none" onchange="qaPickerChanged()">
+      <span id="qa-api-badge" style="display:none;font-size:10px;background:#16a34a22;color:#16a34a;border:1px solid #16a34a44;border-radius:20px;padding:2px 10px;font-weight:600">
+        <i data-lucide="wifi" style="width:10px;height:10px;vertical-align:middle"></i> API
+      </span>
+      <span id="qa-offline-badge" style="display:none;font-size:10px;background:#ca8a0422;color:#ca8a04;border:1px solid #ca8a0444;border-radius:20px;padding:2px 10px;font-weight:600">
+        <i data-lucide="wifi-off" style="width:10px;height:10px;vertical-align:middle"></i> локально
+      </span>
+    </div>
   </div>
   <!-- ── Блоки по отделам ── -->
   <div id="qa-depts-list"></div>
@@ -1667,7 +1691,7 @@ function showTab(name,el){
   el.classList.add('active');
   if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
   if(name==='materials'){ renderMaterials(); }
-  if(name==='qa'){ initQADemoData(); qaInitFilter(); renderQAByDepts(); setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50); }
+  if(name==='qa'){ initQADemoData(); qaInitFilter(); qaFetchAndRender(); setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50); }
   // Скрываем фильтр и алерт-баннер на вкладках где они не нужны
   const hidePeriod = ['map','materials','qa'];
   const periodBar = document.getElementById('period-bar');
@@ -3045,7 +3069,11 @@ function initQADemoData(){
 }
 
 // ── Состояние фильтра ──
-let qaFilterDate = 'today'; // 'today' = сегодня по умолчанию, null = все дни, 'YYYY-MM-DD' = конкретный день
+let qaActivePeriod = 'day'; // 'day' | 'week' | 'month'
+let qaFilterDate = null;    // YYYY-MM-DD for day, YYYY-Www for week, YYYY-MM for month
+let qaApiData = null;       // data loaded from API, null = use localStorage
+
+const QA_API_BASE = 'http://64.188.59.189:3001';
 
 function qaGetToday(){
   const now = new Date();
@@ -3053,52 +3081,200 @@ function qaGetToday(){
   return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
 }
 
+function qaGetCurrentMonth(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return `${now.getFullYear()}-${pad(now.getMonth()+1)}`;
+}
+
+// Get current ISO week string YYYY-Www
+function qaGetCurrentWeek(){
+  const now = new Date();
+  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getUTCFullYear()}-W${pad(weekNo)}`;
+}
+
+// Parse YYYY-Www → {from: YYYY-MM-DD, to: YYYY-MM-DD}
+function qaWeekRange(weekStr){
+  const [y, wPart] = weekStr.split('-W');
+  const year = parseInt(y), week = parseInt(wPart);
+  const jan4 = new Date(Date.UTC(year, 0, 4));
+  const dayOfWeek = jan4.getUTCDay() || 7;
+  const weekStart = new Date(jan4);
+  weekStart.setUTCDate(jan4.getUTCDate() - dayOfWeek + 1 + (week - 1) * 7);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setUTCDate(weekStart.getUTCDate() + 6);
+  const fmt = d => `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+  return { from: fmt(weekStart), to: fmt(weekEnd) };
+}
+
+function qaUpdateTabStyles(){
+  ['day','week','month'].forEach(p => {
+    const btn = document.getElementById(`qa-period-${p}`);
+    if(!btn) return;
+    if(p === qaActivePeriod){
+      btn.style.color = 'var(--gold)';
+      btn.style.borderBottomColor = 'var(--gold)';
+    } else {
+      btn.style.color = 'var(--muted)';
+      btn.style.borderBottomColor = 'transparent';
+    }
+  });
+}
+
+function qaUpdatePickerVisibility(){
+  const dayPicker = document.getElementById('qa-date-filter');
+  const weekPicker = document.getElementById('qa-week-filter');
+  const monthPicker = document.getElementById('qa-month-filter');
+  if(dayPicker) dayPicker.style.display = qaActivePeriod === 'day' ? 'block' : 'none';
+  if(weekPicker) weekPicker.style.display = qaActivePeriod === 'week' ? 'block' : 'none';
+  if(monthPicker) monthPicker.style.display = qaActivePeriod === 'month' ? 'block' : 'none';
+}
+
+function qaSetPeriod(period){
+  qaActivePeriod = period;
+  qaUpdateTabStyles();
+  qaUpdatePickerVisibility();
+  // Set default picker value
+  if(period === 'day'){
+    const inp = document.getElementById('qa-date-filter');
+    if(inp && !inp.value) inp.value = qaGetToday();
+    qaFilterDate = document.getElementById('qa-date-filter').value || qaGetToday();
+  } else if(period === 'week'){
+    const inp = document.getElementById('qa-week-filter');
+    if(inp && !inp.value) inp.value = qaGetCurrentWeek();
+    qaFilterDate = document.getElementById('qa-week-filter').value || qaGetCurrentWeek();
+  } else {
+    const inp = document.getElementById('qa-month-filter');
+    if(inp && !inp.value) inp.value = qaGetCurrentMonth();
+    qaFilterDate = document.getElementById('qa-month-filter').value || qaGetCurrentMonth();
+  }
+  qaFetchAndRender();
+}
+
+function qaPickerChanged(){
+  if(qaActivePeriod === 'day') qaFilterDate = document.getElementById('qa-date-filter').value;
+  else if(qaActivePeriod === 'week') qaFilterDate = document.getElementById('qa-week-filter').value;
+  else qaFilterDate = document.getElementById('qa-month-filter').value;
+  qaFetchAndRender();
+}
+
 function qaInitFilter(){
-  // По умолчанию — сегодня (всегда при открытии вкладки)
+  qaActivePeriod = 'day';
   const today = qaGetToday();
   qaFilterDate = today;
   const inp = document.getElementById('qa-date-filter');
   if(inp) inp.value = today;
-  const btn = document.getElementById('qa-all-days-btn');
-  if(btn) btn.classList.remove('primary');
+  const weekInp = document.getElementById('qa-week-filter');
+  if(weekInp) weekInp.value = qaGetCurrentWeek();
+  const monthInp = document.getElementById('qa-month-filter');
+  if(monthInp) monthInp.value = qaGetCurrentMonth();
+  qaUpdateTabStyles();
+  qaUpdatePickerVisibility();
 }
 
-function qaSetAllDays(){
-  // Если уже "Все дни" — переключаемся обратно на сегодня
-  if(qaFilterDate === null){
-    const today = qaGetToday();
-    qaFilterDate = today;
-    const inp = document.getElementById('qa-date-filter');
-    if(inp) inp.value = today;
-    document.getElementById('qa-all-days-btn').classList.remove('primary');
-  } else {
-    qaFilterDate = null;
-    document.getElementById('qa-date-filter').value = '';
-    document.getElementById('qa-all-days-btn').classList.add('primary');
-  }
-  renderQAByDepts();
-}
+// Fetch from API, fallback to localStorage
+async function qaFetchAndRender(){
+  qaApiData = null;
+  try {
+    let url = `${QA_API_BASE}/api/summaries/chat?`;
+    if(qaActivePeriod === 'day'){
+      url += `period=day`;
+      if(qaFilterDate) url += `&date=${qaFilterDate}`;
+    } else if(qaActivePeriod === 'week'){
+      const range = qaWeekRange(qaFilterDate || qaGetCurrentWeek());
+      // For week: fetch weekly summary + daily summaries in range
+      url += `period=day&from=${range.from}&to=${range.to}`;
+    } else {
+      // month: fetch monthly summary + weekly summaries
+      const month = qaFilterDate || qaGetCurrentMonth();
+      url += `period=day&month=${month}`;
+    }
 
-function qaSetDate(){
-  const val = document.getElementById('qa-date-filter').value;
-  qaFilterDate = val || null;
-  const btn = document.getElementById('qa-all-days-btn');
-  if(qaFilterDate) btn.classList.remove('primary');
-  else btn.classList.add('primary');
+    const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
+    if(res.ok){
+      const dayData = await res.json();
+
+      // Also fetch period-specific (week/month) summaries
+      let periodData = [];
+      if(qaActivePeriod === 'week'){
+        const range = qaWeekRange(qaFilterDate || qaGetCurrentWeek());
+        const r2 = await fetch(`${QA_API_BASE}/api/summaries/chat?period=week&from=${range.from}&to=${range.to}`, { signal: AbortSignal.timeout(4000) });
+        if(r2.ok) periodData = await r2.json();
+      } else if(qaActivePeriod === 'month'){
+        const month = qaFilterDate || qaGetCurrentMonth();
+        const [r2, r3] = await Promise.all([
+          fetch(`${QA_API_BASE}/api/summaries/chat?period=week&month=${month}`, { signal: AbortSignal.timeout(4000) }),
+          fetch(`${QA_API_BASE}/api/summaries/chat?period=month&month=${month}`, { signal: AbortSignal.timeout(4000) }),
+        ]);
+        if(r2.ok) periodData = [...periodData, ...(await r2.json())];
+        if(r3.ok) periodData = [...periodData, ...(await r3.json())];
+      }
+
+      // Merge: dayData + periodData → map to QAChat format
+      const merged = [...dayData, ...periodData].map(s => ({
+        id: String(s.id),
+        chatName: s.chatName,
+        date: s.date,
+        summary: s.summary,
+        dept: s.dept,
+        period: s.period || 'day',
+        source: 'api'
+      }));
+
+      if(merged.length > 0){
+        qaApiData = merged;
+        document.getElementById('qa-api-badge').style.display = '';
+        document.getElementById('qa-offline-badge').style.display = 'none';
+        renderQAByDepts();
+        return;
+      }
+    }
+  } catch(e){ /* API недоступен */ }
+
+  // Fallback to localStorage
+  document.getElementById('qa-api-badge').style.display = 'none';
+  document.getElementById('qa-offline-badge').style.display = '';
   renderQAByDepts();
 }
 
 // ── Главный рендер: блоки по отделам ──
+function qaMatchesFilter(item){
+  if(!qaFilterDate) return true;
+  const d = item.date || '';
+  if(qaActivePeriod === 'day') return d === qaFilterDate;
+  if(qaActivePeriod === 'week'){
+    const range = qaWeekRange(qaFilterDate);
+    return d >= range.from && d <= range.to;
+  }
+  if(qaActivePeriod === 'month') return d.startsWith(qaFilterDate);
+  return true;
+}
+
+function periodLabel(period){
+  if(period === 'week') return `<span style="font-size:10px;background:#2563eb22;color:#2563eb;border:1px solid #2563eb44;border-radius:20px;padding:1px 8px;font-weight:600;margin-left:6px">НЕДЕЛЯ</span>`;
+  if(period === 'month') return `<span style="font-size:10px;background:#7c3aed22;color:#7c3aed;border:1px solid #7c3aed44;border-radius:20px;padding:1px 8px;font-weight:600;margin-left:6px">МЕСЯЦ</span>`;
+  return '';
+}
+
 function renderQAByDepts(){
   const container = document.getElementById('qa-depts-list');
   if(!container) return;
 
   const allZooms = getQAZoom();
-  const allChats = getQAChat();
+  // Use API data if available, otherwise localStorage chats
+  const localChats = getQAChat();
+  const apiChats = qaApiData || [];
+  const allChats = apiChats.length > 0 ? [...apiChats, ...localChats] : localChats;
 
   const html = QA_DEPTS.map(deptName => {
-    const zooms = allZooms.filter(z => z.dept === deptName && (!qaFilterDate || (z.date && z.date.startsWith(qaFilterDate))));
-    const chats = allChats.filter(c => c.dept === deptName && (!qaFilterDate || (c.date && c.date.startsWith(qaFilterDate))));
+    const zooms = allZooms.filter(z => z.dept === deptName && qaMatchesFilter(z));
+    const chats = allChats.filter(c => c.dept === deptName && qaMatchesFilter(c));
     const color = QA_DEPT_COLORS[deptName] || '#6b7280';
     const hasContent = zooms.length > 0 || chats.length > 0;
 
@@ -3127,25 +3303,28 @@ function renderQAByDepts(){
     const chatCards = chats.map(c => {
       const d = new Date(c.date);
       const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+      const isApiEntry = c.source === 'api';
+      const deleteBtn = isApiEntry ? '' : `<button class="team-btn" onclick="deleteQAChat('${c.id}')" style="color:#dc2626;padding:3px 7px;font-size:11px;flex-shrink:0"><i data-lucide="trash-2" style="width:11px;height:11px"></i></button>`;
       return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
           <div>
             <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">
-              <i data-lucide="hash" style="width:13px;height:13px;vertical-align:middle;opacity:0.5"></i>${escHtml(c.chatName)}
+              <i data-lucide="hash" style="width:13px;height:13px;vertical-align:middle;opacity:0.5"></i>${escHtml(c.chatName)}${periodLabel(c.period)}
             </div>
             <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)">
               <i data-lucide="calendar" style="width:11px;height:11px"></i>${escHtml(dateStr)}
             </div>
           </div>
-          <button class="team-btn" onclick="deleteQAChat('${c.id}')" style="color:#dc2626;padding:3px 7px;font-size:11px;flex-shrink:0"><i data-lucide="trash-2" style="width:11px;height:11px"></i></button>
+          ${deleteBtn}
         </div>
         <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
       </div>`;
     }).join('');
 
+    const periodName = qaActivePeriod === 'day' ? ' за этот день' : qaActivePeriod === 'week' ? ' за эту неделю' : ' за этот месяц';
     const emptyState = !hasContent ? `<div style="display:flex;align-items:center;gap:8px;padding:18px 0;color:var(--muted);font-size:13px">
       <i data-lucide="inbox" style="width:16px;height:16px;opacity:0.4"></i>
-      Нет записей${qaFilterDate ? ' за этот день' : ''}
+      Нет записей${qaFilterDate ? periodName : ''}
     </div>` : '';
 
     return `<div style="margin-bottom:20px;border:1px solid ${color}33;border-radius:14px;overflow:hidden">
