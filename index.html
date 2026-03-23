@@ -474,6 +474,9 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <button class="mob-tab" id="mob-map" onclick="mobNav('map',this)">
     <span class="mob-tab-icon">🗺️</span>Карта
   </button>
+  <button class="mob-tab" id="mob-qa" onclick="mobNav('qa',this)">
+    <span class="mob-tab-icon"><i data-lucide="shield-check" style="width:18px;height:18px;display:inline-block"></i></span>КК
+  </button>
 </div>
 
 <!-- ══════════ MATERIALS MODAL ══════════ -->
@@ -572,6 +575,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div class="nav-tab" onclick="showTab('analytics',this)">Аналитика года</div>
   <div class="nav-tab" onclick="showTab('map',this)">Карта франчайзи</div>
   <div class="nav-tab" onclick="showTab('materials',this)" style="display:flex;align-items:center;gap:6px"><i data-lucide="paperclip" style="width:14px;height:14px"></i> Материалы</div>
+  <div class="nav-tab" onclick="showTab('qa',this)" style="display:flex;align-items:center;gap:6px"><i data-lucide="shield-check" style="width:14px;height:14px"></i> Контроль качества</div>
 </nav>
 
 <div id="period-bar" style="background:rgba(247,247,247,0.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:8px 28px;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:112px;z-index:198">
@@ -713,6 +717,43 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div style="margin-top:28px">
     <div class="section-title">КФУ франшизы — Ценный конечный продукт каждого блока</div>
     <div class="kfu-mini-grid" id="kfu-mini-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TAB: КОНТРОЛЬ КАЧЕСТВА -->
+<div class="page" id="tab-qa">
+  <!-- ── Zoom саммери ── -->
+  <div style="margin-bottom:32px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">
+        <i data-lucide="video" style="width:16px;height:16px;color:var(--gold)"></i>
+        Zoom встречи
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <input type="date" id="qa-zoom-date" class="team-modal-input" style="width:auto;padding:6px 10px;font-size:12px" onchange="renderQAZoom()">
+        <button class="team-btn primary" onclick="openAddZoomModal()" style="display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 14px">
+          <i data-lucide="plus" style="width:14px;height:14px"></i> Добавить
+        </button>
+      </div>
+    </div>
+    <div id="qa-zoom-list"></div>
+  </div>
+
+  <!-- ── Чат саммери ── -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">
+        <i data-lucide="message-square" style="width:16px;height:16px;color:var(--gold)"></i>
+        Чаты
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <input type="date" id="qa-chat-date" class="team-modal-input" style="width:auto;padding:6px 10px;font-size:12px" onchange="renderQAChat()">
+        <button class="team-btn primary" onclick="openAddChatModal()" style="display:flex;align-items:center;gap:6px;font-size:12px;padding:6px 14px">
+          <i data-lucide="plus" style="width:14px;height:14px"></i> Добавить
+        </button>
+      </div>
+    </div>
+    <div id="qa-chat-list"></div>
   </div>
 </div>
 
@@ -1650,8 +1691,9 @@ function showTab(name,el){
   el.classList.add('active');
   if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
   if(name==='materials'){ renderMaterials(); }
+  if(name==='qa'){ initQADemoData(); renderQAZoom(); renderQAChat(); setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50); }
   // Скрываем фильтр и алерт-баннер на вкладках где они не нужны
-  const hidePeriod = ['map','materials'];
+  const hidePeriod = ['map','materials','qa'];
   const periodBar = document.getElementById('period-bar');
   if(periodBar) periodBar.classList.toggle('hidden-period', hidePeriod.includes(name));
   const alertBanner = document.getElementById('alert-banner');
@@ -2948,6 +2990,216 @@ function mobNav(tabName, el){
   setMobTab(el);
 }
 
+// ══════════════════════════════════════════════════════════
+// КОНТРОЛЬ КАЧЕСТВА (QA TAB)
+// ══════════════════════════════════════════════════════════
+const QA_ZOOM_KEY = 'levita_zoom_summaries_v1';
+const QA_CHAT_KEY = 'levita_chat_summaries_v1';
+
+const DEPT_COLORS = {
+  'Маркетинг': '#7c3aed',
+  'Продажи':   '#2563eb',
+  'Продукт':   '#0891b2',
+  'HR':        '#059669',
+  'Операции':  '#d97706',
+  'Технологии':'#dc2626',
+  'Финансы':   '#ca8a04',
+};
+
+function deptBadge(dept){
+  const color = DEPT_COLORS[dept] || '#6b7280';
+  return `<span style="display:inline-flex;align-items:center;background:${color}22;color:${color};border:1px solid ${color}44;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 10px;text-transform:uppercase">${dept}</span>`;
+}
+
+function getQAZoom(){ try{ return JSON.parse(localStorage.getItem(QA_ZOOM_KEY)||'[]'); }catch(e){ return []; } }
+function getQAChat(){ try{ return JSON.parse(localStorage.getItem(QA_CHAT_KEY)||'[]'); }catch(e){ return []; } }
+function saveQAZoom(d){ localStorage.setItem(QA_ZOOM_KEY, JSON.stringify(d)); }
+function saveQAChat(d){ localStorage.setItem(QA_CHAT_KEY, JSON.stringify(d)); }
+
+function initQADemoData(){
+  if(!getQAZoom().length){
+    const demos = [
+      {id:'z1', title:'Синхронизация отдела маркетинга', date:'2026-03-20T10:00', participants:['Анна Иванова','Михаил Петров','Ольга Смирнова'], summary:'Обсудили план контента на апрель. Утвердили бюджет для рекламных кампаний. Назначили ответственных за соцсети.', dept:'Маркетинг'},
+      {id:'z2', title:'Планёрка отдела продаж', date:'2026-03-20T11:30', participants:['Сергей Козлов','Татьяна Новикова'], summary:'Разобрали воронку за прошлую неделю. Конверсия выросла на 3%. Внедряем новый скрипт для холодных звонков.', dept:'Продажи'},
+      {id:'z3', title:'Product review Q1', date:'2026-03-19T14:00', participants:['Дмитрий Лебедев','Анна Иванова','Роман Федоров','Светлана Кузнецова'], summary:'Ревью итогов Q1 по продукту. Закрыли 12 из 15 задач спринта. Приоритизировали бэклог на Q2. Обсудили UX-исследование.', dept:'Продукт'},
+      {id:'z4', title:'HR: адаптация новых сотрудников', date:'2026-03-18T09:00', participants:['Елена Морозова','Игорь Волков'], summary:'Обновили онбординг-программу. Добавили ментора для новых педагогов. Сроки адаптации сократили с 30 до 21 дня.', dept:'HR'},
+    ];
+    saveQAZoom(demos);
+  }
+  if(!getQAChat().length){
+    const demos = [
+      {id:'c1', chatName:'#маркетинг-команда', date:'2026-03-20', summary:'Обсуждали запуск новой рекламной кампании. Согласовали креативы. Дедлайн — 25 марта. Ответственный: Михаил.', dept:'Маркетинг'},
+      {id:'c2', chatName:'#продажи-общий', date:'2026-03-20', summary:'Поступило 3 заявки от новых партнёров. Сергей взял в работу. Передали чек-лист по первичной квалификации лидов.', dept:'Продажи'},
+      {id:'c3', chatName:'#product-dev', date:'2026-03-19', summary:'Фикс критического бага в CRM-модуле. Деплой прошёл успешно. Проблема с импортом данных у партнёра — в работе.', dept:'Технологии'},
+      {id:'c4', chatName:'#hr-рекрутинг', date:'2026-03-18', summary:'Закрыли вакансию тренера-педагога в Москве. 2 оффера в рассмотрении. Обсудили изменение грейдовой системы.', dept:'HR'},
+    ];
+    saveQAChat(demos);
+  }
+}
+
+function renderQAZoom(){
+  const list = document.getElementById('qa-zoom-list');
+  if(!list) return;
+  const dateInput = document.getElementById('qa-zoom-date');
+  const filterDate = dateInput ? dateInput.value : '';
+  let items = getQAZoom();
+  if(filterDate){
+    items = items.filter(z => z.date && z.date.startsWith(filterDate));
+  }
+  if(!items.length){
+    list.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;padding:48px 0;color:var(--muted);gap:12px">
+      <i data-lucide="calendar-x" style="width:40px;height:40px;opacity:0.35"></i>
+      <div style="font-size:14px">${filterDate ? 'Нет встреч за этот день' : 'Нет встреч'}</div>
+    </div>`;
+    if(window.lucide) lucide.createIcons();
+    return;
+  }
+  list.innerHTML = items.map(z => {
+    const d = new Date(z.date);
+    const dateStr = isNaN(d) ? z.date : d.toLocaleString('ru-RU',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const parts = Array.isArray(z.participants) ? z.participants : [];
+    return `<div class="dept-card" style="margin-bottom:12px;padding:18px 20px;cursor:default">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">${escHtml(z.title)}</div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+            <i data-lucide="clock" style="width:13px;height:13px"></i>
+            ${escHtml(dateStr)}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${deptBadge(z.dept)}
+          <button class="team-btn" onclick="deleteQAZoom('${z.id}')" style="color:#dc2626;padding:4px 8px;font-size:11px"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>
+        </div>
+      </div>
+      ${parts.length ? `<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+        <i data-lucide="users" style="width:13px;height:13px;color:var(--muted);flex-shrink:0"></i>
+        ${parts.map(p=>`<span style="font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 10px;color:var(--text)">${escHtml(p.trim())}</span>`).join('')}
+      </div>` : ''}
+      <div style="font-size:13px;color:var(--muted);line-height:1.6">${escHtml(z.summary)}</div>
+    </div>`;
+  }).join('');
+  if(window.lucide) lucide.createIcons();
+}
+
+function renderQAChat(){
+  const list = document.getElementById('qa-chat-list');
+  if(!list) return;
+  const dateInput = document.getElementById('qa-chat-date');
+  const filterDate = dateInput ? dateInput.value : '';
+  let items = getQAChat();
+  if(filterDate){
+    items = items.filter(c => c.date && c.date.startsWith(filterDate));
+  }
+  if(!items.length){
+    list.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;padding:48px 0;color:var(--muted);gap:12px">
+      <i data-lucide="message-circle-off" style="width:40px;height:40px;opacity:0.35"></i>
+      <div style="font-size:14px">${filterDate ? 'Нет саммери за этот день' : 'Нет саммери'}</div>
+    </div>`;
+    if(window.lucide) lucide.createIcons();
+    return;
+  }
+  list.innerHTML = items.map(c => {
+    const d = new Date(c.date);
+    const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+    return `<div class="dept-card" style="margin-bottom:12px;padding:18px 20px;cursor:default">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">
+            <i data-lucide="hash" style="width:14px;height:14px;vertical-align:middle;opacity:0.5"></i>
+            ${escHtml(c.chatName)}
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)">
+            <i data-lucide="calendar" style="width:13px;height:13px"></i>
+            ${escHtml(dateStr)}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${deptBadge(c.dept)}
+          <button class="team-btn" onclick="deleteQAChat('${c.id}')" style="color:#dc2626;padding:4px 8px;font-size:11px"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
+    </div>`;
+  }).join('');
+  if(window.lucide) lucide.createIcons();
+}
+
+function deleteQAZoom(id){
+  if(!confirm('Удалить встречу?')) return;
+  saveQAZoom(getQAZoom().filter(z=>z.id!==id));
+  renderQAZoom();
+}
+function deleteQAChat(id){
+  if(!confirm('Удалить саммери?')) return;
+  saveQAChat(getQAChat().filter(c=>c.id!==id));
+  renderQAChat();
+}
+
+function openAddZoomModal(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('qa-z-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  document.getElementById('qa-z-title').value = '';
+  document.getElementById('qa-z-participants').value = '';
+  document.getElementById('qa-z-summary').value = '';
+  document.getElementById('qa-zoom-add-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('qa-z-title').focus(), 50);
+}
+function closeAddZoomModal(){ document.getElementById('qa-zoom-add-modal').classList.remove('open'); }
+
+function saveZoomSummary(){
+  const title = document.getElementById('qa-z-title').value.trim();
+  if(!title){ alert('Введите название встречи'); return; }
+  const participants = document.getElementById('qa-z-participants').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const item = {
+    id: 'z'+Date.now(),
+    title,
+    date: document.getElementById('qa-z-date').value,
+    participants,
+    summary: document.getElementById('qa-z-summary').value.trim(),
+    dept: document.getElementById('qa-z-dept').value,
+  };
+  const items = getQAZoom();
+  items.unshift(item);
+  saveQAZoom(items);
+  closeAddZoomModal();
+  renderQAZoom();
+}
+
+function openAddChatModal(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('qa-c-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  document.getElementById('qa-c-name').value = '';
+  document.getElementById('qa-c-summary').value = '';
+  document.getElementById('qa-chat-add-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('qa-c-name').focus(), 50);
+}
+function closeAddChatModal(){ document.getElementById('qa-chat-add-modal').classList.remove('open'); }
+
+function saveChatSummary(){
+  const chatName = document.getElementById('qa-c-name').value.trim();
+  if(!chatName){ alert('Введите название чата'); return; }
+  const item = {
+    id: 'c'+Date.now(),
+    chatName,
+    date: document.getElementById('qa-c-date').value,
+    summary: document.getElementById('qa-c-summary').value.trim(),
+    dept: document.getElementById('qa-c-dept').value,
+  };
+  const items = getQAChat();
+  items.unshift(item);
+  saveQAChat(items);
+  closeAddChatModal();
+  renderQAChat();
+}
+
+// Close on overlay click
+['qa-zoom-add-modal','qa-chat-add-modal'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click',e=>{if(e.target.id===id) document.getElementById(id).classList.remove('open');});
+});
+
 // ── BOOT ────────────────────────────────────────────────
 initDefaultUsers();
 const _sess = currentSession();
@@ -3057,6 +3309,62 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
     </div>
   </div>
 </div>
+<!-- QA: ZOOM ADD MODAL -->
+<div class="team-modal-overlay" id="qa-zoom-add-modal">
+  <div class="team-modal" style="max-width:500px">
+    <div class="team-modal-title">Добавить Zoom встречу</div>
+    <label class="team-modal-label">Название встречи</label>
+    <input class="team-modal-input" id="qa-z-title" type="text" placeholder="Еженедельный синк с командой маркетинга" maxlength="120">
+    <label class="team-modal-label">Дата и время</label>
+    <input class="team-modal-input" id="qa-z-date" type="datetime-local">
+    <label class="team-modal-label">Участники (через запятую)</label>
+    <input class="team-modal-input" id="qa-z-participants" type="text" placeholder="Анна Иванова, Михаил Петров">
+    <label class="team-modal-label">Отдел</label>
+    <select class="team-modal-input" id="qa-z-dept">
+      <option value="Маркетинг">Маркетинг</option>
+      <option value="Продажи">Продажи</option>
+      <option value="Продукт">Продукт</option>
+      <option value="HR">HR</option>
+      <option value="Операции">Операции</option>
+      <option value="Технологии">Технологии</option>
+      <option value="Финансы">Финансы</option>
+    </select>
+    <label class="team-modal-label">Саммери</label>
+    <textarea class="team-modal-input" id="qa-z-summary" rows="4" placeholder="Что обсуждалось на встрече..."></textarea>
+    <div class="team-modal-footer">
+      <button class="team-btn" onclick="closeAddZoomModal()">Отмена</button>
+      <button class="team-btn primary" onclick="saveZoomSummary()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- QA: CHAT ADD MODAL -->
+<div class="team-modal-overlay" id="qa-chat-add-modal">
+  <div class="team-modal" style="max-width:500px">
+    <div class="team-modal-title">Добавить чат саммери</div>
+    <label class="team-modal-label">Название чата / канала</label>
+    <input class="team-modal-input" id="qa-c-name" type="text" placeholder="#маркетинг-общий" maxlength="100">
+    <label class="team-modal-label">Дата</label>
+    <input class="team-modal-input" id="qa-c-date" type="date">
+    <label class="team-modal-label">Отдел</label>
+    <select class="team-modal-input" id="qa-c-dept">
+      <option value="Маркетинг">Маркетинг</option>
+      <option value="Продажи">Продажи</option>
+      <option value="Продукт">Продукт</option>
+      <option value="HR">HR</option>
+      <option value="Операции">Операции</option>
+      <option value="Технологии">Технологии</option>
+      <option value="Финансы">Финансы</option>
+    </select>
+    <label class="team-modal-label">Саммери</label>
+    <textarea class="team-modal-input" id="qa-c-summary" rows="4" placeholder="Ключевые темы и решения из чата..."></textarea>
+    <div class="team-modal-footer">
+      <button class="team-btn" onclick="closeAddChatModal()">Отмена</button>
+      <button class="team-btn primary" onclick="saveChatSummary()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <div class="team-modal-overlay" id="team-detail-modal">
   <div class="team-modal" style="max-width:540px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
