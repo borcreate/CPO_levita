@@ -1691,7 +1691,7 @@ function showTab(name,el){
   el.classList.add('active');
   if(name==='analytics'&&!analyticsInited){ initAnalyticsCharts(); analyticsInited=true; }
   if(name==='materials'){ renderMaterials(); }
-  if(name==='qa'){ initQADemoData(); qaInitFilter(); qaFetchAndRender(); setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50); }
+  if(name==='qa'){ qaInitFilter(); qaFetchAndRender(); setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50); }
   // Скрываем фильтр и алерт-баннер на вкладках где они не нужны
   const hidePeriod = ['map','materials','qa'];
   const periodBar = document.getElementById('period-bar');
@@ -3181,6 +3181,7 @@ function qaInitFilter(){
 // Fetch from API, fallback to localStorage
 async function qaFetchAndRender(){
   qaApiData = null;
+  let apiReachable = false;
   try {
     let url = `${QA_API_BASE}/api/summaries/chat?`;
     if(qaActivePeriod === 'day'){
@@ -3198,6 +3199,7 @@ async function qaFetchAndRender(){
 
     const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
     if(res.ok){
+      apiReachable = true;
       const dayData = await res.json();
 
       // Also fetch period-specific (week/month) summaries
@@ -3227,17 +3229,19 @@ async function qaFetchAndRender(){
         source: 'api'
       }));
 
-      if(merged.length > 0){
-        qaApiData = merged;
-        document.getElementById('qa-api-badge').style.display = '';
-        document.getElementById('qa-offline-badge').style.display = 'none';
-        renderQAByDepts();
-        return;
-      }
+      // API доступен — используем его данные (даже если пусто), очищаем localStorage от демо
+      qaApiData = merged; // может быть пустым массивом — это нормально
+      localStorage.removeItem(QA_CHAT_KEY);
+      localStorage.removeItem(QA_ZOOM_KEY);
+      document.getElementById('qa-api-badge').style.display = '';
+      document.getElementById('qa-offline-badge').style.display = 'none';
+      renderQAByDepts();
+      return;
     }
   } catch(e){ /* API недоступен */ }
 
-  // Fallback to localStorage
+  // Fallback to localStorage (API недоступен или вернул не-ok)
+  initQADemoData(); // инициализируем демо только если localStorage пуст
   document.getElementById('qa-api-badge').style.display = 'none';
   document.getElementById('qa-offline-badge').style.display = '';
   renderQAByDepts();
@@ -3266,11 +3270,11 @@ function renderQAByDepts(){
   const container = document.getElementById('qa-depts-list');
   if(!container) return;
 
-  const allZooms = getQAZoom();
-  // Use API data if available, otherwise localStorage chats
-  const localChats = getQAChat();
-  const apiChats = qaApiData || [];
-  const allChats = apiChats.length > 0 ? [...apiChats, ...localChats] : localChats;
+  // API режим: qaApiData !== null (даже если пустой массив — API доступен, localStorage игнорируем)
+  // Offline режим: qaApiData === null — используем localStorage
+  const apiAvailable = qaApiData !== null;
+  const allZooms = apiAvailable ? [] : getQAZoom();
+  const allChats = apiAvailable ? qaApiData : getQAChat();
 
   const html = QA_DEPTS.map(deptName => {
     const zooms = allZooms.filter(z => z.dept === deptName && qaMatchesFilter(z));
