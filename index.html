@@ -740,9 +740,6 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
       <i data-lucide="filter" style="width:14px;height:14px;color:var(--gold);flex-shrink:0"></i>
       <!-- Day picker -->
-      <button id="qa-yesterday-btn" onclick="qaSetYesterday()" style="background:none;border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:color .15s,border-color .15s" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold)'" onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
-        <i data-lucide="chevron-left" style="width:13px;height:13px"></i> Вчера
-      </button>
       <input type="date" id="qa-date-filter" class="team-modal-input" style="width:auto;padding:5px 10px;font-size:12px;display:block" onchange="qaPickerChanged()">
       <!-- Week picker -->
       <input type="week" id="qa-week-filter" class="team-modal-input" style="width:auto;padding:5px 10px;font-size:12px;display:none" onchange="qaPickerChanged()">
@@ -3005,7 +3002,10 @@ const QA_DEPTS = [
   'Отдел ШМП',
   'Маркетинг партнёров',
   'Территориальные управляющие',
+  'Комьюнити менеджер',
   'Обучение и контроль качества',
+  'Академия администраторов',
+  'Академия педагогов',
   'Руководители',
 ];
 
@@ -3097,23 +3097,9 @@ function qaUpdatePickerVisibility(){
   const dayPicker = document.getElementById('qa-date-filter');
   const weekPicker = document.getElementById('qa-week-filter');
   const monthPicker = document.getElementById('qa-month-filter');
-  const yestBtn = document.getElementById('qa-yesterday-btn');
   if(dayPicker) dayPicker.style.display = qaActivePeriod === 'day' ? 'block' : 'none';
   if(weekPicker) weekPicker.style.display = qaActivePeriod === 'week' ? 'block' : 'none';
   if(monthPicker) monthPicker.style.display = qaActivePeriod === 'month' ? 'block' : 'none';
-  if(yestBtn) yestBtn.style.display = qaActivePeriod === 'day' ? 'flex' : 'none';
-}
-
-function qaSetYesterday(){
-  if(qaActivePeriod !== 'day') return;
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  const pad = n => String(n).padStart(2,'0');
-  const yesterday = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  const inp = document.getElementById('qa-date-filter');
-  if(inp) inp.value = yesterday;
-  qaFilterDate = yesterday;
-  qaFetchAndRender();
 }
 
 function qaSetPeriod(period){
@@ -3177,7 +3163,7 @@ async function qaFetchAndRender(){
       url += `period=day&month=${month}`;
     }
 
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
     if(res.ok){
       apiReachable = true;
       const dayData = await res.json();
@@ -3186,13 +3172,13 @@ async function qaFetchAndRender(){
       let periodData = [];
       if(qaActivePeriod === 'week'){
         const range = qaWeekRange(qaFilterDate || qaGetCurrentWeek());
-        const r2 = await fetch(`${QA_API_BASE}/api/summaries/chat?period=week&from=${range.from}&to=${range.to}`);
+        const r2 = await fetch(`${QA_API_BASE}/api/summaries/chat?period=week&from=${range.from}&to=${range.to}`, { signal: AbortSignal.timeout(4000) });
         if(r2.ok) periodData = await r2.json();
       } else if(qaActivePeriod === 'month'){
         const month = qaFilterDate || qaGetCurrentMonth();
         const [r2, r3] = await Promise.all([
-          fetch(`${QA_API_BASE}/api/summaries/chat?period=week&month=${month}`),
-          fetch(`${QA_API_BASE}/api/summaries/chat?period=month&month=${month}`),
+          fetch(`${QA_API_BASE}/api/summaries/chat?period=week&month=${month}`, { signal: AbortSignal.timeout(4000) }),
+          fetch(`${QA_API_BASE}/api/summaries/chat?period=month&month=${month}`, { signal: AbortSignal.timeout(4000) }),
         ]);
         if(r2.ok) periodData = [...periodData, ...(await r2.json())];
         if(r3.ok) periodData = [...periodData, ...(await r3.json())];
@@ -3201,14 +3187,13 @@ async function qaFetchAndRender(){
       // Merge: dayData + periodData → map to QAChat format
       const merged = [...dayData, ...periodData].map(s => ({
         id: String(s.id),
-        chatName: s.chatName || s.chat_name || '—',
+        chatName: s.chatName,
         date: s.date,
         summary: s.summary,
         dept: s.dept,
         period: s.period || 'day',
-        source: s.source || 'api'
+        source: 'api'
       }));
-      console.log('QA API data:', merged);
 
       // API доступен — используем его данные (даже если пусто), очищаем localStorage от демо
       qaApiData = merged; // может быть пустым массивом — это нормально
@@ -3219,7 +3204,7 @@ async function qaFetchAndRender(){
       renderQAByDepts();
       return;
     }
-  } catch(e){ console.error('QA API fetch error:', e); /* API недоступен */ }
+  } catch(e){ /* API недоступен */ }
 
   // Fallback: API недоступен — показываем пустой стейт
   document.getElementById('qa-api-badge').style.display = 'none';
