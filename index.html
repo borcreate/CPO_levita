@@ -1017,7 +1017,7 @@ function sparkline(data, color, width=60, height=20){
 }
 
 // ── RENDER KFU ──────────────────────────────────────────────
-const KFU_CHART_IDS=['c-ltv','c-brand',null,null,null,'c-nps',null];
+const KFU_CHART_IDS=['c-ltv','c-brand',null,null,null,'c-nps-p',null];
 function renderKFU(){
   const rows = [document.getElementById('kfu-row1'), document.getElementById('kfu-row2')];
   KFU.forEach((k,i)=>{
@@ -1078,7 +1078,7 @@ function renderKFU(){
         <div class="kfu-divider"></div>
         <div class="kfu-metrics">${metricsHtml}</div>
         ${kfuProgHtml}
-        ${KFU_CHART_IDS[k._idx]?`<div style="margin-top:8px"><button onclick="document.getElementById('${KFU_CHART_IDS[k._idx]}')?.closest('.card')?.scrollIntoView({behavior:'smooth',block:'center'})" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px"><i data-lucide="trending-up" style="width:12px;height:12px"></i> смотреть тренд</button></div>`:''}
+        ${KFU_CHART_IDS[k._idx]?`<div style="margin-top:8px"><button onclick="(function(){const tab=document.querySelectorAll('.nav-tab')[2];showTab('analytics',tab);setTimeout(()=>{const el=document.getElementById('${KFU_CHART_IDS[k._idx]}');if(el)el.closest('.card')?.scrollIntoView({behavior:'smooth',block:'center'});},300);})()" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px"><i data-lucide="trending-up" style="width:12px;height:12px"></i> смотреть тренд</button></div>`:''}
       </div>`;
     rows[i<3?0:1].appendChild(el);
   });
