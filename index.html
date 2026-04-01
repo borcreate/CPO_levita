@@ -1987,15 +1987,48 @@ function lastNonZero(arr){
   return{v:arr[0],i:0};
 }
 
+const LIVE_CACHE_KEY = 'levita_live_cache_v1';
+const LIVE_CACHE_TTL = 15 * 60 * 1000; // 15 минут
+
 async function loadLiveData(){
   // Показываем skeleton на stat-val элементах
   document.querySelectorAll('.stat-val').forEach(el=>{el.dataset.orig=el.textContent;el.classList.add('skeleton');el.style.minWidth='60px';el.style.minHeight='24px'});
+
+  // Проверяем кэш — если свежий, рендерим сразу без запроса
+  try {
+    const cached = JSON.parse(localStorage.getItem(LIVE_CACHE_KEY)||'null');
+    if(cached && (Date.now()-cached.ts) < LIVE_CACHE_TTL){
+      applyLiveData(cached.svod, cached.full);
+      // Обновляем в фоне
+      fetchAndCacheLiveData().catch(()=>{});
+      return;
+    }
+  } catch(e){}
+
+  await fetchAndCacheLiveData();
+}
+
+async function fetchAndCacheLiveData(){
   try{
     // ── Грузим сводный раздел напрямую по диапазону (надёжнее чем поиск по всему листу) ──
     const [svodRows, fullRows] = await Promise.all([
       fetchSheet('Аналитика года', 'A245:M310'),
       fetchSheet('Аналитика года'),
     ]);
+    try{ localStorage.setItem(LIVE_CACHE_KEY, JSON.stringify({ts:Date.now(),svod:svodRows,full:fullRows})); }catch(e){}
+    applyLiveData(svodRows, fullRows);
+  }catch(e){
+    document.querySelectorAll('.stat-val.skeleton').forEach(el=>{el.classList.remove('skeleton');el.style.minWidth='';el.style.minHeight=''});
+    console.warn('⚠️ Live data load failed:', e);
+    document.getElementById('kfu-row1').innerHTML='';
+    document.getElementById('kfu-row2').innerHTML='';
+    renderKFU();
+    redrawCharts();
+  }
+}
+
+async function applyLiveData(svodRows, fullRows){
+  try{
 
     const nonZero=v=>v!==null&&v!==undefined&&v!==0&&v!=='';
     // Конвертация: если значение 0.14 → 14, если 14 → 14
@@ -2100,7 +2133,6 @@ async function loadLiveData(){
   }catch(e){
     document.querySelectorAll('.stat-val.skeleton').forEach(el=>{el.classList.remove('skeleton');el.style.minWidth='';el.style.minHeight=''});
     console.warn('⚠️ Live data load failed:', e);
-    // При ошибке всё равно перерисовываем с дефолтными данными
     document.getElementById('kfu-row1').innerHTML='';
     document.getElementById('kfu-row2').innerHTML='';
     renderKFU();
