@@ -1024,9 +1024,13 @@ function renderKFU(){
     const el = document.createElement('div');
     el.className='kfu-card';
     // Цвет карточки = среднее по всем метрикам (как в светофоре и summary bar)
-    const _cardPcts=[];k.metrics.forEach(m=>{if(m.type==='gt')_cardPcts.push(m.f>m.cmp?100:50);else if(typeof m.f==='number'&&m.p!=null&&m.p!==0)_cardPcts.push(Math.round(m.f/m.p*100));});
+    const _cardPcts=[];k.metrics.forEach(m=>{
+      if(m.f===null||m.f===undefined) return; // нет данных — не учитываем
+      if(m.type==='gt'){ if(m.cmp!==null&&m.cmp!==undefined) _cardPcts.push(m.f>m.cmp?100:50); }
+      else if(typeof m.f==='number'&&m.p!=null&&m.p!==0) _cardPcts.push(Math.round(m.f/m.p*100));
+    });
     const _cardAvg=_cardPcts.length?Math.round(_cardPcts.reduce((a,b)=>a+b,0)/_cardPcts.length):null;
-    const color=_cardAvg!==null?sc(_cardAvg):C.green;
+    const color=_cardAvg!==null?sc(_cardAvg):C.gray; // нет данных = серый
     const _sparkSources=[LTV,BRAND_F,CONV_F,NPS_ZAN_F,CRM_F,NPS_PF,null];
     const _sparkSvg=(_sparkSources[k._idx]&&_sparkSources[k._idx].some(v=>v))?sparkline(_sparkSources[k._idx],color):'';
     const metricsHtml = k.metrics.map(m=>{
@@ -1902,12 +1906,13 @@ function updateKFUCards(){
   // Для одного месяца — берём значение этого месяца
   // Для нескольких — среднее (%) или среднее (₽)
   // Для нуля выбранных — последний заполненный месяц
+  // Если данных нет за выбранный период — возвращаем null (не берём из других месяцев)
   const getAvg=(arr)=>{
     if(selectedMonths.size===0){
       return lastNonZero(arr).v;
     }
     const vals=[...selectedMonths].map(i=>arr[i]).filter(v=>v!==null&&v!==undefined&&v!==0);
-    if(!vals.length)return lastNonZero(arr).v;
+    if(!vals.length) return null; // нет данных за выбранный период
     if(vals.length===1)return vals[0];
     return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
   };
@@ -1916,21 +1921,23 @@ function updateKFUCards(){
   const cacAvg=getAvg(CAC);
   KFU[0].metrics[0].f  =ltvAvg;
   KFU[0].metrics[0].cmp=cacAvg;
-  KFU[0].metrics[0].hint=`LTV ${Math.round(ltvAvg).toLocaleString('ru-RU')} ${ltvAvg>cacAvg?'>':'<'} CAC ${Math.round(cacAvg).toLocaleString('ru-RU')} — маркетинг ${ltvAvg>cacAvg?'окупается':'не окупается'}`;
-  const ltvRatio=cacAvg>0?(ltvAvg/cacAvg).toFixed(2):null;
-  const ltvEl=document.getElementById('ltv-chart-title');
-  if(ltvEl&&ltvRatio){
-    const ratioColor=ltvAvg>=cacAvg?'#34d399':'#fb7185';
-    const arrow=ltvAvg>=cacAvg?'↑':'↓';
-    ltvEl.innerHTML=`LTV vs CAC <span style="font-size:12px;font-weight:600;color:${ratioColor};margin-left:6px">${arrow} ${ltvRatio}×</span>`;
-  }
+  if(ltvAvg!==null&&cacAvg!==null){
+    KFU[0].metrics[0].hint=`LTV ${Math.round(ltvAvg).toLocaleString('ru-RU')} ${ltvAvg>cacAvg?'>':'<'} CAC ${Math.round(cacAvg).toLocaleString('ru-RU')} — маркетинг ${ltvAvg>cacAvg?'окупается':'не окупается'}`;
+    const ltvRatio=cacAvg>0?(ltvAvg/cacAvg).toFixed(2):null;
+    const ltvEl=document.getElementById('ltv-chart-title');
+    if(ltvEl&&ltvRatio){
+      const ratioColor=ltvAvg>=cacAvg?'#34d399':'#fb7185';
+      const arrow=ltvAvg>=cacAvg?'↑':'↓';
+      ltvEl.innerHTML=`LTV vs CAC <span style="font-size:12px;font-weight:600;color:${ratioColor};margin-left:6px">${arrow} ${ltvRatio}×</span>`;
+    }
+  } else { KFU[0].metrics[0].hint=''; }
   KFU[0].metrics[1].f=getAvg(PROFIT);
 
   const brandF=getAvg(BRAND_F);
   const brandP=getAvg(BRAND_P);
   KFU[1].metrics[0].f=brandF;
   KFU[1].metrics[0].p=brandP;
-  KFU[1].metrics[0].hint=brandP>0?(brandF>=brandP?`${Math.round(brandF/brandP*100)}% плана — выше плана 🎉`:`Ниже плана — нужен рост (${Math.round(brandF/brandP*100)}%)`):'суммарный брендовый спрос';
+  KFU[1].metrics[0].hint=(brandF!==null&&brandP!==null&&brandP>0)?(brandF>=brandP?`${Math.round(brandF/brandP*100)}% плана — выше плана 🎉`:`Ниже плана — нужен рост (${Math.round(brandF/brandP*100)}%)`):(brandF!==null?'суммарный брендовый спрос':'');
 
   KFU[2].metrics[0].f=getAvg(CONV_F);
   KFU[2].metrics[0].p=getAvg(CONV_P);
@@ -1947,8 +1954,8 @@ function updateKFUCards(){
   // NPS партнёров: значения уже в % (напр. 95), план тоже в %
   const npsPf=getAvg(NPS_PF);
   const npsPp=getAvg(NPS_PP);
-  KFU[5].metrics[0].f=npsPf>1?npsPf:Math.round(npsPf*100);
-  KFU[5].metrics[0].p=npsPp>1?npsPp:Math.round(npsPp*100);
+  KFU[5].metrics[0].f=npsPf===null?null:(npsPf>1?npsPf:Math.round(npsPf*100));
+  KFU[5].metrics[0].p=npsPp===null?null:(npsPp>1?npsPp:Math.round(npsPp*100));
 
   document.getElementById('kfu-row1').innerHTML='';
   document.getElementById('kfu-row2').innerHTML='';
@@ -3346,26 +3353,58 @@ function renderQAByDepts(){
       </div>`;
     }).join('');
 
-    const chatCards = chats.map(c => {
-      const d = new Date(c.date);
-      const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
-      const isApiEntry = c.source === 'api';
-      const deleteBtn = isApiEntry ? '' : `<button class="team-btn" onclick="deleteQAChat('${c.id}')" style="color:#dc2626;padding:3px 7px;font-size:11px;flex-shrink:0"><i data-lucide="trash-2" style="width:11px;height:11px"></i></button>`;
-      return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
-          <div>
-            <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">
-              <i data-lucide="hash" style="width:13px;height:13px;vertical-align:middle;opacity:0.5"></i>${escHtml(c.chatName)}${periodLabel(c.period)}
+    // При неделе/месяце — группируем дневные саммери по chatName и аккумулируем
+    let chatCards = '';
+    if(qaActivePeriod === 'day'){
+      chatCards = chats.map(c => {
+        const d = new Date(c.date);
+        const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+        const isApiEntry = c.source === 'api';
+        const deleteBtn = isApiEntry ? '' : `<button class="team-btn" onclick="deleteQAChat('${c.id}')" style="color:#dc2626;padding:3px 7px;font-size:11px;flex-shrink:0"><i data-lucide="trash-2" style="width:11px;height:11px"></i></button>`;
+        return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">
+                <i data-lucide="hash" style="width:13px;height:13px;vertical-align:middle;opacity:0.5"></i>${escHtml(c.chatName)}
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)">
+                <i data-lucide="calendar" style="width:11px;height:11px"></i>${escHtml(dateStr)}
+              </div>
             </div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)">
-              <i data-lucide="calendar" style="width:11px;height:11px"></i>${escHtml(dateStr)}
-            </div>
+            ${deleteBtn}
           </div>
-          ${deleteBtn}
-        </div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
-      </div>`;
-    }).join('');
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
+        </div>`;
+      }).join('');
+    } else {
+      // Неделя/месяц — группируем по chatName, внутри сортируем по дате, каждый день — отдельный блок
+      const grouped = {};
+      chats.forEach(c => {
+        if(!grouped[c.chatName]) grouped[c.chatName] = [];
+        grouped[c.chatName].push(c);
+      });
+      chatCards = Object.entries(grouped).map(([chatName, items]) => {
+        items.sort((a,b) => (a.date||'') > (b.date||'') ? 1 : -1);
+        const dayBlocks = items.map(c => {
+          const d = new Date(c.date);
+          const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'short'});
+          return `<div style="padding:10px 0;border-top:1px solid var(--border)">
+            <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">${escHtml(dateStr)}</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
+          </div>`;
+        }).join('');
+        const label = qaActivePeriod === 'week'
+          ? `<span style="font-size:10px;background:#2563eb22;color:#2563eb;border:1px solid #2563eb44;border-radius:20px;padding:1px 8px;font-weight:600;margin-left:6px">НЕДЕЛЯ</span>`
+          : `<span style="font-size:10px;background:#7c3aed22;color:#7c3aed;border:1px solid #7c3aed44;border-radius:20px;padding:1px 8px;font-weight:600;margin-left:6px">МЕСЯЦ</span>`;
+        return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px">
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px">
+            <i data-lucide="hash" style="width:13px;height:13px;vertical-align:middle;opacity:0.5"></i>${escHtml(chatName)}${label}
+            <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px">${items.length} ${items.length===1?'день':'дн.'}</span>
+          </div>
+          ${dayBlocks}
+        </div>`;
+      }).join('');
+    }
 
     const periodName = qaActivePeriod === 'day' ? ' за этот день' : qaActivePeriod === 'week' ? ' за эту неделю' : ' за этот месяц';
     const emptyState = !hasContent ? `<div style="display:flex;align-items:center;gap:8px;padding:18px 0;color:var(--muted);font-size:13px">
