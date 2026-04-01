@@ -858,7 +858,8 @@ function icon(name, size=16, color='currentColor'){
 function pct(f,p){ if(!p||p===0) return null; return Math.round(f/p*100); }
 // type='gt': f > cmp = зелёный (LTV > CAC), иначе красный
 function scMetric(m){
-  if(m.type==='gt'){ return m.f > m.cmp ? C.green : C.red; }
+  if(m.f===null||m.f===undefined) return C.gray; // нет данных — серый, без оценки
+  if(m.type==='gt'){ return (m.f!==null&&m.cmp!==null&&m.f>m.cmp) ? C.green : (m.f===null||m.cmp===null?C.gray:C.red); }
   const p = (typeof m.f==='number'&&m.p!=null) ? Math.round(m.f/m.p*100) : null;
   return sc(p);
 }
@@ -967,11 +968,12 @@ function renderKFUSummaryBar(){
   KFU.forEach((k,i)=>{
     let pcts=[];
     k.metrics.forEach(m=>{
-      if(m.type==='gt') pcts.push(m.f>m.cmp?100:50);
+      if(m.f===null||m.f===undefined) return; // нет данных — не считаем
+      if(m.type==='gt'){ if(m.cmp!==null&&m.cmp!==undefined) pcts.push(m.f>m.cmp?100:50); }
       else if(typeof m.f==='number'&&m.p!=null) pcts.push(Math.round(m.f/m.p*100));
     });
     const avg=pcts.length?Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length):null;
-    if(avg===null)return;
+    if(avg===null)return; // нет данных за период — не добавляем в счётчик
     if(avg>=85)good++;
     else if(avg>=60)warn++;
     else{crit++;critNames.push(k.title);}
@@ -1804,7 +1806,7 @@ const DEPT_MONTH_DATA = {
 function getAvgFor(arr){
   if(selectedMonths.size===0){return lastNonZero(arr).v;}
   const vals=[...selectedMonths].map(i=>arr[i]).filter(v=>v!==null&&v!==undefined&&v!==0);
-  if(!vals.length)return lastNonZero(arr).v;
+  if(!vals.length) return null; // нет данных за выбранный период — не подставлять из других месяцев
   return vals.length===1?vals[0]:Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
 }
 
