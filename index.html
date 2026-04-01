@@ -1099,13 +1099,13 @@ const DEPTS = [
     name:'Отдел открытий', num:1,
     stats:[
       {l:'Открытий студий',v:'11 шт',sub:'янв–мар'},
-      {l:'Срок открытия',v:'19 мес',sub:'среднее'},
+      {l:'Срок открытия',v:'27.5 мес',sub:'среднее'},
       {l:'Расходы на откр.',v:'600К ₽',sub:'итого'},
       {l:'NPS отдела',v:'—',sub:'нет данных'},
     ],
     table:[
       {n:'Кол-во открытий',f:'11',p:'—',pct:null},
-      {n:'Срок открытия (мес.)',f:'19',p:'—',pct:null},
+      {n:'Срок открытия (мес.)',f:'27.5',p:'—',pct:null},
       {n:'Расходы (₽)',f:'600 000',p:'—',pct:null},
     ],
     chart:{id:'d-openings',render:()=>{
@@ -1799,6 +1799,12 @@ const DEPT_MONTH_DATA = {
   acadIn:  ACAD_IN,
   acadC:   ACAD_C,
   npsZan:  NPS_ZAN_F,
+  // Отдел открытий — по месяцам из таблицы "Аналитика года"
+  openings: {
+    count:    [10, 1, 0, 0,0,0,0,0,0,0,0,0],   // кол-во открытий
+    duration: [36, 19, 0, 0,0,0,0,0,0,0,0,0],  // срок открытия (мес)
+    expenses: [0, 500000, 100000, 0,0,0,0,0,0,0,0,0], // расходы (₽)
+  },
 };
 
 function getAvgFor(arr){
@@ -1819,6 +1825,36 @@ function updateDeptsForPeriod(){
   const lbl = selectedMonths.size===0
     ? MONTH_LABELS[new Date().getMonth()]
     : [...selectedMonths].sort((a,b)=>a-b).map(i=>MONTH_LABELS[i]).join('+');
+
+  // ── Отдел 0 (Открытий, индекс 0) ──
+  (()=>{
+    const od = DEPT_MONTH_DATA.openings;
+    let months = selectedMonths.size===0
+      ? [0,1,2].filter(i=>od.count[i]>0||od.expenses[i]>0)  // все месяцы с данными
+      : [...selectedMonths];
+
+    // Кол-во открытий — сумма за выбранный период
+    const totalCount = months.reduce((s,i)=>s+(od.count[i]||0),0);
+    // Срок — среднее только по месяцам где есть данные
+    const durMonths = months.filter(i=>od.duration[i]>0);
+    const avgDur = durMonths.length ? Math.round(durMonths.reduce((s,i)=>s+od.duration[i],0)/durMonths.length) : 0;
+    // Расходы — сумма
+    const totalExp = months.reduce((s,i)=>s+(od.expenses[i]||0),0);
+
+    const periodLabel = selectedMonths.size===0
+      ? months.length>1 ? MONTH_LABELS[months[0]]+'–'+MONTH_LABELS[months[months.length-1]] : lbl
+      : lbl;
+
+    setDStat(0, 0, totalCount+' шт', periodLabel);
+    setDStat(0, 1, avgDur ? avgDur+' мес' : '—', 'среднее');
+    setDStat(0, 2, totalExp ? (totalExp>=1000000?(totalExp/1000000).toFixed(1)+'M ₽':(totalExp/1000).toFixed(0)+'К ₽') : '—', 'итого');
+
+    // Таблица
+    const factCells = document.querySelectorAll('#dept-0 .td-fact');
+    if(factCells[0]) factCells[0].textContent = totalCount;
+    if(factCells[1]) factCells[1].textContent = avgDur ? avgDur : '—';
+    if(factCells[2]) factCells[2].textContent = totalExp ? totalExp.toLocaleString('ru-RU')+' ₽' : '—';
+  })();
 
   // ── Отдел 3 (Маркетинг, индекс 2): Клиенты сети ──
   const clients = getAvgFor(CLIENTS);
