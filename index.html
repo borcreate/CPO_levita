@@ -1020,6 +1020,7 @@ function sparkline(data, color, width=60, height=20){
 const KFU_CHART_IDS=['c-ltv','c-brand',null,null,null,'c-nps-p',null];
 function renderKFU(){
   const rows = [document.getElementById('kfu-row1'), document.getElementById('kfu-row2')];
+  rows.forEach(r=>{ if(r) r.innerHTML=''; });
   KFU.forEach((k,i)=>{
     const el = document.createElement('div');
     el.className='kfu-card';
