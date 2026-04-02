@@ -2540,19 +2540,25 @@ function runCountAnimations(){
 // TRAFFIC LIGHT (светофор по отделам)
 // ══════════════════════════════════════════════════════════
 function getDeptStatus(deptIdx){
-  // Простая логика: смотрим на tasks и owner
-  // Можно расширить реальными KPI
-  const statusMap = {
-    0: {label:'Отдел открытий', status:'yellow', sub:'11 открытий'},
-    1: {label:'Отдел ШМП', status:'red', sub:'57% плана'},
-    2: {label:'Маркетинг', status:'yellow', sub:'79 лидов'},
-    3: {label:'Терр. управляющие', status:'green', sub:'NPS 80%'},
-    4: {label:'Комьюнити', status:'red', sub:'0 мероприятий'},
-    5: {label:'Обучение и КК', status:'green', sub:'NPS 92%'},
-    6: {label:'Академия адм.', status:'yellow', sub:'38% выпуск'},
-    7: {label:'Академия пед.', status:'green', sub:'86% доходимость'},
+  // Статус на основе реальных данных из массивов
+  const deptName = DEPTS[deptIdx] ? DEPTS[deptIdx].name : 'Отдел '+deptIdx;
+  const dataMap = {
+    0: ()=>{ const v=lastNonZero(DEPT_MONTH_DATA.openings.count).v; return v?{sub:v+' открытий',pct:null}:{sub:'нет данных',pct:null}; },
+    1: ()=>{ const f=lastNonZero(DEPT_MONTH_DATA.shmp.fact).v,p=lastNonZero(DEPT_MONTH_DATA.shmp.plan).v; return f&&p?{sub:Math.round(f/p*100)+'% плана',pct:Math.round(f/p*100)}:{sub:'нет данных',pct:null}; },
+    2: ()=>{ const v=lastNonZero(SMM_INST).v; return v?{sub:v.toLocaleString('ru-RU')+' охват',pct:null}:{sub:'нет данных',pct:null}; },
+    3: ()=>{ const v=lastNonZero(CLIENTS).v; return v?{sub:v.toLocaleString('ru-RU')+' клиентов',pct:null}:{sub:'нет данных',pct:null}; },
+    4: ()=>{ return {sub:'нет данных',pct:null}; },
+    5: ()=>{ const v=lastNonZero(NPS_ZAN_F).v; return v?{sub:'NPS '+v+'%',pct:v}:{sub:'нет данных',pct:null}; },
+    6: ()=>{ const v=lastNonZero(ACAD_IN).v; return v?{sub:v+' зашли',pct:null}:{sub:'нет данных',pct:null}; },
+    7: ()=>{ return {sub:'нет данных',pct:null}; },
   };
-  return statusMap[deptIdx] || {label:'Отдел '+deptIdx, status:'yellow', sub:''};
+  const d = dataMap[deptIdx] ? dataMap[deptIdx]() : {sub:'',pct:null};
+  let status = 'yellow';
+  if(d.pct===null) status = 'yellow';
+  else if(d.pct >= 85) status = 'green';
+  else if(d.pct >= 60) status = 'yellow';
+  else status = 'red';
+  return {label: deptName, status, sub: d.sub};
 }
 
 function getKFUTrafficStatus(){
@@ -2560,16 +2566,16 @@ function getKFUTrafficStatus(){
   return KFU.map((k, i) => {
     let pcts = [];
     k.metrics.forEach(m => {
+      if(m.f===null||m.f===undefined) return; // нет данных
       if(m.type === 'gt') {
-        // LTV vs CAC: зелёный если LTV > CAC
-        pcts.push(m.f > m.cmp ? 100 : 50);
+        if(m.cmp!==null&&m.cmp!==undefined) pcts.push(m.f > m.cmp ? 100 : 50);
       } else if(typeof m.f === 'number' && m.p != null) {
         pcts.push(Math.round(m.f / m.p * 100));
       }
     });
     const avg = pcts.length ? pcts.reduce((a,b)=>a+b,0)/pcts.length : null;
     let status = 'yellow';
-    if(avg === null) status = 'yellow';
+    if(avg === null) status = 'yellow'; // нет данных — не красим
     else if(avg >= 85) status = 'green';
     else if(avg >= 60) status = 'yellow';
     else status = 'red';
