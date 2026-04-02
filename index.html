@@ -783,7 +783,13 @@ const CLIENTS = N12();
 const ACAD_IN = N12();
 const ACAD_C  = N12();
 const NPS_ZAN_F = N12();
-const NPS_ZAN_P = Array(12).fill(85); // план фиксированный — цель ≥85%
+const NPS_ZAN_P = N12(); // план из таблицы
+// Планы KFU — загружаются из таблицы (сводный раздел)
+const PROFIT_P    = N12(); // план % партнёров с ЧП ≥300К
+const AMB_P       = N12(); // план % амбасадорских направлений
+const IND_TRUST_P = N12(); // план индекс доверия партнёров
+const COMM_PART_P = N12(); // план % участия в мероприятиях
+const ACHIEVEMENTS_P = N12(); // план кол-во достижений в сети
 const SHMP_L  = ['1 курс','2 курс','3.1 курс','3.2 курс'];
 const SHMP_P  = [null,null,null,null];
 const SHMP_F2 = [null,null,null,null];
@@ -807,7 +813,7 @@ const KFU = [
     // LTV сравниваем с CAC (не с планом) — если выше, хорошо
     metrics:[
       {l:'LTV vs CAC',f:null,cmp:null,u:'₽',hint:'',type:'gt'},
-      {l:'Партнёры с ЧП ≥300К',f:null,p:80,u:'%'},
+      {l:'Партнёры с ЧП ≥300К',f:null,p:null,u:'%'},
     ] },
   { _idx:1, title:'Спрос / PR',
     desc:'Бренд даёт доверие и конверсию, есть стабильный "фундамент" входящего трафика',
@@ -827,8 +833,8 @@ const KFU = [
     desc:'Клиент реально получает ощущаемый результат и возвращается снова',
     ckp:'Клиент получает ощущаемый результат, минимальная негативная и высокая доля удержания. Педагоги работают по регламентам, постоянно собирается обратная связь от клиентов и тайных покупателей. Доля амбасадорских направлений растёт от года к году.',
     metrics:[
-      {l:'NPS занятий',f:null,p:85,u:'%'},
-      {l:'% амб. направлений',f:null,p:25,u:'%'},
+      {l:'NPS занятий',f:null,p:null,u:'%'},
+      {l:'% амб. направлений',f:null,p:null,u:'%'},
     ] },
   { _idx:4, title:'IT + данные',
     desc:'В любой момент видно — где дырка, кто не выполняет, что делать прямо сейчас',
@@ -841,15 +847,15 @@ const KFU = [
     desc:'"Со мной честны, правила понятны, ко мне относятся уважительно" — так должен чувствовать партнёр',
     ckp:'Партнёр чувствует "со мной честны, правила понятны, изменения предсказуемы и логичны". Нет ощущения что сеть просто собирает деньги. Конфликты решаются быстро и по процедуре, без эмоций и унижения. Хорошие партнёры получают больше возможностей, плохие не паразитируют.',
     metrics:[
-      {l:'NPS партнёров',f:null,p:80,u:'%'},
-      {l:'Индекс доверия',f:null,p:90,u:'%'},
+      {l:'NPS партнёров',f:null,p:null,u:'%'},
+      {l:'Индекс доверия',f:null,p:null,u:'%'},
     ] },
   { _idx:6, title:'Качественное сообщество',
     desc:'Партнёр не один, есть обмен решениями, поддержка, принадлежность к чему-то большему',
     ckp:'Партнёр не один — есть обмен решениями, поддержка, статус, энергия. Лучшие практики расходятся быстро, ошибки не повторяются. В кризис сообщество удерживает людей от паники и выхода.',
     metrics:[
-      {l:'% участия в мероп.',f:null,p:80,u:'%'},
-      {l:'Достижений в сети',f:null,p:6,u:'шт'},
+      {l:'% участия в мероп.',f:null,p:null,u:'%'},
+      {l:'Достижений в сети',f:null,p:null,u:'шт'},
     ] },
 ];
 
@@ -1953,6 +1959,7 @@ function updateKFUCards(){
     }
   } else { KFU[0].metrics[0].hint=''; }
   KFU[0].metrics[1].f=getAvg(PROFIT);
+  KFU[0].metrics[1].p=getAvg(PROFIT_P);
 
   const brandF=getAvg(BRAND_F);
   const brandP=getAvg(BRAND_P);
@@ -1966,17 +1973,24 @@ function updateKFUCards(){
   KFU[2].metrics[1].p=getAvg(CONST_REV_P);
 
   KFU[3].metrics[0].f=getAvg(NPS_ZAN_F);
+  KFU[3].metrics[0].p=getAvg(NPS_ZAN_P);
 
   KFU[4].metrics[0].f=getAvg(CRM_F);
   KFU[4].metrics[0].p=getAvg(CRM_P);
   KFU[4].metrics[1].f=getAvg(REP_F);
   KFU[4].metrics[1].p=getAvg(REP_P);
 
-  // NPS партнёров: значения уже в % (напр. 95), план тоже в %
+  // NPS партнёров и Индекс доверия — из таблицы
   const npsPf=getAvg(NPS_PF);
   const npsPp=getAvg(NPS_PP);
   KFU[5].metrics[0].f=npsPf===null?null:(npsPf>1?npsPf:Math.round(npsPf*100));
   KFU[5].metrics[0].p=npsPp===null?null:(npsPp>1?npsPp:Math.round(npsPp*100));
+  const indTrP=getAvg(IND_TRUST_P);
+  KFU[5].metrics[1].p=indTrP===null?null:(indTrP>1?indTrP:Math.round(indTrP*100));
+
+  // Сообщество
+  const commP=getAvg(COMM_PART_P);
+  KFU[6].metrics[0].p=commP===null?null:(commP>1?commP:Math.round(commP*100));
 
   document.getElementById('kfu-row1').innerHTML='';
   document.getElementById('kfu-row2').innerHTML='';
@@ -2048,7 +2062,7 @@ function lastNonZero(arr){
   return{v:arr[0],i:0};
 }
 
-const LIVE_CACHE_KEY = 'levita_live_cache_v3'; // v3 — сброс кеша после чистки хардкода
+const LIVE_CACHE_KEY = 'levita_live_cache_v4'; // v4 — все планы из таблицы
 const LIVE_CACHE_TTL = 15 * 60 * 1000; // 15 минут
 
 async function loadLiveData(){
@@ -2138,6 +2152,8 @@ async function applyLiveData(svodRows, fullRows){
 
     // Продукт
     apply(NPS_ZAN_F, findAfterIn(svodRows,'1. NPS занятий не менее','Факт'));
+    apply(NPS_ZAN_P, findAfterIn(svodRows,'1. NPS занятий не менее','План'));
+    apply(PROFIT_P,  findIn(svodRows,'2. Чистая прибыль'), toPct); // строка плана — в таблице одна строка с % по месяцам
 
     // IT
     apply(CRM_F, findAfterIn(svodRows,'1. % студий с корректными данными','Факт'), toPct);
@@ -2146,8 +2162,12 @@ async function applyLiveData(svodRows, fullRows){
     apply(REP_P, findAfterIn(svodRows,'2. % студий сдающих отчетность','План'), toPct);
 
     // Справедливость
-    apply(NPS_PF, findAfterIn(svodRows,'1. NPS партнеров','Факт'), toPct);
-    apply(NPS_PP, findAfterIn(svodRows,'1. NPS партнеров','План'), toPct);
+    apply(NPS_PF,      findAfterIn(svodRows,'1. NPS партнеров','Факт'), toPct);
+    apply(NPS_PP,      findAfterIn(svodRows,'1. NPS партнеров','План'), toPct);
+    apply(IND_TRUST_P, findAfterIn(svodRows,'2. Индекс доверия партнеров','План'), toPct);
+
+    // Сообщество
+    apply(COMM_PART_P, findIn(svodRows,'1. % партнеров участвующих'), toPct);
 
     // ══ ПОЛНЫЙ ЛИСТ — данные отделов ══
     apply(CLIENTS,   findIn(fullRows,'Кол-во клиентов сети'));
