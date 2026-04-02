@@ -795,6 +795,8 @@ const REP_F = N12();
 const REP_P = N12();
 const PIE_L = ['Stretching','Pilates','Пластика и сила','Barre','Балетная подкачка','Кл.хор.','Нар. танцы','Прочие'];
 const PIE_D = [null,null,null,null,null,null,null,null];
+const SMM_INST = N12(); // охват Instagram по месяцам
+const SMM_TG   = N12(); // охват Telegram по месяцам
 
 // Логика статуса: для KFU Бизнес-модель LTV > CAC это ХОРОШО (зелёный)
 // Специальный тип 'ratio': f > threshold => зелёный
@@ -1055,7 +1057,8 @@ function renderKFU(){
     // Средний % выполнения для прогресс-бара
     let kfuPcts=[];
     k.metrics.forEach(m=>{
-      if(m.type==='gt') kfuPcts.push(m.f>m.cmp?100:50);
+      if(m.f===null||m.f===undefined) return; // нет данных
+      if(m.type==='gt'){ if(m.cmp!==null&&m.cmp!==undefined) kfuPcts.push(m.f>m.cmp?100:50); }
       else if(typeof m.f==='number'&&m.p!=null) kfuPcts.push(Math.round(m.f/m.p*100));
     });
     const kfuAvg=kfuPcts.length?Math.round(kfuPcts.reduce((a,b)=>a+b,0)/kfuPcts.length):null;
@@ -1102,19 +1105,19 @@ const DEPTS = [
   {
     name:'Отдел открытий', num:1,
     stats:[
-      {l:'Открытий студий',v:'11 шт',sub:'янв–мар'},
-      {l:'Срок открытия',v:'27.5 мес',sub:'среднее'},
-      {l:'Расходы на откр.',v:'600К ₽',sub:'итого'},
+      {l:'Открытий студий',v:'—',sub:''},
+      {l:'Срок открытия',v:'—',sub:'среднее'},
+      {l:'Расходы на откр.',v:'—',sub:'итого'},
       {l:'NPS отдела',v:'—',sub:'нет данных'},
     ],
     table:[
-      {n:'Кол-во открытий',f:'11',p:'—',pct:null},
-      {n:'Срок открытия (мес.)',f:'27.5',p:'—',pct:null},
-      {n:'Расходы (₽)',f:'600 000',p:'—',pct:null},
+      {n:'Кол-во открытий',f:'—',p:'—',pct:null},
+      {n:'Срок открытия (мес.)',f:'—',p:'—',pct:null},
+      {n:'Расходы (₽)',f:'—',p:'—',pct:null},
     ],
     chart:{id:'d-openings',render:()=>{
       mkChart('d-openings',{type:'bar',data:{labels:MONTHS,
-        datasets:[barDs('Открытий',[10,1,0,2,3,2,1,2,3,2,2,1],C.gold),{...barDs('Расходы',[0,500000,100000,200000,300000,200000,100000,200000,300000,200000,200000,100000],C.blue),yAxisID:'y2'}]},
+        datasets:[barDs('Открытий',DEPT_MONTH_DATA.openings.count,C.gold),{...barDs('Расходы',DEPT_MONTH_DATA.openings.expenses,C.blue),yAxisID:'y2'}]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},
           scales:{...gridOpts(true),y:{title:{display:true,text:'шт',font:{size:10}}},y2:{position:'right',title:{display:true,text:'₽'},grid:{display:false}}}}});
     }}
@@ -1122,17 +1125,17 @@ const DEPTS = [
   {
     name:'Отдел ШМП', num:2,
     stats:[
-      {l:'Выручка (факт)',v:'6.35M ₽',sub:'план 11.1M'},
-      {l:'Выполнение плана',v:'57%',sub:'март',color:'red'},
-      {l:'Кол-во выпускников',v:'0',sub:'нет данных'},
-      {l:'NPS отдела',v:'9.3',sub:'из 10'},
+      {l:'Выручка (факт)',v:'—',sub:''},
+      {l:'Выполнение плана',v:'—',sub:''},
+      {l:'Кол-во выпускников',v:'—',sub:'нет данных'},
+      {l:'NPS отдела',v:'—',sub:''},
     ],
     table:[
-      {n:'Выручка итого',f:'6 353 844 ₽',p:'11 100 000 ₽',pct:57},
-      {n:'1 курс РФ/СНГ',f:'297 588 ₽',p:'600 000 ₽',pct:50},
-      {n:'2 курс РФ/СНГ',f:'3 542 859 ₽',p:'4 900 000 ₽',pct:72},
-      {n:'3.1 курс',f:'1 076 063 ₽',p:'3 200 000 ₽',pct:34},
-      {n:'3.2 курс',f:'760 206 ₽',p:'1 600 000 ₽',pct:48},
+      {n:'Выручка итого',f:'—',p:'—',pct:null},
+      {n:'1 курс РФ/СНГ',f:'—',p:'—',pct:null},
+      {n:'2 курс РФ/СНГ',f:'—',p:'—',pct:null},
+      {n:'3.1 курс',f:'—',p:'—',pct:null},
+      {n:'3.2 курс',f:'—',p:'—',pct:null},
     ],
     chart:{id:'d-shmp',render:()=>{
       mkChart('d-shmp',{type:'bar',data:{labels:SHMP_L,
@@ -1143,36 +1146,35 @@ const DEPTS = [
   {
     name:'Маркетинг партнёров', num:3,
     stats:[
-      {l:'Охват Instagram',v:'24 224',sub:'февраль'},
-      {l:'Охват Telegram',v:'51 039',sub:'февраль'},
-      {l:'Лидов с сетевых',v:'79',sub:'февраль'},
-      {l:'PR-выходов',v:'0',sub:'нет данных'},
+      {l:'Охват Instagram',v:'—',sub:'загрузка...'},
+      {l:'Охват Telegram',v:'—',sub:'загрузка...'},
+      {l:'Лидов с сетевых',v:'—',sub:''},
+      {l:'PR-выходов',v:'—',sub:''},
     ],
     table:[
-      {n:'Охват СММ (Инст)',f:'24 224',p:'—',pct:null},
-      {n:'Охват ТГ',f:'51 039',p:'—',pct:null},
-      {n:'Лидов с сетевых каналов',f:'79',p:'—',pct:null},
-      {n:'Гипотезы запущены',f:'4',p:'—',pct:null},
+      {n:'Охват СММ (Инст)',f:'—',p:'—',pct:null},
+      {n:'Охват ТГ',f:'—',p:'—',pct:null},
+      {n:'Лидов с сетевых каналов',f:'—',p:'—',pct:null},
+      {n:'Гипотезы запущены',f:'—',p:'—',pct:null},
     ],
     chart:{id:'d-mkt',render:()=>{
       mkChart('d-mkt',{type:'line',data:{labels:MONTHS,
-        datasets:[lineDs('Instagram',[ 0,24224,28000,31000,34000,38000,41000,43000,46000,50000,52000,55000],C.purple),lineDs('Telegram',[0,51039,55000,58000,62000,66000,70000,73000,77000,80000,84000,88000],C.teal)]},
+        datasets:[lineDs('Instagram',SMM_INST,C.purple),lineDs('Telegram',SMM_TG,C.teal)]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
     }}
   },
   {
     name:'Территориальные управляющие', num:4,
     stats:[
-      {l:'Клиентов сети',v:'70 234',sub:'февраль (−2 776 к январю)'},
-      {l:'% аттестаций',v:'82%',sub:'по управлению'},
+      {l:'Клиентов сети',v:'—',sub:''},
+      {l:'% аттестаций',v:'—',sub:'по управлению'},
       {l:'% сбора роялти',v:'—',sub:'нет данных'},
-      {l:'NPS партнёров',v:'80%',sub:'факт'},
+      {l:'NPS партнёров',v:'—',sub:''},
     ],
     table:[
-      {n:'Клиентов сети (янв)',f:'73 010',p:'—',pct:null},
-      {n:'Клиентов сети (фев)',f:'70 234',p:'—',pct:null},
-      {n:'% аттестаций (управление)',f:'82%',p:'75%',pct:109},
-      {n:'NPS по клиентам',f:'0%',p:'—',pct:null},
+      {n:'Клиентов сети',f:'—',p:'—',pct:null},
+      {n:'% аттестаций (управление)',f:'—',p:'—',pct:null},
+      {n:'NPS по клиентам',f:'—',p:'—',pct:null},
     ],
     chart:{id:'d-terr',render:()=>{
       mkChart('d-terr',{type:'line',data:{labels:MONTHS,
@@ -1184,35 +1186,35 @@ const DEPTS = [
   {
     name:'Комьюнити менеджер', num:5,
     stats:[
-      {l:'Мероприятий',v:'0',sub:'план 6 в год'},
-      {l:'Амбасадоров',v:'66%',sub:'из партнёров'},
-      {l:'Достижений в сети',v:'2',sub:'цель >6'},
+      {l:'Мероприятий',v:'—',sub:'план 6 в год'},
+      {l:'Амбасадоров',v:'—',sub:'из партнёров'},
+      {l:'Достижений в сети',v:'—',sub:'цель >6'},
       {l:'NPS мероприятий',v:'—',sub:'нет данных'},
     ],
     table:[
-      {n:'Мероприятий проведено',f:'0',p:'6 / год',pct:null},
-      {n:'% партнёров-амбасадоров',f:'66%',p:'80%',pct:83},
-      {n:'Достижений в сети',f:'2',p:'6',pct:33},
+      {n:'Мероприятий проведено',f:'—',p:'6 / год',pct:null},
+      {n:'% партнёров-амбасадоров',f:'—',p:'80%',pct:null},
+      {n:'Достижений в сети',f:'—',p:'6',pct:null},
     ],
     progBars:[
-      {l:'% участия в мероприятиях',f:66,p:80},
-      {l:'Достижений в сети',f:2,p:6},
-      {l:'Амбасадоры сети',f:66,p:80},
+      {l:'% участия в мероприятиях',f:null,p:80},
+      {l:'Достижений в сети',f:null,p:6},
+      {l:'Амбасадоры сети',f:null,p:80},
     ]
   },
   {
     name:'Обучение и контроль качества', num:6,
     stats:[
-      {l:'NPS занятий',v:'92%',sub:'цель ≥85%',color:'green'},
-      {l:'Качество занятий',v:'86%',sub:'февраль'},
-      {l:'Тайных покупателей',v:'8 / 20',sub:'план выполнен на 40%'},
-      {l:'Кол-во посещений',v:'300K+',sub:'за период'},
+      {l:'NPS занятий',v:'—',sub:'цель ≥85%'},
+      {l:'Качество занятий',v:'—',sub:''},
+      {l:'Тайных покупателей',v:'—',sub:''},
+      {l:'Кол-во посещений',v:'—',sub:'за период'},
     ],
     table:[
-      {n:'NPS занятий',f:'92%',p:'85%',pct:108},
-      {n:'Качество занятий',f:'86%',p:'—',pct:null},
-      {n:'Тайные покупатели',f:'8',p:'20',pct:40},
-      {n:'Индекс групп',f:'51',p:'—',pct:null},
+      {n:'NPS занятий',f:'—',p:'85%',pct:null},
+      {n:'Качество занятий',f:'—',p:'—',pct:null},
+      {n:'Тайные покупатели',f:'—',p:'—',pct:null},
+      {n:'Индекс групп',f:'—',p:'—',pct:null},
     ],
     chart:{id:'d-qual',render:()=>{
       mkChart('d-nps-zan',{type:'line',data:{labels:MONTHS,
@@ -1227,16 +1229,16 @@ const DEPTS = [
   {
     name:'Академия администраторов', num:7,
     stats:[
-      {l:'Зашли (фев)',v:'106',sub:''},
-      {l:'Сертификат (фев)',v:'39',sub:'37% выпуск'},
-      {l:'NPS академии',v:'73',sub:'из 100'},
-      {l:'Итого за 3 мес.',v:'225 → 86',sub:'зашли → сертификат'},
+      {l:'Зашли',v:'—',sub:''},
+      {l:'Получили сертификат',v:'—',sub:''},
+      {l:'NPS академии',v:'—',sub:''},
+      {l:'% выпуска',v:'—',sub:''},
     ],
     table:[
-      {n:'Зашли',f:'225',p:'—',pct:null},
-      {n:'Получили сертификат',f:'86',p:'—',pct:null},
-      {n:'% выпуска',f:'38%',p:'—',pct:null},
-      {n:'NPS академии',f:'73',p:'—',pct:null},
+      {n:'Зашли',f:'—',p:'—',pct:null},
+      {n:'Получили сертификат',f:'—',p:'—',pct:null},
+      {n:'% выпуска',f:'—',p:'—',pct:null},
+      {n:'NPS академии',f:'—',p:'—',pct:null},
     ],
     chart:{id:'d-acad',render:()=>{
       mkChart('d-acad',{type:'bar',data:{labels:MONTHS,
@@ -1247,19 +1249,19 @@ const DEPTS = [
   {
     name:'Академия педагогов', num:8,
     stats:[
-      {l:'Зашедших (фев)',v:'159',sub:''},
-      {l:'Договоров (фев)',v:'112',sub:''},
-      {l:'% доходимости',v:'86%',sub:'февраль'},
+      {l:'Зашедших',v:'—',sub:''},
+      {l:'Договоров',v:'—',sub:''},
+      {l:'% доходимости',v:'—',sub:''},
       {l:'NPS академии',v:'—',sub:'нет данных'},
     ],
     table:[
-      {n:'Кол-во зашедших',f:'159',p:'—',pct:null},
-      {n:'% доходимости до аттестации',f:'86%',p:'—',pct:null},
-      {n:'Кол-во договоров',f:'112',p:'—',pct:null},
+      {n:'Кол-во зашедших',f:'—',p:'—',pct:null},
+      {n:'% доходимости до аттестации',f:'—',p:'—',pct:null},
+      {n:'Кол-во договоров',f:'—',p:'—',pct:null},
     ],
     progBars:[
-      {l:'% доходимости до аттестации',f:86,p:100},
-      {l:'Конверсия зашли→договор',f:70,p:100},
+      {l:'% доходимости до аттестации',f:null,p:100},
+      {l:'Конверсия зашли→договор',f:null,p:100},
     ]
   },
 ];
@@ -1857,26 +1859,45 @@ function updateDeptsForPeriod(){
     if(factCells[2]) factCells[2].textContent = totalExp ? totalExp.toLocaleString('ru-RU')+' ₽' : '—';
   })();
 
-  // ── Отдел 3 (Маркетинг, индекс 2): Клиенты сети ──
-  const clients = getAvgFor(CLIENTS);
-  setDStat(3, 0, clients.toLocaleString('ru-RU'), lbl);
+  // ── Отдел 2 (Маркетинг): охваты соцсетей ──
+  const smmInst = getAvgFor(SMM_INST);
+  const smmTg   = getAvgFor(SMM_TG);
+  setDStat(2, 0, smmInst!==null ? smmInst.toLocaleString('ru-RU') : '—', lbl);
+  setDStat(2, 1, smmTg!==null   ? smmTg.toLocaleString('ru-RU')   : '—', lbl);
 
-  // ── Отдел 6 (Обучение и КК, индекс 5): NPS занятий ──
+  // ── Отдел 3 (Терр. управляющие): Клиенты сети ──
+  const clients = getAvgFor(CLIENTS);
+  setDStat(3, 0, clients!==null ? clients.toLocaleString('ru-RU') : '—', lbl);
+
+  // ── Отдел 5 (Обучение и КК): NPS занятий — обновляется ниже ──
   const npsZan = getAvgFor(NPS_ZAN_F);
-  setDStat(5, 0, npsZan+'%', 'цель ≥85%');
 
   // ── Отдел 1 (ШМП, индекс 1): выручка ──
   const shmpF = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
   const shmpP = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
-  const shmpPct = shmpP ? Math.round(shmpF/shmpP*100) : 0;
-  setDStat(1, 0, (shmpF/1e6).toFixed(2)+'M ₽', lbl);
-  setDStat(1, 1, shmpPct+'%', lbl, );
+  if(shmpF!==null){
+    const shmpPct = (shmpP&&shmpP>0) ? Math.round(shmpF/shmpP*100) : null;
+    setDStat(1, 0, shmpF>=1e6 ? (shmpF/1e6).toFixed(2)+'M ₽' : Math.round(shmpF).toLocaleString('ru-RU')+' ₽', shmpP ? 'план '+Math.round(shmpP/1e6*100)/100+'M' : lbl);
+    setDStat(1, 1, shmpPct!==null ? shmpPct+'%' : '—', lbl);
+  } else {
+    setDStat(1, 0, '—', ''); setDStat(1, 1, '—', '');
+  }
+
+  // ── Отдел 3 (Терр. управляющие): клиенты + NPS ──
+  const npsP = getAvgFor(NPS_PF);
+  setDStat(3, 1, npsP!==null ? npsP+'%' : '—', 'по управлению');
+
+  // ── Отдел 5 (Обучение/КК): NPS занятий ──
+  setDStat(5, 0, npsZan!==null ? npsZan+'%' : '—', 'цель ≥85%');
 
   // ── Отдел 6 (Академия администраторов, индекс 6): зашли ──
   const acadIn = getAvgFor(ACAD_IN);
   const acadC  = getAvgFor(ACAD_C);
-  setDStat(6, 0, acadIn, lbl);
-  setDStat(6, 1, acadC, lbl);
+  setDStat(6, 0, acadIn!==null ? String(acadIn) : '—', lbl);
+  setDStat(6, 1, acadC!==null  ? String(acadC)  : '—', lbl);
+
+  // ── Отдел 7 (Академия педагогов): договоры ──
+  // данных по месяцам нет в массивах — оставляем как есть
 
   // ── CRM/отчётность → КФУ IT (обновляется через updateKFUCards) ──
   // Дополнительно обновляем таблицы отделов у тех кто имеет динамические данные
@@ -2129,10 +2150,12 @@ async function applyLiveData(svodRows, fullRows){
     apply(NPS_PP, findAfterIn(svodRows,'1. NPS партнеров','План'), toPct);
 
     // ══ ПОЛНЫЙ ЛИСТ — данные отделов ══
-    apply(CLIENTS, findIn(fullRows,'Кол-во клиентов сети'));
-    apply(ACAD_IN, findIn(fullRows,'Кол-во зашли'));
-    apply(ACAD_C,  findIn(fullRows,'получили сертификат'));
+    apply(CLIENTS,   findIn(fullRows,'Кол-во клиентов сети'));
+    apply(ACAD_IN,   findIn(fullRows,'Кол-во зашли'));
+    apply(ACAD_C,    findIn(fullRows,'получили сертификат'));
     apply(NPS_ZAN_F, findAfterIn(fullRows,'NPS занятий','Факт') || findIn(svodRows,'Факт'));
+    apply(SMM_INST,  findIn(fullRows,'Охват СММ'));
+    apply(SMM_TG,    findIn(fullRows,'Охват ТГ'));
 
     // Отдел открытий — помесячно
     apply(DEPT_MONTH_DATA.openings.count,    findIn(fullRows,'Кол-во открытий студий'));
