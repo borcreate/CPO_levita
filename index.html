@@ -1186,7 +1186,7 @@ const DEPTS = [
       mkChart('d-terr',{type:'line',data:{labels:MONTHS,
         datasets:[lineDs('Клиентов сети',CLIENTS,C.gold,true)]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-          scales:{...gridOpts(),y:{min:68000,max:85000,grid:{color:'#f0f0f5',drawBorder:false},ticks:{font:{size:10}}}}}});
+          scales:{...gridOpts(),y:{grid:{color:'#f0f0f5',drawBorder:false},ticks:{font:{size:10}}}}}});
     }}
   },
   {
