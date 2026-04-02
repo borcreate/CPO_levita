@@ -1203,9 +1203,9 @@ const DEPTS = [
       {n:'Достижений в сети',f:'—',p:'6',pct:null},
     ],
     progBars:[
-      {l:'% участия в мероприятиях',f:null,p:80},
-      {l:'Достижений в сети',f:null,p:6},
-      {l:'Амбасадоры сети',f:null,p:80},
+      {l:'% участия в мероприятиях',f:null,p:null},
+      {l:'Достижений в сети',f:null,p:null},
+      {l:'Амбасадоры сети',f:null,p:null},
     ]
   },
   {
@@ -1266,8 +1266,8 @@ const DEPTS = [
       {n:'Кол-во договоров',f:'—',p:'—',pct:null},
     ],
     progBars:[
-      {l:'% доходимости до аттестации',f:null,p:100},
-      {l:'Конверсия зашли→договор',f:null,p:100},
+      {l:'% доходимости до аттестации',f:null,p:null},
+      {l:'Конверсия зашли→договор',f:null,p:null},
     ]
   },
 ];
@@ -1524,11 +1524,11 @@ function initAnalyticsCharts(){
   const rows=[
     {m:'LTV',d:'Бизнес-модель',p:_ga(CAC),f:_ga(LTV),u:'₽'},
     {m:'Конверсия лид→покупка',d:'Стандарты',p:_ga(CONV_P),f:_ga(CONV_F),u:'%'},
-    {m:'NPS занятий',d:'Продукт',p:85,f:_ga(NPS_ZAN_F),u:'%'},
+    {m:'NPS занятий',d:'Продукт',p:_ga(NPS_ZAN_P),f:_ga(NPS_ZAN_F),u:'%'},
     {m:'% студий в CRM',d:'IT+данные',p:_ga(CRM_P),f:_ga(CRM_F),u:'%'},
     {m:'NPS партнёров',d:'Справедливость',p:_ga(NPS_PP),f:_ga(NPS_PF),u:'%'},
     {m:'Брендовый спрос',d:'Спрос/PR',p:_ga(BRAND_P),f:_ga(BRAND_F),u:''},
-    {m:'% участия в мероп.',d:'Сообщество',p:80,f:null,u:'%'},
+    {m:'% участия в мероп.',d:'Сообщество',p:_ga(COMM_PART_P),f:null,u:'%'},
     {m:'Выручка ШМП',d:'Отдел ШМП',p:_ga(DEPT_MONTH_DATA.shmp.plan),f:_ga(DEPT_MONTH_DATA.shmp.fact),u:'₽'},
     {m:'Клиентов сети',d:'Терр. управ.',p:null,f:_ga(CLIENTS),u:''},
   ];
