@@ -529,7 +529,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 <!-- ══════════ MATERIALS MODAL ══════════ -->
 <div id="mat-modal" class="hidden">
   <div class="mat-modal-box">
-    <div class="mat-modal-title">📎 Добавить материал</div>
+    <div class="mat-modal-title"><i data-lucide="paperclip" style="width:15px;height:15px;display:inline-block;vertical-align:middle;margin-right:6px"></i> Добавить материал</div>
     <div class="mat-form-row">
       <label class="mat-form-label">Название</label>
       <input class="mat-form-input" id="mat-name" type="text" placeholder="Регламент по открытию студии">
@@ -580,7 +580,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 <div id="users-modal" class="hidden">
   <div class="users-box">
     <button class="modal-close" onclick="closeUsersModal()">✕</button>
-    <div class="users-title">👥 Управление пользователями</div>
+    <div class="users-title"><i data-lucide="users" style="width:15px;height:15px;display:inline-block;vertical-align:middle;margin-right:6px"></i> Управление пользователями</div>
     <table class="users-table">
       <thead><tr><th>Логин</th><th>Роль</th><th>Новый пароль</th><th></th></tr></thead>
       <tbody id="users-tbody"></tbody>
@@ -1551,7 +1551,7 @@ function renderPersonalTasks(){
         ${collapsed?'':`<div class="task-status-btns" style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
           <button class="task-status-btn${t.done?' active-done':''}" onclick="setPTDone(${i},true)">✓ Готово</button>
           <button class="task-status-btn${(!t.done)?' active-notdone':''}" onclick="setPTDone(${i},false)">✕ Не готово</button>
-          <button onclick="deletePTActive(${i})" style="margin-left:auto;font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid #ef444433;background:#ef444411;color:#ef4444;cursor:pointer">🗑 Удалить</button>
+          <button onclick="deletePTActive(${i})" style="margin-left:auto;font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid #ef444433;background:#ef444411;color:#ef4444;cursor:pointer;display:flex;align-items:center;gap:4px"><i data-lucide="trash-2" style="width:11px;height:11px"></i> Удалить</button>
         </div>`}
       </div>
     </div>`;
@@ -2914,7 +2914,7 @@ function renderMaterials(){
 
   const cardsHtml = filtered.length===0
     ? `<div class="mat-empty" style="padding:60px 20px">
-        <div style="font-size:40px;margin-bottom:12px">📎</div>
+        <div style="margin-bottom:12px"><i data-lucide="paperclip" style="width:40px;height:40px;color:var(--muted)"></i></div>
         <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Материалов пока нет${matActiveCat!=='Все'?' в этой категории':''}</div>
         ${matActiveCat==='Все'&&canEdit?`<div style="font-size:13px;color:var(--muted)">Нажмите <b>+ Добавить</b> чтобы загрузить первый документ</div>`:''}
       </div>`
@@ -2925,7 +2925,7 @@ function renderMaterials(){
               <div class="mat-card-name">${escHtml(m.name)}</div>
               ${m.desc?`<div class="mat-card-desc">${escHtml(m.desc)}</div>`:''}
             </div>
-            <div class="mat-card-icon">${MAT_ICONS[m.cat]||'📎'}</div>
+            <div class="mat-card-icon">${MAT_ICONS[m.cat]||'<i data-lucide="paperclip" style="width:16px;height:16px"></i>'}</div>
           </div>
           <div><span class="mat-card-cat">${m.cat}</span></div>
           <div class="mat-card-footer">
@@ -2937,7 +2937,7 @@ function renderMaterials(){
 
   root.innerHTML = `
     <div class="mat-header">
-      <div class="mat-header-title">📎 Материалы и документы</div>
+      <div class="mat-header-title"><i data-lucide="paperclip" style="width:15px;height:15px;display:inline-block;vertical-align:middle;margin-right:6px"></i> Материалы и документы</div>
       ${addBtn}
     </div>
     <div class="mat-cats">${catsHtml}</div>
