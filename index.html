@@ -2543,7 +2543,7 @@ function lastNonZero(arr){
   return{v:arr[0],i:0};
 }
 
-const LIVE_CACHE_KEY = 'levita_live_cache_v4'; // v4 - все планы из таблицы
+const LIVE_CACHE_KEY = 'levita_live_cache_v5'; // v5 - свод с A210:M310, NPS занятий из fullRows
 const LIVE_CACHE_TTL = 15 * 60 * 1000; // 15 минут
 
 async function loadLiveData(){
@@ -2568,7 +2568,7 @@ async function fetchAndCacheLiveData(){
   try{
     // ── Грузим сводный раздел напрямую по диапазону (надёжнее чем поиск по всему листу) ──
     const [svodRows, fullRows] = await Promise.all([
-      fetchSheet('Аналитика года', 'A245:M310'),
+      fetchSheet('Аналитика года', 'A210:M310'),
       fetchSheet('Аналитика года'),
     ]);
     try{ localStorage.setItem(LIVE_CACHE_KEY, JSON.stringify({ts:Date.now(),svod:svodRows,full:fullRows})); }catch(e){}
@@ -2616,7 +2616,7 @@ async function applyLiveData(svodRows, fullRows){
       });
     };
 
-    // ══ СВОДНЫЙ РАЗДЕЛ (A245:M310) - точные данные для KFU ══
+    // ══ СВОДНЫЙ РАЗДЕЛ (A210:M310) - точные данные для KFU ══
     // Бизнес-модель
     apply(LTV,      findIn(svodRows,'LTV'));
     apply(CAC,      findIn(svodRows,'CAC'));
@@ -2656,7 +2656,7 @@ async function applyLiveData(svodRows, fullRows){
     apply(CLIENTS,   findIn(fullRows,'Кол-во клиентов сети'));
     apply(ACAD_IN,   findIn(fullRows,'Кол-во зашли'));
     apply(ACAD_C,    findIn(fullRows,'получили сертификат'));
-    apply(NPS_ZAN_F, findAfterIn(fullRows,'NPS занятий','Факт') || findIn(svodRows,'Факт'));
+    apply(NPS_ZAN_F, findIn(fullRows,'NPS занятий'));
     apply(SMM_INST,  findIn(fullRows,'Охват СММ'));
     apply(SMM_TG,    findIn(fullRows,'Охват ТГ'));
 
