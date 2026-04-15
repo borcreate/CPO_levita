@@ -1184,13 +1184,13 @@ const DEPTS = [
     name:'Отдел открытий', num:1,
     stats:[
       {l:'Открытий студий',v:'-',sub:''},
-      {l:'Срок открытия',v:'-',sub:'среднее'},
+      {l:'Срок открытия',v:'-',sub:'за период'},
       {l:'Расходы на откр.',v:'-',sub:'итого'},
       {l:'NPS отдела',v:'-',sub:'нет данных'},
     ],
     table:[
       {n:'Кол-во открытий',f:'-',p:'-',pct:null},
-      {n:'Срок открытия (мес.)',f:'-',p:'-',pct:null},
+      {n:'Срок открытия (дней)',f:'-',p:'-',pct:null},
       {n:'Расходы (₽)',f:'-',p:'-',pct:null},
     ],
     chart:{id:'d-openings',render:()=>{
@@ -2232,7 +2232,8 @@ function updateDeptsForPeriod(){
     const totalCount = months.reduce((s,i)=>s+(od.count[i]||0),0);
     // Срок - среднее только по месяцам где есть данные
     const durMonths = months.filter(i=>od.duration[i]>0);
-    const avgDur = durMonths.length ? Math.round(durMonths.reduce((s,i)=>s+od.duration[i],0)/durMonths.length) : 0;
+    // За выбранный период берём сумму дней (не среднее)
+    const avgDur = durMonths.length ? durMonths.reduce((s,i)=>s+od.duration[i],0) : 0;
     // Расходы - сумма
     const totalExp = months.reduce((s,i)=>s+(od.expenses[i]||0),0);
 
@@ -2241,7 +2242,7 @@ function updateDeptsForPeriod(){
       : lbl;
 
     setDStat(0, 0, totalCount+' шт', periodLabel);
-    setDStat(0, 1, avgDur ? avgDur+' мес' : '-', 'среднее');
+    setDStat(0, 1, avgDur ? avgDur+' дн' : '-', 'за период');
     setDStat(0, 2, totalExp ? (totalExp>=1000000?(totalExp/1000000).toFixed(1)+'M ₽':(totalExp/1000).toFixed(0)+'К ₽') : '-', 'итого');
 
     // Таблица
@@ -2264,12 +2265,13 @@ function updateDeptsForPeriod(){
   // ── Отдел 5 (Обучение и КК): NPS занятий - обновляется ниже ──
   const npsZan = getAvgFor(NPS_ZAN_F);
 
-  // ── Отдел 1 (ШМП, индекс 1): выручка ──
-  const shmpF = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
-  const shmpP = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
+  // ── Отдел 1 (ШМП, индекс 1): выручка — сумма за период ──
+  const _shmpMonths = selectedMonths.size===0 ? [0,1,2,3,4,5,6,7,8,9,10,11] : [...selectedMonths];
+  const shmpF = _shmpMonths.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.fact[i]||0),0) || null;
+  const shmpP = _shmpMonths.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.plan[i]||0),0) || null;
   if(shmpF!==null){
     const shmpPct = (shmpP&&shmpP>0) ? Math.round(shmpF/shmpP*100) : null;
-    setDStat(1, 0, shmpF>=1e6 ? (shmpF/1e6).toFixed(2)+'M ₽' : Math.round(shmpF).toLocaleString('ru-RU')+' ₽', shmpP ? 'план '+Math.round(shmpP/1e6*100)/100+'M' : lbl);
+    setDStat(1, 0, shmpF>=1e6 ? (shmpF/1e6).toFixed(2)+'M ₽' : Math.round(shmpF).toLocaleString('ru-RU')+' ₽', shmpP ? 'план '+(shmpP/1e6).toFixed(2)+'M' : lbl);
     setDStat(1, 1, shmpPct!==null ? shmpPct+'%' : '-', lbl);
   } else {
     setDStat(1, 0, '-', ''); setDStat(1, 1, '-', '');
@@ -2295,8 +2297,9 @@ function updateDeptsForPeriod(){
 
 function updateDeptTables(){
   // Обновляем td-fact / td-plan у отдела ШМП (индекс 1)
-  const shmpFact = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
-  const shmpPlan = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
+  const _sm2 = selectedMonths.size===0 ? [0,1,2,3,4,5,6,7,8,9,10,11] : [...selectedMonths];
+  const shmpFact = _sm2.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.fact[i]||0),0);
+  const shmpPlan = _sm2.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.plan[i]||0),0);
   const shmpPct  = shmpPlan ? Math.round(shmpFact/shmpPlan*100) : 0;
   const shmpRows = document.querySelectorAll('#dept-1 .td-fact');
   if(shmpRows[0]) shmpRows[0].textContent = Math.round(shmpFact).toLocaleString('ru-RU')+' ₽';
