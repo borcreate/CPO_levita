@@ -1809,9 +1809,8 @@ function renderDepts(){
       return `<div class="prog-item"><div class="prog-head"><span class="prog-label">${pb.l}</span><span>${pb.f} / ${pb.p} (${p}%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(p,100)}%;background:${cc}"></div></div></div>`;
     }).join('')}</div>`:'';
     const chartHtml = d.chart?(d.chart.dualChart
-      ?(d._merged
-        ?`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`
-        :`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`)`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
+      ?`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`
+      :`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
 
     const tasksHtml = renderTasksBlock(i);
     // No team block - removed
