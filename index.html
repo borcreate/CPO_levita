@@ -21,24 +21,6 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<script>
-const _PASS = 'levita2026';
-const _SESS = 'levita_session_v1';
-function doLogin(){
-  var p = document.getElementById('auth-pass');
-  var err = document.getElementById('auth-err');
-  if(!p) return;
-  if(p.value === _PASS){
-    sessionStorage.setItem(_SESS,'ok');
-    var ov = document.getElementById('auth-overlay');
-    if(ov) ov.classList.add('hidden');
-  } else {
-    if(err) err.textContent = 'Неверный пароль';
-    p.value='';
-    p.focus();
-  }
-}
-</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
