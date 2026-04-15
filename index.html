@@ -897,6 +897,8 @@ const ACHIEVEMENTS_P = N12(); // план кол-во достижений в с
 const SHMP_L  = ['1 курс','2 курс','3.1 курс','3.2 курс'];
 const SHMP_P  = [null,null,null,null];
 const SHMP_F2 = [null,null,null,null];
+const SHMP_RF_F = N12(); // РФ/СНГ в среднем на студию - факт
+const SHMP_RF_P = N12(); // РФ/СНГ в среднем на студию - план
 const CONST_REV_F = N12();
 const CONST_REV_P = N12();
 const CRM_F = N12();
@@ -1244,6 +1246,7 @@ const DEPTS = [
     ],
     table:[
       {n:'Выручка итого',f:'-',p:'-',pct:null},
+      {n:'РФ/СНГ (в среднем на студию)',f:'-',p:'-',pct:null},
       {n:'1 курс РФ/СНГ',f:'-',p:'-',pct:null},
       {n:'2 курс РФ/СНГ',f:'-',p:'-',pct:null},
       {n:'3.1 курс',f:'-',p:'-',pct:null},
@@ -2386,6 +2389,9 @@ function updateDeptTables(){
   const shmpPct  = shmpPlan ? Math.round(shmpFact/shmpPlan*100) : 0;
   const shmpRows = document.querySelectorAll('#dept-1 .td-fact');
   if(shmpRows[0]) shmpRows[0].textContent = Math.round(shmpFact).toLocaleString('ru-RU')+' ₽';
+  const rfF = getAvgFor(SHMP_RF_F); const rfP = getAvgFor(SHMP_RF_P);
+  if(shmpRows[1]) shmpRows[1].textContent = rfF!=null ? Math.round(rfF).toLocaleString('ru-RU')+' ₽' : '-';
+  // Цены по курсам — сдвиг на 1 (shmpRows[2..5])
 
   // Клиенты сети в таблице отдела 3
   const clientRows = document.querySelectorAll('#dept-3 .td-fact');
@@ -2684,6 +2690,12 @@ async function applyLiveData(svodRows, fullRows){
       if(pr){const vals=rowMonths(pr).filter(nonZero);if(vals.length)SHMP_P[c.pIdx]=vals.reduce((a,b)=>a+b,0);}
       if(fr){const vals=rowMonths(fr).filter(nonZero);if(vals.length)SHMP_F2[c.fIdx]=vals.reduce((a,b)=>a+b,0);}
     });
+
+    // РФ/СНГ в среднем на студию
+    const rfPlanRow = findAfterIn(fullRows,'РФ/СНГ (в среднем на студию)','План',5);
+    const rfFactRow = findAfterIn(fullRows,'РФ/СНГ (в среднем на студию)','Факт',5);
+    if(rfPlanRow) apply(SHMP_RF_P, rfPlanRow);
+    if(rfFactRow) apply(SHMP_RF_F, rfFactRow);
 
     // PIE - посещения, берём март (index 2) или последний ненулевой
     const pieMap=[
