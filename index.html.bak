@@ -322,26 +322,73 @@ main{padding:28px 28px;max-width:1440px;margin:0 auto}
 .mat-modal-save{flex:1;padding:10px;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .mat-modal-save:hover{background:#a07820}
 .mat-modal-cancel{padding:10px 18px;background:var(--bg3);color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
-/* ══ TASKS ══ */
+/* ══ TASKS v2 ══ */
 .tasks-section{margin-top:20px;border-top:2px solid var(--gold-dim);padding-top:16px}
-.tasks-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.tasks-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tasks-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border);transition:.1s}
 .task-item.done{opacity:.55}
 .task-item.done .task-text{text-decoration:line-through;color:var(--muted)}
 .task-check{width:16px;height:16px;border:2px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:.1s;background:#fff}
 .task-check.checked{background:var(--green);border-color:var(--green);color:#fff}
-.task-text{font-size:14px;flex:1;line-height:1.4;color:var(--text)}
-.task-meta{font-size:10px;color:var(--muted2);white-space:nowrap;margin-top:1px}
-.task-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0 2px;line-height:1;opacity:0;transition:.1s}
+.task-text{font-size:13px;flex:1;line-height:1.4;color:var(--text)}
+.task-meta{font-size:10px;color:var(--muted2);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.task-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0 2px;line-height:1;opacity:0;transition:.1s;flex-shrink:0}
 .task-item:hover .task-del{opacity:1}
 .task-del:hover{color:var(--red)}
-.task-add-row{display:flex;gap:6px;margin-top:4px}
-.task-add-input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none;background:#fff;transition:.15s}
+.task-priority{font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700;display:inline-flex;align-items:center;gap:2px}
+.task-priority.high{background:#fee2e2;color:#dc2626}
+.task-priority.med{background:#fef3c7;color:#d97706}
+.task-priority.low{background:#dcfce7;color:#16a34a}
+body.dark .task-priority.high{background:#4a0d0d;color:#fb7185}
+body.dark .task-priority.med{background:#3d2700;color:#fbbf24}
+body.dark .task-priority.low{background:#0d3320;color:#34d399}
+.task-deadline{font-size:10px;color:var(--muted);display:inline-flex;align-items:center;gap:3px}
+.task-deadline.overdue{color:var(--red);font-weight:600}
+.task-status-btns{display:flex;gap:4px;margin-top:4px}
+.task-status-btn{background:var(--bg4);border:1px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:600;font-family:inherit;transition:.1s}
+.task-status-btn.active-done{background:#dcfce7;border-color:#16a34a;color:#16a34a}
+body.dark .task-status-btn.active-done{background:#0d3320;color:#34d399;border-color:#34d399}
+.task-status-btn.active-notdone{background:#fee2e2;border-color:#dc2626;color:#dc2626}
+body.dark .task-status-btn.active-notdone{background:#4a0d0d;color:#fb7185;border-color:#fb7185}
+.task-add-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.task-add-input{flex:1;min-width:150px;padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;outline:none;background:var(--bg2);color:var(--text);transition:.15s}
 .task-add-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,144,42,.08)}
 .task-add-btn{padding:7px 14px;background:var(--gold);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:.2s cubic-bezier(.34,1.56,.64,1)}
 .task-add-btn:hover{background:#a07820;transform:translateY(-1px)}
 .task-empty{font-size:12px;color:var(--muted);font-style:italic;padding:4px 0}
+/* Archive sidebar */
+.archive-sidebar{position:fixed;top:0;right:-400px;width:400px;max-width:95vw;height:100vh;background:var(--bg2);border-left:1px solid var(--border);z-index:5000;overflow-y:auto;padding:24px;transition:right .3s cubic-bezier(.34,1.56,.64,1);box-shadow:-4px 0 24px rgba(0,0,0,.12)}
+.archive-sidebar.open{right:0}
+.archive-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:4999}
+.archive-sidebar-overlay.open{display:block}
+.archive-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.archive-close{background:none;border:none;cursor:pointer;color:var(--muted);font-size:20px;line-height:1;padding:2px;margin-left:auto;transition:.1s}
+.archive-close:hover{color:var(--text)}
+/* KFU Notes block */
+.kfu-notes-block{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.kfu-notes-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted2);margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.kfu-notes-responsible{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;min-height:22px;align-items:center}
+.kfu-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gold-dim);border:1px solid rgba(201,168,76,.3);color:var(--gold);border-radius:20px;font-size:10px;font-weight:600;padding:2px 8px;cursor:default}
+.kfu-chip-del{background:none;border:none;cursor:pointer;color:var(--gold);opacity:.6;font-size:12px;line-height:1;padding:0;margin-left:2px;transition:.1s}
+.kfu-chip-del:hover{opacity:1;color:var(--red)}
+.kfu-chip-add{background:none;border:1px dashed var(--border);color:var(--muted);border-radius:20px;font-size:10px;padding:2px 8px;cursor:pointer;font-family:inherit;transition:.15s}
+.kfu-chip-add:hover{border-color:var(--gold);color:var(--gold)}
+.kfu-focus-input{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;outline:none;background:var(--bg3);color:var(--text);transition:.15s;resize:none}
+.kfu-focus-input:focus{border-color:var(--gold);background:var(--bg2)}
+.kfu-focus-archive-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:10px;padding:2px 4px;border-radius:4px;transition:.1s;margin-left:4px}
+.kfu-focus-archive-btn:hover{color:var(--gold);background:var(--gold-dim)}
+/* Personal tasks block */
+.personal-tasks-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:20px;max-width:100%;width:100%;flex-shrink:0}
+@media(max-width:768px){.personal-tasks-block{max-width:100%}}
+.personal-tasks-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;margin-bottom:8px;padding-right:2px}
+.personal-task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border)}
+.personal-task-item.done-pt .pt-text{text-decoration:line-through;color:var(--muted);opacity:.7}
+.pt-text{font-size:13px;color:var(--text);flex:1;line-height:1.4}
+.pt-collapsed .pt-text{display:none}
+.pt-meta{font-size:10px;color:var(--muted);margin-top:2px;display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.pt-toggle{background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px;padding:0 2px;flex-shrink:0;transition:.1s}
+.pt-toggle:hover{color:var(--gold)}
 /* ══ OWNER STATUS ══ */
 .owner-status-dots{display:flex;gap:6px;align-items:center;margin-left:8px}
 .owner-status-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px currentColor}
@@ -482,7 +529,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 <!-- ══════════ MATERIALS MODAL ══════════ -->
 <div id="mat-modal" class="hidden">
   <div class="mat-modal-box">
-    <div class="mat-modal-title">📎 Добавить материал</div>
+    <div class="mat-modal-title"><i data-lucide="paperclip" style="width:15px;height:15px;display:inline-block;vertical-align:middle;margin-right:6px"></i> Добавить материал</div>
     <div class="mat-form-row">
       <label class="mat-form-label">Название</label>
       <input class="mat-form-input" id="mat-name" type="text" placeholder="Регламент по открытию студии">
@@ -520,11 +567,9 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div class="auth-box">
     <div class="auth-logo">LEVITA</div>
     <div class="auth-sub">CPO Dashboard · Войдите в систему</div>
-    <label class="auth-label" for="auth-login">Логин</label>
-    <input class="auth-input" id="auth-login" type="text" placeholder="ваш логин" autocomplete="username">
     <label class="auth-label" for="auth-pass" style="margin-top:14px">Пароль</label>
     <input class="auth-input" id="auth-pass" type="password" placeholder="••••••••" autocomplete="current-password">
-    <button class="auth-btn" id="auth-submit">Войти</button>
+    <button class="auth-btn" id="auth-submit" onclick="doLogin()">Войти</button>
     <div class="auth-err" id="auth-err"></div>
   </div>
 </div>
@@ -533,7 +578,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 <div id="users-modal" class="hidden">
   <div class="users-box">
     <button class="modal-close" onclick="closeUsersModal()">✕</button>
-    <div class="users-title">👥 Управление пользователями</div>
+    <div class="users-title"><i data-lucide="users" style="width:15px;height:15px;display:inline-block;vertical-align:middle;margin-right:6px"></i> Управление пользователями</div>
     <table class="users-table">
       <thead><tr><th>Логин</th><th>Роль</th><th>Новый пароль</th><th></th></tr></thead>
       <tbody id="users-tbody"></tbody>
@@ -560,7 +605,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div style="display:flex;align-items:center;gap:12px">
     <div class="hdr-date" id="hdrDate"></div>
     <span id="hdr-username" style="font-size:12px;color:var(--muted)"></span>
-    <button id="hdr-users-btn" onclick="openUsersModal()" style="display:none;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'"><i data-lucide="users" style="width:14px;height:14px;display:block"></i></button>
+
     <button class="theme-btn" id="hdr-theme-btn" onclick="toggleTheme()" title="Тёмная тема"><i data-lucide="moon" style="width:14px;height:14px;display:block"></i></button>
     <button class="present-btn" onclick="togglePresent()" title="Режим презентации"><i data-lucide="maximize-2" style="width:14px;height:14px;display:block"></i></button>
     <button onclick="exportPDF()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="Скачать PDF-отчёт по фокусным метрикам"><i data-lucide="file-text" style="width:14px;height:14px;display:block"></i></button>
@@ -586,7 +631,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <span id="period-label" style="font-size:11px;color:var(--gold);margin-left:8px"></span>
   <!-- Mobile period button -->
   <button id="mob-period-btn" onclick="openMobPeriod()">
-    <i data-lucide="calendar" style="width:15px;height:15px"></i><span id="mob-period-label">Март</span><span>▾</span>
+    <i data-lucide="calendar" style="width:15px;height:15px"></i><span id="mob-period-label">Период 1</span><span>▾</span>
   </button>
 </div>
 
@@ -606,13 +651,37 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   <div style="position:absolute;top:200px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(5,150,105,0.05) 0%,transparent 70%);pointer-events:none;z-index:0;border-radius:50%;filter:blur(60px)"></div>
   <div id="owners-status-panel" style="margin-bottom:20px;position:relative;z-index:1"></div>
   <div id="kfu-summary-bar" style="margin-bottom:16px"></div>
+  <!-- Personal Tasks Block -->
+  <div class="personal-tasks-block" id="personal-tasks-block">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);flex:1">
+        <i data-lucide="user-check" style="width:14px;height:14px;color:var(--gold)"></i>
+        Личные фокусы CPO
+        <span id="pt-count" style="background:var(--gold-dim);color:var(--gold);padding:1px 7px;border-radius:10px;font-size:10px">0</span>
+      </div>
+      <button onclick="openPTArchive()" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-family:inherit;display:flex;align-items:center;gap:4px;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+        <i data-lucide="archive" style="width:12px;height:12px"></i> Архив
+      </button>
+    </div>
+    <div class="personal-tasks-list" id="pt-list"></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+      <input id="pt-new-text" class="task-add-input" style="flex:2;min-width:130px" placeholder="Новая задача...">
+      <select id="pt-new-priority" style="padding:7px 8px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none;background:var(--bg2);color:var(--text)">
+        <option value="high">🔴 Высокий</option>
+        <option value="med" selected>🟡 Средний</option>
+        <option value="low">🟢 Низкий</option>
+      </select>
+      <input id="pt-new-deadline" type="date" style="padding:7px 8px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none;background:var(--bg2);color:var(--text)">
+      <button class="task-add-btn" onclick="addPersonalTask()">+ Добавить</button>
+    </div>
+  </div>
   <div class="traffic-grid" id="kfu-traffic-grid" style="margin-bottom:20px"></div>
   <div class="kfu-grid" id="kfu-row1"></div>
   <div class="kfu-grid-4" id="kfu-row2"></div>
   <div class="charts-row cols-3">
     <div class="card card-pad">
       <div class="chart-title" id="ltv-chart-title">LTV vs CAC</div>
-      <div class="chart-sub">Окупаемость маркетинга — LTV должен быть выше CAC</div>
+      <div class="chart-sub">Окупаемость маркетинга - LTV должен быть выше CAC</div>
       <div class="chart-wrap"><canvas id="c-ltv"></canvas></div>
       <div class="chart-legend">
         <div class="leg-item"><div class="leg-dot" style="background:#b8902a"></div>LTV</div>
@@ -650,7 +719,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
 <div class="page" id="tab-analytics">
   <div class="charts-row cols-2" style="margin-bottom:16px">
     <div class="card card-pad">
-      <div class="chart-title">LTV vs CAC — динамика года</div>
+      <div class="chart-title">LTV vs CAC - динамика года</div>
       <div class="chart-sub">Зелёная зона = маркетинг окупается</div>
       <div class="chart-wrap-lg"><canvas id="a-ltv"></canvas></div>
     </div>
@@ -685,13 +754,13 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
     </div>
     <div class="card card-pad">
       <div class="chart-title">Выручка ШМП по курсам</div>
-      <div class="chart-sub">План vs факт, Янв–Мар</div>
+      <div class="chart-sub">План vs факт, П1-П3</div>
       <div class="chart-wrap"><canvas id="a-shmp"></canvas></div>
     </div>
   </div>
   <div class="card">
     <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
-      <div class="section-title" style="margin-bottom:0">Сводная таблица — ключевые метрики (март 2026)</div>
+      <div class="section-title" style="margin-bottom:0">Сводная таблица - ключевые метрики (март 2026)</div>
     </div>
     <table class="summary-table">
       <thead><tr><th>Метрика</th><th>Отдел</th><th>План</th><th>Факт</th><th>%</th></tr></thead>
@@ -715,7 +784,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
     <div id="markers-section"></div>
   </div>
   <div style="margin-top:28px">
-    <div class="section-title">КФУ франшизы — Ценный конечный продукт каждого блока</div>
+    <div class="section-title">КФУ франшизы - Ценный конечный продукт каждого блока</div>
     <div class="kfu-mini-grid" id="kfu-mini-grid"></div>
   </div>
 </div>
@@ -765,10 +834,10 @@ Chart.defaults.borderColor = '#e5e7eb';
 Chart.defaults.font.family = 'Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';
 Chart.defaults.font.size = 11;
 
-const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+const MONTHS = ['П1','П2','П3','П4','П5','П6','П7','П8','П9','П10','П11','П12'];
 const C = {gold:'#b8902a',blue:'#2563eb',green:'#16a34a',red:'#dc2626',yellow:'#ca8a04',purple:'#7c3aed',teal:'#0891b2',gray:'#9ca3af'};
 
-// ВСЕ МАССИВЫ — только из Google Sheets. До загрузки = null.
+// ВСЕ МАССИВЫ - только из Google Sheets. До загрузки = null.
 const N12 = ()=>Array(12).fill(null);
 const LTV     = N12();
 const CAC     = N12();
@@ -784,7 +853,7 @@ const ACAD_IN = N12();
 const ACAD_C  = N12();
 const NPS_ZAN_F = N12();
 const NPS_ZAN_P = N12(); // план из таблицы
-// Планы KFU — загружаются из таблицы (сводный раздел)
+// Планы KFU - загружаются из таблицы (сводный раздел)
 const PROFIT_P    = N12(); // план % партнёров с ЧП ≥300К
 const AMB_P       = N12(); // план % амбасадорских направлений
 const IND_TRUST_P = N12(); // план индекс доверия партнёров
@@ -808,9 +877,9 @@ const SMM_TG   = N12(); // охват Telegram по месяцам
 // Специальный тип 'ratio': f > threshold => зелёный
 const KFU = [
   { _idx:0, title:'Бизнес-модель',
-    desc:'Оптимизация внутри модели, рычаги прибыли — сходится ли экономика у партнёра',
-    ckp:'Партнёр понимает как растут метрики, регламенты, как работать по бизнес-модели, как тратить финансы. При стагнации прибыли — пересборка: меняем что, как, кому продаём, устройство точки и канала прибыли.',
-    // LTV сравниваем с CAC (не с планом) — если выше, хорошо
+    desc:'Оптимизация внутри модели, рычаги прибыли - сходится ли экономика у партнёра',
+    ckp:'Партнёр понимает как растут метрики, регламенты, как работать по бизнес-модели, как тратить финансы. При стагнации прибыли - пересборка: меняем что, как, кому продаём, устройство точки и канала прибыли.',
+    // LTV сравниваем с CAC (не с планом) - если выше, хорошо
     metrics:[
       {l:'LTV vs CAC',f:null,cmp:null,u:'₽',hint:'',type:'gt'},
       {l:'Партнёры с ЧП ≥300К',f:null,p:null,u:'%'},
@@ -837,14 +906,14 @@ const KFU = [
       {l:'% амб. направлений',f:null,p:null,u:'%'},
     ] },
   { _idx:4, title:'IT + данные',
-    desc:'В любой момент видно — где дырка, кто не выполняет, что делать прямо сейчас',
-    ckp:'В любой момент партнёру видно — где дырка, куда утекли деньги, по какому показателю нужно поднажать для увеличения прибыли. Все оцифровано по источникам лидов и метрикам бизнеса. УК видит все метрики партнёров и точно реагирует на спады компетентной помощью. Безопасность систем присутствует везде.',
+    desc:'В любой момент видно - где дырка, кто не выполняет, что делать прямо сейчас',
+    ckp:'В любой момент партнёру видно - где дырка, куда утекли деньги, по какому показателю нужно поднажать для увеличения прибыли. Все оцифровано по источникам лидов и метрикам бизнеса. УК видит все метрики партнёров и точно реагирует на спады компетентной помощью. Безопасность систем присутствует везде.',
     metrics:[
       {l:'% студий в CRM',f:null,p:null,u:'%'},
       {l:'% сдачи отчётности',f:null,p:null,u:'%'},
     ] },
   { _idx:5, title:'Справедливость управления',
-    desc:'"Со мной честны, правила понятны, ко мне относятся уважительно" — так должен чувствовать партнёр',
+    desc:'"Со мной честны, правила понятны, ко мне относятся уважительно" - так должен чувствовать партнёр',
     ckp:'Партнёр чувствует "со мной честны, правила понятны, изменения предсказуемы и логичны". Нет ощущения что сеть просто собирает деньги. Конфликты решаются быстро и по процедуре, без эмоций и унижения. Хорошие партнёры получают больше возможностей, плохие не паразитируют.',
     metrics:[
       {l:'NPS партнёров',f:null,p:null,u:'%'},
@@ -852,7 +921,7 @@ const KFU = [
     ] },
   { _idx:6, title:'Качественное сообщество',
     desc:'Партнёр не один, есть обмен решениями, поддержка, принадлежность к чему-то большему',
-    ckp:'Партнёр не один — есть обмен решениями, поддержка, статус, энергия. Лучшие практики расходятся быстро, ошибки не повторяются. В кризис сообщество удерживает людей от паники и выхода.',
+    ckp:'Партнёр не один - есть обмен решениями, поддержка, статус, энергия. Лучшие практики расходятся быстро, ошибки не повторяются. В кризис сообщество удерживает людей от паники и выхода.',
     metrics:[
       {l:'% участия в мероп.',f:null,p:null,u:'%'},
       {l:'Достижений в сети',f:null,p:null,u:'шт'},
@@ -866,7 +935,7 @@ function icon(name, size=16, color='currentColor'){
 function pct(f,p){ if(!p||p===0) return null; return Math.round(f/p*100); }
 // type='gt': f > cmp = зелёный (LTV > CAC), иначе красный
 function scMetric(m){
-  if(m.f===null||m.f===undefined) return C.gray; // нет данных — серый, без оценки
+  if(m.f===null||m.f===undefined) return C.gray; // нет данных - серый, без оценки
   if(m.type==='gt'){ return (m.f!==null&&m.cmp!==null&&m.f>m.cmp) ? C.green : (m.f===null||m.cmp===null?C.gray:C.red); }
   const p = (typeof m.f==='number'&&m.p!=null) ? Math.round(m.f/m.p*100) : null;
   return sc(p);
@@ -875,7 +944,7 @@ function sc(p){ if(p===null) return C.blue; return p>=100?C.green:p>=85?C.green:
 function scClass(p){ if(p===null) return 'blue'; return p>=100?'green':p>=85?'green':p>=60?'yellow':'red'; }
 function fmtNum(v,u){
   if(typeof v==='string') return v+(u?' '+u:'');
-  if(typeof v!=='number') return '—';
+  if(typeof v!=='number') return '-';
   let s;
   if(Math.abs(v)>=1e6) s=(v/1e6).toFixed(1)+'M';
   else if(Math.abs(v)>=1000) s=Math.round(v).toLocaleString('ru-RU');
@@ -976,12 +1045,12 @@ function renderKFUSummaryBar(){
   KFU.forEach((k,i)=>{
     let pcts=[];
     k.metrics.forEach(m=>{
-      if(m.f===null||m.f===undefined) return; // нет данных — не считаем
+      if(m.f===null||m.f===undefined) return; // нет данных - не считаем
       if(m.type==='gt'){ if(m.cmp!==null&&m.cmp!==undefined) pcts.push(m.f>m.cmp?100:50); }
       else if(typeof m.f==='number'&&m.p!=null) pcts.push(Math.round(m.f/m.p*100));
     });
     const avg=pcts.length?Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length):null;
-    if(avg===null)return; // нет данных за период — не добавляем в счётчик
+    if(avg===null)return; // нет данных за период - не добавляем в счётчик
     if(avg>=85)good++;
     else if(avg>=60)warn++;
     else{crit++;critNames.push(k.title);}
@@ -1033,7 +1102,7 @@ function renderKFU(){
     el.className='kfu-card';
     // Цвет карточки = среднее по всем метрикам (как в светофоре и summary bar)
     const _cardPcts=[];k.metrics.forEach(m=>{
-      if(m.f===null||m.f===undefined) return; // нет данных — не учитываем
+      if(m.f===null||m.f===undefined) return; // нет данных - не учитываем
       if(m.type==='gt'){ if(m.cmp!==null&&m.cmp!==undefined) _cardPcts.push(m.f>m.cmp?100:50); }
       else if(typeof m.f==='number'&&m.p!=null&&m.p!==0) _cardPcts.push(Math.round(m.f/m.p*100));
     });
@@ -1054,7 +1123,7 @@ function renderKFU(){
         <div class="kfu-m-label">${m.l}</div>
         <div class="kfu-m-row" style="flex-direction:column;align-items:flex-start;gap:2px">
           <div class="kfu-m-val" style="color:${mc}">${valDisplay}</div>
-          ${m.p!=null&&!m.type?`<div class="kfu-m-plan" style="font-size:11px;color:var(--muted)">план: ${fmtNum(m.p,m.u)} · ${p!==null?p+'%':'—'}</div>`:''}
+          ${m.p!=null&&!m.type?`<div class="kfu-m-plan" style="font-size:11px;color:var(--muted)">план: ${fmtNum(m.p,m.u)} · ${p!==null?p+'%':'-'}</div>`:''}
         </div>
         ${hintHtml}
         ${p!==null?`<div class="kfu-prog"><div class="kfu-prog-fill" style="width:${fill}%;background:${mc}"></div></div>`:''}
@@ -1069,7 +1138,7 @@ function renderKFU(){
     });
     const kfuAvg=kfuPcts.length?Math.round(kfuPcts.reduce((a,b)=>a+b,0)/kfuPcts.length):null;
     const kfuProgColor = kfuAvg===null?'var(--muted)':kfuAvg>=105?'#059669':kfuAvg>=90?'#34d399':kfuAvg>=70?'#fbbf24':'#fb7185';
-    const kfuProgLabel = kfuAvg===null?'—':kfuAvg>=105?`${kfuAvg}% — перевыполнено 🎉`:kfuAvg>=90?`${kfuAvg}% плана`:kfuAvg>=70?`${kfuAvg}% — под риском`:`${kfuAvg}% — критично`;
+    const kfuProgLabel = kfuAvg===null?'-':kfuAvg>=105?`${kfuAvg}% - перевыполнено 🎉`:kfuAvg>=90?`${kfuAvg}% плана`:kfuAvg>=70?`${kfuAvg}% - под риском`:`${kfuAvg}% - критично`;
     const kfuProgFill2 = kfuAvg!==null?Math.min(kfuAvg,100):0;
     const kfuProgHtml=kfuAvg!==null?`<div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border)">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1091,6 +1160,7 @@ function renderKFU(){
         <div class="kfu-metrics">${metricsHtml}</div>
         ${kfuProgHtml}
         ${KFU_CHART_IDS[k._idx]?`<div style="margin-top:8px"><button onclick="(function(){const tab=document.querySelectorAll('.nav-tab')[2];showTab('analytics',tab);setTimeout(()=>{const el=document.getElementById('${KFU_CHART_IDS[k._idx]}');if(el)el.closest('.card')?.scrollIntoView({behavior:'smooth',block:'center'});},300);})()" style="background:none;border:none;color:var(--gold);font-size:11px;cursor:pointer;padding:0;font-family:inherit;display:flex;align-items:center;gap:4px"><i data-lucide="trending-up" style="width:12px;height:12px"></i> смотреть тренд</button></div>`:''}
+        ${renderKFUNotesBlock(k._idx)}
       </div>`;
     rows[i<3?0:1].appendChild(el);
   });
@@ -1111,15 +1181,15 @@ const DEPTS = [
   {
     name:'Отдел открытий', num:1,
     stats:[
-      {l:'Открытий студий',v:'—',sub:''},
-      {l:'Срок открытия',v:'—',sub:'среднее'},
-      {l:'Расходы на откр.',v:'—',sub:'итого'},
-      {l:'NPS отдела',v:'—',sub:'нет данных'},
+      {l:'Открытий студий',v:'-',sub:''},
+      {l:'Срок открытия',v:'-',sub:'за период'},
+      {l:'Расходы на откр.',v:'-',sub:'итого'},
+      {l:'NPS отдела',v:'-',sub:'нет данных'},
     ],
     table:[
-      {n:'Кол-во открытий',f:'—',p:'—',pct:null},
-      {n:'Срок открытия (мес.)',f:'—',p:'—',pct:null},
-      {n:'Расходы (₽)',f:'—',p:'—',pct:null},
+      {n:'Кол-во открытий',f:'-',p:'-',pct:null},
+      {n:'Срок открытия (дней)',f:'-',p:'-',pct:null},
+      {n:'Расходы (₽)',f:'-',p:'-',pct:null},
     ],
     chart:{id:'d-openings',render:()=>{
       mkChart('d-openings',{type:'bar',data:{labels:MONTHS,
@@ -1131,17 +1201,17 @@ const DEPTS = [
   {
     name:'Отдел ШМП', num:2,
     stats:[
-      {l:'Выручка (факт)',v:'—',sub:''},
-      {l:'Выполнение плана',v:'—',sub:''},
-      {l:'Кол-во выпускников',v:'—',sub:'нет данных'},
-      {l:'NPS отдела',v:'—',sub:''},
+      {l:'Выручка (факт)',v:'-',sub:''},
+      {l:'Выполнение плана',v:'-',sub:''},
+      {l:'Кол-во выпускников',v:'-',sub:'нет данных'},
+      {l:'NPS отдела',v:'-',sub:''},
     ],
     table:[
-      {n:'Выручка итого',f:'—',p:'—',pct:null},
-      {n:'1 курс РФ/СНГ',f:'—',p:'—',pct:null},
-      {n:'2 курс РФ/СНГ',f:'—',p:'—',pct:null},
-      {n:'3.1 курс',f:'—',p:'—',pct:null},
-      {n:'3.2 курс',f:'—',p:'—',pct:null},
+      {n:'Выручка итого',f:'-',p:'-',pct:null},
+      {n:'1 курс РФ/СНГ',f:'-',p:'-',pct:null},
+      {n:'2 курс РФ/СНГ',f:'-',p:'-',pct:null},
+      {n:'3.1 курс',f:'-',p:'-',pct:null},
+      {n:'3.2 курс',f:'-',p:'-',pct:null},
     ],
     chart:{id:'d-shmp',render:()=>{
       mkChart('d-shmp',{type:'bar',data:{labels:SHMP_L,
@@ -1152,16 +1222,16 @@ const DEPTS = [
   {
     name:'Маркетинг партнёров', num:3,
     stats:[
-      {l:'Охват Instagram',v:'—',sub:'загрузка...'},
-      {l:'Охват Telegram',v:'—',sub:'загрузка...'},
-      {l:'Лидов с сетевых',v:'—',sub:''},
-      {l:'PR-выходов',v:'—',sub:''},
+      {l:'Охват Instagram',v:'-',sub:'загрузка...'},
+      {l:'Охват Telegram',v:'-',sub:'загрузка...'},
+      {l:'Лидов с сетевых',v:'-',sub:''},
+      {l:'PR-выходов',v:'-',sub:''},
     ],
     table:[
-      {n:'Охват СММ (Инст)',f:'—',p:'—',pct:null},
-      {n:'Охват ТГ',f:'—',p:'—',pct:null},
-      {n:'Лидов с сетевых каналов',f:'—',p:'—',pct:null},
-      {n:'Гипотезы запущены',f:'—',p:'—',pct:null},
+      {n:'Охват СММ (Инст)',f:'-',p:'-',pct:null},
+      {n:'Охват ТГ',f:'-',p:'-',pct:null},
+      {n:'Лидов с сетевых каналов',f:'-',p:'-',pct:null},
+      {n:'Гипотезы запущены',f:'-',p:'-',pct:null},
     ],
     chart:{id:'d-mkt',render:()=>{
       mkChart('d-mkt',{type:'line',data:{labels:MONTHS,
@@ -1172,15 +1242,15 @@ const DEPTS = [
   {
     name:'Территориальные управляющие', num:4,
     stats:[
-      {l:'Клиентов сети',v:'—',sub:''},
-      {l:'% аттестаций',v:'—',sub:'по управлению'},
-      {l:'% сбора роялти',v:'—',sub:'нет данных'},
-      {l:'NPS партнёров',v:'—',sub:''},
+      {l:'Клиентов сети',v:'-',sub:''},
+      {l:'% аттестаций',v:'-',sub:'по управлению'},
+      {l:'% сбора роялти',v:'-',sub:'нет данных'},
+      {l:'NPS партнёров',v:'-',sub:''},
     ],
     table:[
-      {n:'Клиентов сети',f:'—',p:'—',pct:null},
-      {n:'% аттестаций (управление)',f:'—',p:'—',pct:null},
-      {n:'NPS по клиентам',f:'—',p:'—',pct:null},
+      {n:'Клиентов сети',f:'-',p:'-',pct:null},
+      {n:'% аттестаций (управление)',f:'-',p:'-',pct:null},
+      {n:'NPS по клиентам',f:'-',p:'-',pct:null},
     ],
     chart:{id:'d-terr',render:()=>{
       mkChart('d-terr',{type:'line',data:{labels:MONTHS,
@@ -1192,15 +1262,15 @@ const DEPTS = [
   {
     name:'Комьюнити менеджер', num:5,
     stats:[
-      {l:'Мероприятий',v:'—',sub:'план 6 в год'},
-      {l:'Амбасадоров',v:'—',sub:'из партнёров'},
-      {l:'Достижений в сети',v:'—',sub:'цель >6'},
-      {l:'NPS мероприятий',v:'—',sub:'нет данных'},
+      {l:'Мероприятий',v:'-',sub:'план 6 в год'},
+      {l:'Амбасадоров',v:'-',sub:'из партнёров'},
+      {l:'Достижений в сети',v:'-',sub:'цель >6'},
+      {l:'NPS мероприятий',v:'-',sub:'нет данных'},
     ],
     table:[
-      {n:'Мероприятий проведено',f:'—',p:'6 / год',pct:null},
-      {n:'% партнёров-амбасадоров',f:'—',p:'80%',pct:null},
-      {n:'Достижений в сети',f:'—',p:'6',pct:null},
+      {n:'Мероприятий проведено',f:'-',p:'6 / год',pct:null},
+      {n:'% партнёров-амбасадоров',f:'-',p:'80%',pct:null},
+      {n:'Достижений в сети',f:'-',p:'6',pct:null},
     ],
     progBars:[
       {l:'% участия в мероприятиях',f:null,p:null},
@@ -1211,17 +1281,18 @@ const DEPTS = [
   {
     name:'Обучение и контроль качества', num:6,
     stats:[
-      {l:'NPS занятий',v:'—',sub:'цель ≥85%'},
-      {l:'Качество занятий',v:'—',sub:''},
-      {l:'Тайных покупателей',v:'—',sub:''},
-      {l:'Кол-во посещений',v:'—',sub:'за период'},
+      {l:'NPS занятий',v:'-',sub:'цель ≥85%'},
+      {l:'Качество занятий',v:'-',sub:''},
+      {l:'Тайных покупателей',v:'-',sub:''},
+      {l:'Кол-во посещений',v:'-',sub:'за период'},
     ],
     table:[
-      {n:'NPS занятий',f:'—',p:'85%',pct:null},
-      {n:'Качество занятий',f:'—',p:'—',pct:null},
-      {n:'Тайные покупатели',f:'—',p:'—',pct:null},
-      {n:'Индекс групп',f:'—',p:'—',pct:null},
+      {n:'NPS занятий',f:'-',p:'85%',pct:null},
+      {n:'Качество занятий',f:'-',p:'-',pct:null},
+      {n:'Тайные покупатели',f:'-',p:'-',pct:null},
+      {n:'Индекс групп',f:'-',p:'-',pct:null},
     ],
+    _merged: true,
     chart:{id:'d-qual',render:()=>{
       mkChart('d-nps-zan',{type:'line',data:{labels:MONTHS,
         datasets:[lineDs('Факт',NPS_ZAN_F,C.green,true),lineDs('План',NPS_ZAN_P,C.gray,false,[5,3])]},
@@ -1230,97 +1301,119 @@ const DEPTS = [
         }});
       mkChart('d-pie',{type:'doughnut',data:{labels:PIE_L,datasets:[{data:PIE_D,backgroundColor:[C.gold,C.blue,C.green,C.purple,C.teal,C.red,'#ff9f40','#888'],borderWidth:0,hoverOffset:4}]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10,padding:6}}}}});
-    }, dualChart: true}
-  },
-  {
-    name:'Академия администраторов', num:7,
-    stats:[
-      {l:'Зашли',v:'—',sub:''},
-      {l:'Получили сертификат',v:'—',sub:''},
-      {l:'NPS академии',v:'—',sub:''},
-      {l:'% выпуска',v:'—',sub:''},
-    ],
-    table:[
-      {n:'Зашли',f:'—',p:'—',pct:null},
-      {n:'Получили сертификат',f:'—',p:'—',pct:null},
-      {n:'% выпуска',f:'—',p:'—',pct:null},
-      {n:'NPS академии',f:'—',p:'—',pct:null},
-    ],
-    chart:{id:'d-acad',render:()=>{
       mkChart('d-acad',{type:'bar',data:{labels:MONTHS,
-        datasets:[barDs('Зашли',ACAD_IN,C.blue),barDs('Сертификат',ACAD_C,C.gold)]},
+        datasets:[barDs('Адм. зашли',ACAD_IN,C.blue),barDs('Адм. сертификат',ACAD_C,C.gold)]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
-    }}
-  },
-  {
-    name:'Академия педагогов', num:8,
-    stats:[
-      {l:'Зашедших',v:'—',sub:''},
-      {l:'Договоров',v:'—',sub:''},
-      {l:'% доходимости',v:'—',sub:''},
-      {l:'NPS академии',v:'—',sub:'нет данных'},
-    ],
-    table:[
-      {n:'Кол-во зашедших',f:'—',p:'—',pct:null},
-      {n:'% доходимости до аттестации',f:'—',p:'—',pct:null},
-      {n:'Кол-во договоров',f:'—',p:'—',pct:null},
-    ],
-    progBars:[
-      {l:'% доходимости до аттестации',f:null,p:null},
-      {l:'Конверсия зашли→договор',f:null,p:null},
-    ]
+    }, dualChart: true},
+    mergedSection: {
+      name:'Академия педагогов',
+      stats:[
+        {l:'Зашедших',v:'-',sub:''},
+        {l:'Договоров',v:'-',sub:''},
+        {l:'% доходимости',v:'-',sub:''},
+        {l:'NPS академии',v:'-',sub:'нет данных'},
+      ],
+      progBars:[
+        {l:'% доходимости до аттестации',f:null,p:null},
+        {l:'Конверсия зашли→договор',f:null,p:null},
+      ]
+    }
   },
 ];
 
 // ══════════════════════════════════════════════════════════
-// TASKS SYSTEM
+// TASKS SYSTEM v2 (deadline, priority, archive, status)
 // ══════════════════════════════════════════════════════════
-const TASKS_KEY = 'levita_tasks_v1';
+const TASKS_KEY = 'levita_tasks_v2';
 
-function getTasks(deptIdx){
-  try{ const all=JSON.parse(localStorage.getItem(TASKS_KEY))||{}; return all[deptIdx]||[]; }catch{ return []; }
-}
-function saveTask(deptIdx, task){
+function lsGet(key, fallback){
   try{
-    const all=JSON.parse(localStorage.getItem(TASKS_KEY))||{};
-    if(!all[deptIdx]) all[deptIdx]=[];
-    all[deptIdx].push(task);
-    localStorage.setItem(TASKS_KEY, JSON.stringify(all));
+    const v = localStorage.getItem(key);
+    if(v) return JSON.parse(v);
+    const bk = localStorage.getItem('levita_backup_'+key);
+    if(bk) return JSON.parse(bk);
+    return fallback;
+  }catch{ return fallback; }
+}
+function lsSet(key, val){
+  try{
+    const s = JSON.stringify(val);
+    localStorage.setItem(key, s);
+    localStorage.setItem('levita_backup_'+key, s);
   }catch{}
 }
+
+function getTasks(deptIdx, includeArchived=false){
+  const all = lsGet(TASKS_KEY, {});
+  const tasks = all[deptIdx] || [];
+  return includeArchived ? tasks : tasks.filter(t=>!t.archived);
+}
+function getArchivedTasks(deptIdx){ return getTasks(deptIdx, true).filter(t=>t.archived); }
 function updateTasks(deptIdx, tasks){
-  try{
-    const all=JSON.parse(localStorage.getItem(TASKS_KEY))||{};
-    all[deptIdx]=tasks;
-    localStorage.setItem(TASKS_KEY, JSON.stringify(all));
-  }catch{}
+  const all = lsGet(TASKS_KEY, {});
+  all[deptIdx] = tasks;
+  lsSet(TASKS_KEY, all);
+}
+
+const PRIORITY_LABEL = {high:'🔴 Высокий',med:'🟡 Средний',low:'🟢 Низкий'};
+
+function taskDeadlineHtml(deadline){
+  if(!deadline) return '';
+  const now = new Date(); now.setHours(0,0,0,0);
+  const d = new Date(deadline+'T00:00:00');
+  const overdue = d < now;
+  return `<span class="task-deadline${overdue?' overdue':''}"><i data-lucide="calendar" style="width:10px;height:10px"></i>${d.toLocaleDateString('ru',{day:'numeric',month:'short'})}</span>`;
 }
 
 function renderTasksBlock(deptIdx){
   const tasks = getTasks(deptIdx);
+  const archived = getArchivedTasks(deptIdx);
   const sess = currentSession();
-  const canEdit = sess && (sess.role==='admin');
+  const canEdit = sess;
 
   const listHtml = tasks.length===0
     ? `<div class="task-empty">Задач пока нет</div>`
-    : tasks.map((t,ti)=>`
-      <div class="task-item${t.done?' done':''}" id="task-${deptIdx}-${ti}">
-        <div class="task-check${t.done?' checked':''}" onclick="toggleTask(${deptIdx},${ti})">${t.done?'✓':''}</div>
+    : tasks.map((t,ti)=>{
+      const pLabel = PRIORITY_LABEL[t.priority]||PRIORITY_LABEL.med;
+      const pClass = t.priority||'med';
+      const dlHtml = taskDeadlineHtml(t.deadline);
+      return `<div class="task-item${t.done?' done':''}" id="task-${deptIdx}-${ti}">
         <div style="flex:1">
           <div class="task-text">${escHtml(t.text)}</div>
-          <div class="task-meta">${t.author} · ${t.date}</div>
+          <div class="task-meta">
+            <span class="task-priority ${pClass}">${pLabel}</span>
+            ${dlHtml}
+            <span style="color:var(--muted2)">${t.author||''} · ${t.date||''}</span>
+          </div>
+          <div class="task-status-btns">
+            <button class="task-status-btn${t.done?' active-done':''}" onclick="setTaskDone(${deptIdx},${ti},true)">✓ Готово</button>
+            <button class="task-status-btn${(!t.done)?' active-notdone':''}" onclick="setTaskDone(${deptIdx},${ti},false)">✕ Не готово</button>
+          </div>
         </div>
         ${canEdit?`<button class="task-del" onclick="deleteTask(${deptIdx},${ti})" title="Удалить">✕</button>`:''}
-      </div>`).join('');
+      </div>`;
+    }).join('');
 
   const addRow = canEdit ? `
     <div class="task-add-row">
-      <input class="task-add-input" id="task-inp-${deptIdx}" type="text" placeholder="Новая задача / фокус...">
+      <input class="task-add-input" id="task-inp-${deptIdx}" type="text" placeholder="Новая задача..." style="flex:2">
+      <select id="task-pri-${deptIdx}" style="padding:6px 8px;border:1px solid var(--border);border-radius:7px;font-size:11px;font-family:inherit;outline:none;background:var(--bg2);color:var(--text)">
+        <option value="high">🔴 Высокий</option>
+        <option value="med" selected>🟡 Средний</option>
+        <option value="low">🟢 Низкий</option>
+      </select>
+      <input id="task-dl-${deptIdx}" type="date" style="padding:6px 8px;border:1px solid var(--border);border-radius:7px;font-size:11px;font-family:inherit;outline:none;background:var(--bg2);color:var(--text)">
       <button class="task-add-btn" onclick="addTask(${deptIdx})">+ Добавить</button>
     </div>` : '';
 
   return `<div class="tasks-section" id="tasks-section-${deptIdx}">
-    <div class="tasks-title"><i data-lucide="target" style="width:13px;height:13px;margin-right:4px"></i>Фокусы и задачи <span style="background:var(--gold-dim);color:var(--gold);padding:1px 7px;border-radius:10px;font-size:10px">${tasks.length}</span></div>
+    <div class="tasks-title">
+      <i data-lucide="target" style="width:13px;height:13px"></i>Фокусы и задачи
+      <span style="background:var(--gold-dim);color:var(--gold);padding:1px 7px;border-radius:10px;font-size:10px">${tasks.length}</span>
+      <button onclick="openArchiveSidebar(${deptIdx})" style="background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 9px;border-radius:6px;cursor:pointer;font-size:10px;font-family:inherit;display:flex;align-items:center;gap:3px;margin-left:auto;transition:.15s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+        <i data-lucide="archive" style="width:11px;height:11px"></i> Архив (${archived.length})
+      </button>
+    </div>
     <div class="tasks-list" id="tasks-list-${deptIdx}">${listHtml}</div>
     ${addRow}
   </div>`;
@@ -1332,32 +1425,49 @@ function escHtml(str){
 
 function addTask(deptIdx){
   const inp = document.getElementById(`task-inp-${deptIdx}`);
+  const priEl = document.getElementById(`task-pri-${deptIdx}`);
+  const dlEl = document.getElementById(`task-dl-${deptIdx}`);
   const text = inp ? inp.value.trim() : '';
   if(!text) return;
   const sess = currentSession();
   const task = {
+    id: 't'+Date.now(),
     text,
     done: false,
-    author: sess ? sess.login : 'unknown',
-    date: new Date().toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'})
+    priority: priEl ? priEl.value : 'med',
+    deadline: dlEl ? dlEl.value : '',
+    author: 'CPO',
+    date: new Date().toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'}),
+    archived: false
   };
-  saveTask(deptIdx, task);
+  const all = lsGet(TASKS_KEY, {});
+  if(!all[deptIdx]) all[deptIdx]=[];
+  all[deptIdx].push(task);
+  lsSet(TASKS_KEY, all);
   inp.value = '';
   refreshTasksList(deptIdx);
 }
 
-function toggleTask(deptIdx, taskIdx){
-  const tasks = getTasks(deptIdx);
-  if(!tasks[taskIdx]) return;
-  tasks[taskIdx].done = !tasks[taskIdx].done;
-  updateTasks(deptIdx, tasks);
+function setTaskDone(deptIdx, taskIdx, done){
+  const all = lsGet(TASKS_KEY, {});
+  const tasks = all[deptIdx]||[];
+  const active = tasks.filter(t=>!t.archived);
+  if(!active[taskIdx]) return;
+  active[taskIdx].done = done;
+  if(done) active[taskIdx].archived = true;
+  lsSet(TASKS_KEY, all);
   refreshTasksList(deptIdx);
 }
 
+function toggleTask(deptIdx, taskIdx){ setTaskDone(deptIdx, taskIdx, !getTasks(deptIdx,true)[taskIdx]?.done); }
+
 function deleteTask(deptIdx, taskIdx){
-  const tasks = getTasks(deptIdx);
-  tasks.splice(taskIdx, 1);
-  updateTasks(deptIdx, tasks);
+  const all = lsGet(TASKS_KEY, {});
+  const tasks = all[deptIdx]||[];
+  const active = tasks.filter(t=>!t.archived);
+  active.splice(taskIdx, 1);
+  all[deptIdx] = [...tasks.filter(t=>t.archived), ...active];
+  lsSet(TASKS_KEY, all);
   refreshTasksList(deptIdx);
 }
 
@@ -1368,32 +1478,315 @@ function refreshTasksList(deptIdx){
   tmp.innerHTML = renderTasksBlock(deptIdx);
   const newSection = tmp.firstElementChild;
   section.replaceWith(newSection);
-  // Навешиваем Enter на инпут
   const inp = document.getElementById(`task-inp-${deptIdx}`);
   if(inp) inp.addEventListener('keydown', e => { if(e.key==='Enter') addTask(deptIdx); });
+  setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50);
+}
+
+// Archive sidebar
+let _archiveDeptIdx = null;
+function openArchiveSidebar(deptIdx){
+  _archiveDeptIdx = deptIdx;
+  const archived = getArchivedTasks(deptIdx);
+  document.getElementById('archive-dept-label').textContent = DEPTS[deptIdx]?.name || 'Отдел '+deptIdx;
+  const list = document.getElementById('archive-list');
+  if(!archived.length){
+    list.innerHTML = '<div style="color:var(--muted);font-size:13px;font-style:italic">Архив пуст</div>';
+  } else {
+    list.innerHTML = archived.map(t=>{
+      const pLabel = PRIORITY_LABEL[t.priority]||PRIORITY_LABEL.med;
+      return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;opacity:.8">
+        <div style="font-size:13px;text-decoration:line-through;color:var(--muted);margin-bottom:4px">${escHtml(t.text)}</div>
+        <div style="font-size:10px;color:var(--muted2);display:flex;gap:6px;flex-wrap:wrap">
+          <span>${pLabel}</span>${t.deadline?`<span>• ${t.deadline}</span>`:''}<span>• ${t.author}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('archive-overlay').classList.add('open');
+  document.getElementById('archive-sidebar').classList.add('open');
+  setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50);
+}
+function closeArchiveSidebar(){
+  document.getElementById('archive-overlay').classList.remove('open');
+  document.getElementById('archive-sidebar').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════
+// PERSONAL TASKS (CPO)
+// ══════════════════════════════════════════════════════════
+const PT_KEY = 'levita_personal_tasks_v1';
+function getPersonalTasks(includeArchived=false){
+  const tasks = lsGet(PT_KEY, []);
+  return includeArchived ? tasks : tasks.filter(t=>!t.archived);
+}
+function savePersonalTasks(tasks){ lsSet(PT_KEY, tasks); }
+
+function renderPersonalTasks(){
+  const tasks = getPersonalTasks();
+  const count = tasks.length;
+  const el = document.getElementById('pt-count');
+  if(el) el.textContent = count;
+  const list = document.getElementById('pt-list');
+  if(!list) return;
+  if(!count){
+    list.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0">Задач пока нет</div>';
+    return;
+  }
+  list.innerHTML = tasks.map((t,i)=>{
+    const pLabel = PRIORITY_LABEL[t.priority]||PRIORITY_LABEL.med;
+    const pClass = t.priority||'med';
+    const dlHtml = taskDeadlineHtml(t.deadline);
+    const collapsed = t.collapsed;
+    return `<div class="personal-task-item${t.done?' done-pt':''}" id="pt-item-${i}">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:${collapsed?0:4}px">
+          <span class="task-priority ${pClass}" style="cursor:pointer" onclick="setPTPriority(${i})">${pLabel}</span>
+          ${dlHtml}
+          <button class="pt-toggle" onclick="togglePTCollapsed(${i})" title="${collapsed?'Развернуть':'Свернуть'}">${collapsed?'▼':'▲'}</button>
+        </div>
+        ${collapsed?'':`<div class="pt-text">${escHtml(t.text)}</div>`}
+        ${collapsed?'':`<div class="task-status-btns" style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <button class="task-status-btn${t.done?' active-done':''}" onclick="setPTDone(${i},true)">✓ Готово</button>
+          <button class="task-status-btn${(!t.done)?' active-notdone':''}" onclick="setPTDone(${i},false)">✕ Не готово</button>
+          <button onclick="deletePTActive(${i})" style="margin-left:auto;font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid #ef444433;background:#ef444411;color:#ef4444;cursor:pointer;display:flex;align-items:center;gap:4px"><i data-lucide="trash-2" style="width:11px;height:11px"></i> Удалить</button>
+        </div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addPersonalTask(){
+  const textEl = document.getElementById('pt-new-text');
+  const priEl = document.getElementById('pt-new-priority');
+  const dlEl = document.getElementById('pt-new-deadline');
+  const text = textEl ? textEl.value.trim() : '';
+  if(!text) return;
+  const tasks = getPersonalTasks(true);
+  tasks.push({
+    id:'pt'+Date.now(), text,
+    done:false, archived:false, collapsed:false,
+    priority: priEl ? priEl.value : 'med',
+    deadline: dlEl ? dlEl.value : '',
+    date: new Date().toLocaleDateString('ru',{day:'numeric',month:'short'})
+  });
+  savePersonalTasks(tasks);
+  if(textEl) textEl.value='';
+  renderPersonalTasks();
+}
+
+function setPTDone(idx, done){
+  const tasks = getPersonalTasks(true);
+  const active = tasks.filter(t=>!t.archived);
+  if(!active[idx]) return;
+  active[idx].done = done;
+  if(done){
+    active[idx].archived = true;
+    active[idx].doneDate = new Date().toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'});
+  }
+  savePersonalTasks(tasks);
+  renderPersonalTasks();
+}
+
+function deletePTActive(idx){
+  const tasks = getPersonalTasks(true);
+  const active = tasks.filter(t=>!t.archived);
+  if(!active[idx]) return;
+  const tidx = tasks.indexOf(active[idx]);
+  if(tidx>-1) tasks.splice(tidx,1);
+  savePersonalTasks(tasks);
+  renderPersonalTasks();
+}
+
+function restorePTFromArchive(archiveIdx){
+  const tasks = getPersonalTasks(true);
+  const archived = tasks.filter(t=>t.archived);
+  if(!archived[archiveIdx]) return;
+  archived[archiveIdx].archived = false;
+  archived[archiveIdx].done = false;
+  archived[archiveIdx].doneDate = null;
+  savePersonalTasks(tasks);
+  renderPersonalTasks();
+  openPTArchive();
+}
+
+function deletePTFromArchive(archiveIdx){
+  const tasks = getPersonalTasks(true);
+  const archived = tasks.filter(t=>t.archived);
+  if(!archived[archiveIdx]) return;
+  const tidx = tasks.indexOf(archived[archiveIdx]);
+  if(tidx>-1) tasks.splice(tidx,1);
+  savePersonalTasks(tasks);
+  openPTArchive();
+}
+
+function setPTPriority(idx){
+  const tasks = getPersonalTasks(true);
+  const active = tasks.filter(t=>!t.archived);
+  if(!active[idx]) return;
+  const order = ['high','med','low'];
+  const cur = active[idx].priority||'med';
+  active[idx].priority = order[(order.indexOf(cur)+1)%3];
+  savePersonalTasks(tasks);
+  renderPersonalTasks();
+}
+
+function togglePTCollapsed(idx){
+  const tasks = getPersonalTasks(true);
+  const active = tasks.filter(t=>!t.archived);
+  if(!active[idx]) return;
+  active[idx].collapsed = !active[idx].collapsed;
+  savePersonalTasks(tasks);
+  renderPersonalTasks();
+}
+
+function openPTArchive(){
+  const archived = getPersonalTasks(true).filter(t=>t.archived);
+  const list = document.getElementById('pt-archive-list');
+  if(!list) return;
+  if(!archived.length){
+    list.innerHTML='<div style="color:var(--muted);font-size:13px;font-style:italic">Архив пуст</div>';
+  } else {
+    list.innerHTML = archived.map((t,ai)=>{
+      const pLabel = PRIORITY_LABEL[t.priority]||PRIORITY_LABEL.med;
+      const doneDate = t.doneDate || '';
+      return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+        <div style="font-size:13px;color:var(--text);margin-bottom:6px;line-height:1.4">${escHtml(t.text)}</div>
+        <div style="font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+          <span>${pLabel}</span>${t.deadline?`<span>• дедлайн: ${t.deadline}</span>`:''}
+          ${doneDate?`<span style="color:var(--green,#16a34a)">✓ выполнено ${doneDate}</span>`:''}
+        </div>
+        <div style="display:flex;gap:6px">
+          <button onclick="restorePTFromArchive(${ai})" style="font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg4,var(--bg2));color:var(--text);cursor:pointer">↩ Вернуть</button>
+          <button onclick="deletePTFromArchive(${ai})" style="font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid #ef444433;background:#ef444411;color:#ef4444;cursor:pointer">✕ Удалить</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('pt-archive-overlay').classList.add('open');
+  document.getElementById('pt-archive-sidebar').classList.add('open');
+}
+function closePTArchive(){
+  document.getElementById('pt-archive-overlay').classList.remove('open');
+  document.getElementById('pt-archive-sidebar').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════════
+// KFU NOTES (responsible + key focus with history)
+// ══════════════════════════════════════════════════════════
+const KFU_NOTES_KEY = 'levita_kfu_notes_v1';
+function getKFUNotes(){ return lsGet(KFU_NOTES_KEY, {}); }
+function saveKFUNotes(d){ lsSet(KFU_NOTES_KEY, d); }
+
+function renderKFUNotesBlock(kfuIdx){
+  const notes = getKFUNotes();
+  const n = notes[kfuIdx] || {responsible:[], focus:'', focusHistory:[]};
+  const chips = (n.responsible||[]).map((r,ri)=>
+    `<span class="kfu-chip">${escHtml(r)}<button class="kfu-chip-del" onclick="removeKFUResponsible(${kfuIdx},${ri})">×</button></span>`
+  ).join('');
+  return `<div class="kfu-notes-block" id="kfu-notes-${kfuIdx}">
+    <div class="kfu-notes-label"><i data-lucide="user" style="width:10px;height:10px"></i> Ответственный</div>
+    <div class="kfu-notes-responsible" id="kfu-resp-${kfuIdx}">
+      ${chips}
+      <button class="kfu-chip-add" onclick="addKFUResponsible(${kfuIdx})">+ Добавить</button>
+    </div>
+    <div class="kfu-notes-label" style="margin-top:6px"><i data-lucide="crosshair" style="width:10px;height:10px"></i> Ключевой фокус:
+      <button class="kfu-focus-archive-btn" onclick="openKFUFocusArchive(${kfuIdx})" title="История"><i data-lucide="history" style="width:10px;height:10px"></i></button>
+    </div>
+    <textarea class="kfu-focus-input" id="kfu-focus-inp-${kfuIdx}" rows="2" placeholder="Фокус этой недели..." oninput="saveKFUFocus(${kfuIdx})">${escHtml(n.focus||'')}</textarea>
+  </div>`;
+}
+
+function addKFUResponsible(kfuIdx){
+  const name = prompt('Имя ответственного:');
+  if(!name||!name.trim()) return;
+  const d = getKFUNotes();
+  if(!d[kfuIdx]) d[kfuIdx]={responsible:[],focus:'',focusHistory:[]};
+  d[kfuIdx].responsible = d[kfuIdx].responsible||[];
+  d[kfuIdx].responsible.push(name.trim());
+  saveKFUNotes(d);
+  refreshKFUNotesBlock(kfuIdx);
+}
+
+function removeKFUResponsible(kfuIdx, respIdx){
+  const d = getKFUNotes();
+  if(!d[kfuIdx]||!d[kfuIdx].responsible) return;
+  d[kfuIdx].responsible.splice(respIdx,1);
+  saveKFUNotes(d);
+  refreshKFUNotesBlock(kfuIdx);
+}
+
+function saveKFUFocus(kfuIdx){
+  const inp = document.getElementById(`kfu-focus-inp-${kfuIdx}`);
+  if(!inp) return;
+  const d = getKFUNotes();
+  if(!d[kfuIdx]) d[kfuIdx]={responsible:[],focus:'',focusHistory:[]};
+  const prev = d[kfuIdx].focus||'';
+  const curr = inp.value;
+  clearTimeout(window[`_kfuFocusTimer_${kfuIdx}`]);
+  window[`_kfuFocusTimer_${kfuIdx}`] = setTimeout(()=>{
+    if(prev!==curr && prev.trim().length>2){
+      d[kfuIdx].focusHistory = d[kfuIdx].focusHistory||[];
+      d[kfuIdx].focusHistory.push({text:prev, date:new Date().toLocaleDateString('ru',{day:'numeric',month:'short'})});
+      if(d[kfuIdx].focusHistory.length>20) d[kfuIdx].focusHistory=d[kfuIdx].focusHistory.slice(-20);
+    }
+    d[kfuIdx].focus = curr;
+    saveKFUNotes(d);
+  }, 800);
+}
+
+function refreshKFUNotesBlock(kfuIdx){
+  const el = document.getElementById(`kfu-notes-${kfuIdx}`);
+  if(!el) return;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = renderKFUNotesBlock(kfuIdx);
+  el.replaceWith(tmp.firstElementChild);
+  setTimeout(()=>{ if(window.lucide) lucide.createIcons(); }, 50);
+}
+
+function openKFUFocusArchive(kfuIdx){
+  const d = getKFUNotes();
+  const history = (d[kfuIdx]?.focusHistory||[]).slice().reverse();
+  document.getElementById('kfu-focus-archive-label').textContent = KFU[kfuIdx]?.title||'KFU '+kfuIdx;
+  const list = document.getElementById('kfu-focus-archive-list');
+  if(!list) return;
+  if(!history.length){
+    list.innerHTML='<div style="color:var(--muted);font-size:13px;font-style:italic">История пуста</div>';
+  } else {
+    list.innerHTML = history.map(h=>`<div style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:var(--bg3)">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:4px">${h.date}</div>
+      <div style="font-size:12px;color:var(--text)">${escHtml(h.text)}</div>
+    </div>`).join('');
+  }
+  document.getElementById('kfu-focus-archive-overlay').classList.add('open');
+  document.getElementById('kfu-focus-archive-sidebar').classList.add('open');
+}
+function closeKFUFocusArchive(){
+  document.getElementById('kfu-focus-archive-overlay').classList.remove('open');
+  document.getElementById('kfu-focus-archive-sidebar').classList.remove('open');
 }
 
 // ── DEPT OWNERS storage ──────────────────────────────────
-const DEPT_OWNERS_KEY = 'levita_dept_owners_v1';
-function getDeptOwners(){ try{ return JSON.parse(localStorage.getItem(DEPT_OWNERS_KEY))||{}; }catch{ return {}; } }
-function saveDeptOwner(i, name){ const o=getDeptOwners(); o[i]=name; localStorage.setItem(DEPT_OWNERS_KEY,JSON.stringify(o)); }
+const DEPT_OWNERS_KEY = 'levita_dept_owners_v2';
+function getDeptOwners(){ return lsGet(DEPT_OWNERS_KEY, {}); }
+function saveDeptOwner(i, name){ const o=getDeptOwners(); o[i]=name; lsSet(DEPT_OWNERS_KEY, o); }
 
 function renderDepts(){
   const list = document.getElementById('dept-list');
   const owners = getDeptOwners();
   const sess = currentSession();
-  const isAdmin = sess && sess.role === 'admin';
+  const isAdmin = sess;
 
   DEPTS.forEach((d,i)=>{
     const el = document.createElement('div');
     el.className='dept-card';
     el.id=`dept-${i}`;
 
-    const ownerName = owners[i] || '—';
+    const ownerName = owners[i] || '-';
     const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного"><i data-lucide="pencil" style="width:13px;height:13px;display:block"></i></button>` : '';
     const ownerEntry = getOwnerStatuses()[i];
-    const ownerDots = ownerName&&ownerName!=='—' ? ownerDotsHtml(ownerEntry) : '';
-    const ownerRateBtn = ownerName&&ownerName!=='—' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
+    const ownerDots = ownerName&&ownerName!=='-' ? ownerDotsHtml(ownerEntry) : '';
+    const ownerRateBtn = ownerName&&ownerName!=='-' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
     const ownerHtml = `<div class="dept-owner-row" id="dept-owner-row-${i}">
       <span class="dept-owner-label">Ответственный</span>
       <span class="dept-owner-name" id="dept-owner-name-${i}">${ownerName}</span>
@@ -1420,12 +1813,36 @@ function renderDepts(){
       :`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
 
     const tasksHtml = renderTasksBlock(i);
-    const teamHtml = renderTeamBlock(i);
+    // No team block - removed
+
+    // For merged dept (Обучение + Академии): add admin academy block + pedagogy section
+    let mergedHtml = '';
+    if(d._merged && d.mergedSection){
+      const ms = d.mergedSection;
+      const adminStatsHtml = `<div style="border-bottom:1px solid var(--border);margin:16px 0"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px"><i data-lucide="graduation-cap" style="width:13px;height:13px"></i>Академия администраторов</div>
+      <div class="stat-grid stat-grid-4" style="margin-bottom:16px">
+        <div class="stat-card"><div class="stat-label">Зашли</div><div class="stat-val" id="dstat-acad-adm-0">—</div><div class="stat-sub" id="dstat-acad-adm-sub-0"></div></div>
+        <div class="stat-card"><div class="stat-label">Сертификат</div><div class="stat-val" id="dstat-acad-adm-1">—</div><div class="stat-sub" id="dstat-acad-adm-sub-1"></div></div>
+        <div class="stat-card"><div class="stat-label">% выпуск</div><div class="stat-val" id="dstat-acad-adm-2">—</div><div class="stat-sub" id="dstat-acad-adm-sub-2"></div></div>
+        <div class="stat-card"><div class="stat-label">NPS</div><div class="stat-val" id="dstat-acad-adm-3">—</div><div class="stat-sub" id="dstat-acad-adm-sub-3"></div></div>
+      </div>
+      <div class="card card-pad" style="margin-bottom:12px"><div class="chart-title">Академия администраторов: зашли / сертификат</div><div class="chart-wrap-sm"><canvas id="d-acad"></canvas></div></div>`;
+      const msStatsHtml = ms.stats?`<div class="stat-grid stat-grid-4" style="margin-bottom:16px">${ms.stats.map((s,si)=>`
+        <div class="stat-card"><div class="stat-label">${s.l}</div><div class="stat-val">${s.v}</div><div class="stat-sub">${s.sub}</div></div>`).join('')}</div>`:'';
+      const msProgHtml = ms.progBars?`<div class="prog-list">${ms.progBars.map(pb=>{
+        const p=pb.f&&pb.p?Math.round(pb.f/pb.p*100):0; const cc=p>=85?C.green:p>=60?C.gold:C.red;
+        return `<div class="prog-item"><div class="prog-head"><span class="prog-label">${pb.l}</span><span>${pb.f||'-'} / ${pb.p||'-'}</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(p,100)}%;background:${cc}"></div></div></div>`;
+      }).join('')}</div>`:'';
+      mergedHtml = `${adminStatsHtml}<div style="border-bottom:1px solid var(--border);margin:16px 0"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px"><i data-lucide="book-open" style="width:13px;height:13px"></i>${ms.name}</div>
+      ${msStatsHtml}${msProgHtml}`;
+    }
 
     el.innerHTML=`<div class="dept-hdr" onclick="toggleDept(${i})">
       <div class="dept-hdr-l"><div class="dept-num">${d.num}</div><div class="dept-name">${d.name}</div></div>
       <div class="dept-arrow"><i data-lucide="chevron-up" style="width:14px;height:14px;display:block"></i></div></div>
-    <div class="dept-body">${ownerHtml}${tasksHtml}${teamHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}</div>`;
+    <div class="dept-body">${ownerHtml}${tasksHtml}${statsHtml}${tableHtml}${progHtml}${chartHtml}${mergedHtml}</div>`;
     list.appendChild(el);
   });
   // Init charts for open depts
@@ -1455,23 +1872,23 @@ function startEditOwner(i){
 function saveOwner(i){
   const inp = document.getElementById(`dept-owner-input-${i}`);
   const name = inp ? inp.value.trim() : '';
-  saveDeptOwner(i, name || '—');
-  restoreOwnerRow(i, name || '—');
+  saveDeptOwner(i, name || '-');
+  restoreOwnerRow(i, name || '-');
 }
 
 function cancelEditOwner(i){
-  const name = getDeptOwners()[i] || '—';
+  const name = getDeptOwners()[i] || '-';
   restoreOwnerRow(i, name);
 }
 
 function restoreOwnerRow(i, name){
   const row = document.getElementById(`dept-owner-row-${i}`);
   const sess = currentSession();
-  const isAdmin = sess && sess.role === 'admin';
+  const isAdmin = sess;
   const editBtn = isAdmin ? `<button class="dept-edit-btn" onclick="startEditOwner(${i})" title="Изменить ответственного"><i data-lucide="pencil" style="width:13px;height:13px;display:block"></i></button>` : '';
   const entry = getOwnerStatuses()[i];
-  const dots = name&&name!=='—' ? ownerDotsHtml(entry) : '';
-  const rateBtn = name&&name!=='—' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
+  const dots = name&&name!=='-' ? ownerDotsHtml(entry) : '';
+  const rateBtn = name&&name!=='-' ? `<button class="owner-rate-btn" onclick="openOwnerRateModal(${i})">Оценить</button>` : '';
   row.innerHTML = `
     <span class="dept-owner-label">Ответственный</span>
     <span class="dept-owner-name" id="dept-owner-name-${i}">${name}</span>
@@ -1519,7 +1936,7 @@ function initAnalyticsCharts(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
   mkChart('a-shmp',{type:'bar',data:{labels:SHMP_L,datasets:[barDs('План',SHMP_P,C.gray),barDs('Факт',SHMP_F2,C.gold)]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
-  // Summary table — данные из массивов (только из Sheets)
+  // Summary table - данные из массивов (только из Sheets)
   const _ga=getAvgFor;
   const rows=[
     {m:'LTV',d:'Бизнес-модель',p:_ga(CAC),f:_ga(LTV),u:'₽'},
@@ -1535,7 +1952,7 @@ function initAnalyticsCharts(){
   document.getElementById('summary-tbody').innerHTML=rows.map(r=>{
     const p=r.p?pct(r.f,r.p):null;
     return `<tr><td style="font-weight:500">${r.m}</td><td style="color:var(--muted)">${r.d}</td>
-      <td style="color:var(--muted)">${r.p?fmtNum(r.p,r.u):'—'}</td>
+      <td style="color:var(--muted)">${r.p?fmtNum(r.p,r.u):'-'}</td>
       <td style="font-weight:600">${fmtNum(r.f,r.u)}</td><td>${badgeHtml(p)}</td></tr>`;
   }).join('');
 
@@ -1574,7 +1991,7 @@ function renderMap(rows){
     const markers=clean(r[7]);  // поведенческие маркеры
 
     const c=STAGE_COLORS[i];
-    const shortState=state.slice(0,90)+(state.length>90?'…':'');
+    const shortState=state.slice(0,90)+(state.length>90?'...':'');
     return `<div class="stage-card" id="stage-${i}">
       <div class="stage-hdr" onclick="toggleStage(${i})">
         <div class="stage-num" style="background:${c}22;color:${c}"><i data-lucide="${STAGE_EMOJI_ICONS[i]}" style="width:16px;height:16px;display:block;stroke:${c}"></i></div>
@@ -1588,15 +2005,15 @@ function renderMap(rows){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
           <div>
             <div class="stage-col-title"><i data-lucide="message-circle" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Триггерные мысли</div>
-            <div class="stage-col-text">${thoughts||'—'}</div>
+            <div class="stage-col-text">${thoughts||'-'}</div>
           </div>
           <div>
             <div class="stage-col-title"><i data-lucide="alert-triangle" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Триггер выхода</div>
-            <div class="stage-col-text">${trigger||'—'}</div>
+            <div class="stage-col-text">${trigger||'-'}</div>
           </div>
           <div>
             <div class="stage-col-title"><i data-lucide="heart" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Как должно ощущаться</div>
-            <div class="stage-col-text">${feeling||'—'}</div>
+            <div class="stage-col-text">${feeling||'-'}</div>
           </div>
           <div>
             <div class="stage-col-title"><i data-lucide="eye" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Поведенческие маркеры</div>
@@ -1606,19 +2023,19 @@ function renderMap(rows){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
             <div class="stage-col-title"><i data-lucide="check-circle" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Что делать</div>
-            <div class="stage-col-text">${todo||'—'}</div>
+            <div class="stage-col-text">${todo||'-'}</div>
           </div>
           <div>
             <div class="stage-col-title"><i data-lucide="message-square" style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px"></i>Как общаться</div>
-            <div class="stage-col-text">${tone||'—'}</div>
+            <div class="stage-col-text">${tone||'-'}</div>
           </div>
         </div>
       </div>
     </div>`;
   }).join('');
 
-  // ── ПОВЕДЕНЧЕСКИЕ МАРКЕРЫ — отдельный раздел ──
-  // Маркеры — это структурированные паттерны: "Начал X → Что значит → Риск → Действие"
+  // ── ПОВЕДЕНЧЕСКИЕ МАРКЕРЫ - отдельный раздел ──
+  // Маркеры - это структурированные паттерны: "Начал X → Что значит → Риск → Действие"
   // Парсим из col[7] каждого этапа
   const markersEl = document.getElementById('markers-section');
   if(markersEl){
@@ -1668,9 +2085,9 @@ function renderMap(rows){
         <div style="width:8px;height:8px;border-radius:50%;background:${sc_color};box-shadow:0 0 6px ${sc_color};flex-shrink:0"></div>
         <div class="kfu-mini-title" style="margin-bottom:0">${n}</div>
       </div>
-      ${desc?`<div style="font-size:11px;color:var(--text);opacity:.7;font-style:italic;margin-bottom:10px;line-height:1.5">${desc.slice(0,110)}${desc.length>110?'…':''}</div>`:''}
+      ${desc?`<div style="font-size:11px;color:var(--text);opacity:.7;font-style:italic;margin-bottom:10px;line-height:1.5">${desc.slice(0,110)}${desc.length>110?'...':''}</div>`:''}
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px">Ценный конечный продукт</div>
-      <div class="kfu-mini-ckp">${ckpText.replace(/\n/g,'<br>')||'—'}</div>
+      <div class="kfu-mini-ckp">${ckpText.replace(/\n/g,'<br>')||'-'}</div>
     </div>`;
   }).join('');
 }
@@ -1714,11 +2131,11 @@ function showTab(name,el){
 
 // ── PERIOD FILTER ──────────────────────────────────────────────
 let selectedMonths = new Set();
-const MONTH_LABELS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+const MONTH_LABELS = ['Период 1','Период 2','Период 3','Период 4','Период 5','Период 6','Период 7','Период 8','Период 9','Период 10','Период 11','Период 12'];
 
 function initPeriod(){
   const c = document.getElementById('period-btns');
-  const currentMonth = new Date().getMonth(); // 0-indexed: март = 2
+  const currentMonth = new Date().getMonth(); // 0-indexed: П1=0 ... П12=11
   MONTH_LABELS.forEach((m,i)=>{
     const btn=document.createElement('button');
     btn.textContent=m;
@@ -1802,7 +2219,7 @@ function redrawCharts(){
   renderKFU();
 }
 
-// Данные отделов по месяцам — только из Google Sheets
+// Данные отделов по месяцам - только из Google Sheets
 const DEPT_MONTH_DATA = {
   shmp: { fact: N12(), plan: N12() },
   clients: CLIENTS,
@@ -1819,7 +2236,7 @@ const DEPT_MONTH_DATA = {
 function getAvgFor(arr){
   if(selectedMonths.size===0){return lastNonZero(arr).v;}
   const vals=[...selectedMonths].map(i=>arr[i]).filter(v=>v!==null&&v!==undefined&&v!==0);
-  if(!vals.length) return null; // нет данных за выбранный период — не подставлять из других месяцев
+  if(!vals.length) return null; // нет данных за выбранный период - не подставлять из других месяцев
   return vals.length===1?vals[0]:Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
 }
 
@@ -1842,68 +2259,69 @@ function updateDeptsForPeriod(){
       ? [0,1,2].filter(i=>od.count[i]>0||od.expenses[i]>0)  // все месяцы с данными
       : [...selectedMonths];
 
-    // Кол-во открытий — сумма за выбранный период
+    // Кол-во открытий - сумма за выбранный период
     const totalCount = months.reduce((s,i)=>s+(od.count[i]||0),0);
-    // Срок — среднее только по месяцам где есть данные
+    // Срок - среднее только по месяцам где есть данные
     const durMonths = months.filter(i=>od.duration[i]>0);
-    const avgDur = durMonths.length ? Math.round(durMonths.reduce((s,i)=>s+od.duration[i],0)/durMonths.length) : 0;
-    // Расходы — сумма
+    // За выбранный период берём сумму дней (не среднее)
+    const avgDur = durMonths.length ? durMonths.reduce((s,i)=>s+od.duration[i],0) : 0;
+    // Расходы - сумма
     const totalExp = months.reduce((s,i)=>s+(od.expenses[i]||0),0);
 
     const periodLabel = selectedMonths.size===0
-      ? months.length>1 ? MONTH_LABELS[months[0]]+'–'+MONTH_LABELS[months[months.length-1]] : lbl
+      ? months.length>1 ? MONTH_LABELS[months[0]]+'-'+MONTH_LABELS[months[months.length-1]] : lbl
       : lbl;
 
     setDStat(0, 0, totalCount+' шт', periodLabel);
-    setDStat(0, 1, avgDur ? avgDur+' мес' : '—', 'среднее');
-    setDStat(0, 2, totalExp ? (totalExp>=1000000?(totalExp/1000000).toFixed(1)+'M ₽':(totalExp/1000).toFixed(0)+'К ₽') : '—', 'итого');
+    setDStat(0, 1, avgDur ? avgDur+' дн' : '-', 'за период');
+    setDStat(0, 2, totalExp ? (totalExp>=1000000?(totalExp/1000000).toFixed(1)+'M ₽':(totalExp/1000).toFixed(0)+'К ₽') : '-', 'итого');
 
     // Таблица
     const factCells = document.querySelectorAll('#dept-0 .td-fact');
     if(factCells[0]) factCells[0].textContent = totalCount;
-    if(factCells[1]) factCells[1].textContent = avgDur ? avgDur : '—';
-    if(factCells[2]) factCells[2].textContent = totalExp ? totalExp.toLocaleString('ru-RU')+' ₽' : '—';
+    if(factCells[1]) factCells[1].textContent = avgDur ? avgDur : '-';
+    if(factCells[2]) factCells[2].textContent = totalExp ? totalExp.toLocaleString('ru-RU')+' ₽' : '-';
   })();
 
   // ── Отдел 2 (Маркетинг): охваты соцсетей ──
   const smmInst = getAvgFor(SMM_INST);
   const smmTg   = getAvgFor(SMM_TG);
-  setDStat(2, 0, smmInst!==null ? smmInst.toLocaleString('ru-RU') : '—', lbl);
-  setDStat(2, 1, smmTg!==null   ? smmTg.toLocaleString('ru-RU')   : '—', lbl);
+  setDStat(2, 0, smmInst!==null ? smmInst.toLocaleString('ru-RU') : '-', lbl);
+  setDStat(2, 1, smmTg!==null   ? smmTg.toLocaleString('ru-RU')   : '-', lbl);
 
   // ── Отдел 3 (Терр. управляющие): Клиенты сети ──
   const clients = getAvgFor(CLIENTS);
-  setDStat(3, 0, clients!==null ? clients.toLocaleString('ru-RU') : '—', lbl);
+  setDStat(3, 0, clients!==null ? clients.toLocaleString('ru-RU') : '-', lbl);
 
-  // ── Отдел 5 (Обучение и КК): NPS занятий — обновляется ниже ──
+  // ── Отдел 5 (Обучение и КК): NPS занятий - обновляется ниже ──
   const npsZan = getAvgFor(NPS_ZAN_F);
 
-  // ── Отдел 1 (ШМП, индекс 1): выручка ──
-  const shmpF = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
-  const shmpP = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
+  // ── Отдел 1 (ШМП, индекс 1): выручка — сумма за период ──
+  const _shmpMonths = selectedMonths.size===0 ? [0,1,2,3,4,5,6,7,8,9,10,11] : [...selectedMonths];
+  const shmpF = _shmpMonths.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.fact[i]||0),0) || null;
+  const shmpP = _shmpMonths.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.plan[i]||0),0) || null;
   if(shmpF!==null){
     const shmpPct = (shmpP&&shmpP>0) ? Math.round(shmpF/shmpP*100) : null;
-    setDStat(1, 0, shmpF>=1e6 ? (shmpF/1e6).toFixed(2)+'M ₽' : Math.round(shmpF).toLocaleString('ru-RU')+' ₽', shmpP ? 'план '+Math.round(shmpP/1e6*100)/100+'M' : lbl);
-    setDStat(1, 1, shmpPct!==null ? shmpPct+'%' : '—', lbl);
+    setDStat(1, 0, shmpF>=1e6 ? (shmpF/1e6).toFixed(2)+'M ₽' : Math.round(shmpF).toLocaleString('ru-RU')+' ₽', shmpP ? 'план '+(shmpP/1e6).toFixed(2)+'M' : lbl);
+    setDStat(1, 1, shmpPct!==null ? shmpPct+'%' : '-', lbl);
   } else {
-    setDStat(1, 0, '—', ''); setDStat(1, 1, '—', '');
+    setDStat(1, 0, '-', ''); setDStat(1, 1, '-', '');
   }
 
   // ── Отдел 3 (Терр. управляющие): клиенты + NPS ──
   const npsP = getAvgFor(NPS_PF);
-  setDStat(3, 1, npsP!==null ? npsP+'%' : '—', 'по управлению');
+  setDStat(3, 1, npsP!==null ? npsP+'%' : '-', 'по управлению');
 
   // ── Отдел 5 (Обучение/КК): NPS занятий ──
-  setDStat(5, 0, npsZan!==null ? npsZan+'%' : '—', 'цель ≥85%');
+  setDStat(5, 0, npsZan!==null ? npsZan+'%' : '-', 'цель ≥85%');
 
-  // ── Отдел 6 (Академия администраторов, индекс 6): зашли ──
+  // ── Отдел 5 (Обучение/КК + Академии): зашли в академию ──
   const acadIn = getAvgFor(ACAD_IN);
   const acadC  = getAvgFor(ACAD_C);
-  setDStat(6, 0, acadIn!==null ? String(acadIn) : '—', lbl);
-  setDStat(6, 1, acadC!==null  ? String(acadC)  : '—', lbl);
-
-  // ── Отдел 7 (Академия педагогов): договоры ──
-  // данных по месяцам нет в массивах — оставляем как есть
+  { const el0=document.getElementById('dstat-acad-adm-0'); if(el0) el0.textContent=acadIn!==null?String(acadIn):'—'; }
+  { const el1=document.getElementById('dstat-acad-adm-sub-0'); if(el1) el1.textContent=lbl; }
+  { const el2=document.getElementById('dstat-acad-adm-1'); if(el2) el2.textContent=acadC!==null?String(acadC):'—'; }
+  { const el3=document.getElementById('dstat-acad-adm-sub-1'); if(el3) el3.textContent=lbl; }
 
   // ── CRM/отчётность → КФУ IT (обновляется через updateKFUCards) ──
   // Дополнительно обновляем таблицы отделов у тех кто имеет динамические данные
@@ -1912,8 +2330,9 @@ function updateDeptsForPeriod(){
 
 function updateDeptTables(){
   // Обновляем td-fact / td-plan у отдела ШМП (индекс 1)
-  const shmpFact = getAvgFor(DEPT_MONTH_DATA.shmp.fact);
-  const shmpPlan = getAvgFor(DEPT_MONTH_DATA.shmp.plan);
+  const _sm2 = selectedMonths.size===0 ? [0,1,2,3,4,5,6,7,8,9,10,11] : [...selectedMonths];
+  const shmpFact = _sm2.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.fact[i]||0),0);
+  const shmpPlan = _sm2.reduce((s,i)=>s+(DEPT_MONTH_DATA.shmp.plan[i]||0),0);
   const shmpPct  = shmpPlan ? Math.round(shmpFact/shmpPlan*100) : 0;
   const shmpRows = document.querySelectorAll('#dept-1 .td-fact');
   if(shmpRows[0]) shmpRows[0].textContent = Math.round(shmpFact).toLocaleString('ru-RU')+' ₽';
@@ -1924,16 +2343,15 @@ function updateDeptTables(){
   if(clientRows[0]) clientRows[0].textContent = clients.toLocaleString('ru-RU');
 
   // Академия администраторов в таблице отдела 6
-  const acadRows = document.querySelectorAll('#dept-6 .td-fact');
-  if(acadRows[0]) acadRows[0].textContent = getAvgFor(ACAD_IN);
-  if(acadRows[1]) acadRows[1].textContent = getAvgFor(ACAD_C);
+  { const el=document.getElementById('dstat-acad-adm-0'); if(el) el.textContent=getAvgFor(ACAD_IN)||'—'; }
+  { const el=document.getElementById('dstat-acad-adm-1'); if(el) el.textContent=getAvgFor(ACAD_C)||'—'; }
 }
 
 function updateKFUCards(){
-  // Для одного месяца — берём значение этого месяца
-  // Для нескольких — среднее (%) или среднее (₽)
-  // Для нуля выбранных — последний заполненный месяц
-  // Если данных нет за выбранный период — возвращаем null (не берём из других месяцев)
+  // Для одного месяца - берём значение этого месяца
+  // Для нескольких - среднее (%) или среднее (₽)
+  // Для нуля выбранных - последний заполненный месяц
+  // Если данных нет за выбранный период - возвращаем null (не берём из других месяцев)
   const getAvg=(arr)=>{
     if(selectedMonths.size===0){
       return lastNonZero(arr).v;
@@ -1949,7 +2367,7 @@ function updateKFUCards(){
   KFU[0].metrics[0].f  =ltvAvg;
   KFU[0].metrics[0].cmp=cacAvg;
   if(ltvAvg!==null&&cacAvg!==null){
-    KFU[0].metrics[0].hint=`LTV ${Math.round(ltvAvg).toLocaleString('ru-RU')} ${ltvAvg>cacAvg?'>':'<'} CAC ${Math.round(cacAvg).toLocaleString('ru-RU')} — маркетинг ${ltvAvg>cacAvg?'окупается':'не окупается'}`;
+    KFU[0].metrics[0].hint=`LTV ${Math.round(ltvAvg).toLocaleString('ru-RU')} ${ltvAvg>cacAvg?'>':'<'} CAC ${Math.round(cacAvg).toLocaleString('ru-RU')} - маркетинг ${ltvAvg>cacAvg?'окупается':'не окупается'}`;
     const ltvRatio=cacAvg>0?(ltvAvg/cacAvg).toFixed(2):null;
     const ltvEl=document.getElementById('ltv-chart-title');
     if(ltvEl&&ltvRatio){
@@ -1965,7 +2383,7 @@ function updateKFUCards(){
   const brandP=getAvg(BRAND_P);
   KFU[1].metrics[0].f=brandF;
   KFU[1].metrics[0].p=brandP;
-  KFU[1].metrics[0].hint=(brandF!==null&&brandP!==null&&brandP>0)?(brandF>=brandP?`${Math.round(brandF/brandP*100)}% плана — выше плана 🎉`:`Ниже плана — нужен рост (${Math.round(brandF/brandP*100)}%)`):(brandF!==null?'суммарный брендовый спрос':'');
+  KFU[1].metrics[0].hint=(brandF!==null&&brandP!==null&&brandP>0)?(brandF>=brandP?`${Math.round(brandF/brandP*100)}% плана - выше плана 🎉`:`Ниже плана - нужен рост (${Math.round(brandF/brandP*100)}%)`):(brandF!==null?'суммарный брендовый спрос':'');
 
   KFU[2].metrics[0].f=getAvg(CONV_F);
   KFU[2].metrics[0].p=getAvg(CONV_P);
@@ -1980,7 +2398,7 @@ function updateKFUCards(){
   KFU[4].metrics[1].f=getAvg(REP_F);
   KFU[4].metrics[1].p=getAvg(REP_P);
 
-  // NPS партнёров и Индекс доверия — из таблицы
+  // NPS партнёров и Индекс доверия - из таблицы
   const npsPf=getAvg(NPS_PF);
   const npsPp=getAvg(NPS_PP);
   KFU[5].metrics[0].f=npsPf===null?null:(npsPf>1?npsPf:Math.round(npsPf*100));
@@ -2008,7 +2426,7 @@ function getFiltered(arr){
 }
 
 function initKFUChartsFiltered(){
-  // KFU графики всегда показывают полный год — фильтр не применяется
+  // KFU графики всегда показывают полный год - фильтр не применяется
   mkChart('c-ltv',{type:'line',data:{labels:MONTHS,datasets:[{...lineDs('LTV',LTV,C.gold,false),fill:{target:1,above:'rgba(34,197,94,0.12)',below:'rgba(239,68,68,0.12)'}},lineDs('CAC',CAC,C.blue)]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
   mkChart('c-brand',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',BRAND_F,C.gold,true),lineDs('План',BRAND_P,C.gray,false,[5,3])]},
@@ -2062,14 +2480,14 @@ function lastNonZero(arr){
   return{v:arr[0],i:0};
 }
 
-const LIVE_CACHE_KEY = 'levita_live_cache_v4'; // v4 — все планы из таблицы
+const LIVE_CACHE_KEY = 'levita_live_cache_v4'; // v4 - все планы из таблицы
 const LIVE_CACHE_TTL = 15 * 60 * 1000; // 15 минут
 
 async function loadLiveData(){
   // Показываем skeleton на stat-val элементах
   document.querySelectorAll('.stat-val').forEach(el=>{el.dataset.orig=el.textContent;el.classList.add('skeleton');el.style.minWidth='60px';el.style.minHeight='24px'});
 
-  // Проверяем кэш — если свежий, рендерим сразу без запроса
+  // Проверяем кэш - если свежий, рендерим сразу без запроса
   try {
     const cached = JSON.parse(localStorage.getItem(LIVE_CACHE_KEY)||'null');
     if(cached && (Date.now()-cached.ts) < LIVE_CACHE_TTL){
@@ -2134,7 +2552,7 @@ async function applyLiveData(svodRows, fullRows){
       });
     };
 
-    // ══ СВОДНЫЙ РАЗДЕЛ (A245:M310) — точные данные для KFU ══
+    // ══ СВОДНЫЙ РАЗДЕЛ (A245:M310) - точные данные для KFU ══
     // Бизнес-модель
     apply(LTV,      findIn(svodRows,'LTV'));
     apply(CAC,      findIn(svodRows,'CAC'));
@@ -2153,7 +2571,7 @@ async function applyLiveData(svodRows, fullRows){
     // Продукт
     apply(NPS_ZAN_F, findAfterIn(svodRows,'1. NPS занятий не менее','Факт'));
     apply(NPS_ZAN_P, findAfterIn(svodRows,'1. NPS занятий не менее','План'));
-    apply(PROFIT_P,  findIn(svodRows,'2. Чистая прибыль'), toPct); // строка плана — в таблице одна строка с % по месяцам
+    apply(PROFIT_P,  findIn(svodRows,'2. Чистая прибыль'), toPct); // строка плана - в таблице одна строка с % по месяцам
 
     // IT
     apply(CRM_F, findAfterIn(svodRows,'1. % студий с корректными данными','Факт'), toPct);
@@ -2169,7 +2587,7 @@ async function applyLiveData(svodRows, fullRows){
     // Сообщество
     apply(COMM_PART_P, findIn(svodRows,'1. % партнеров участвующих'), toPct);
 
-    // ══ ПОЛНЫЙ ЛИСТ — данные отделов ══
+    // ══ ПОЛНЫЙ ЛИСТ - данные отделов ══
     apply(CLIENTS,   findIn(fullRows,'Кол-во клиентов сети'));
     apply(ACAD_IN,   findIn(fullRows,'Кол-во зашли'));
     apply(ACAD_C,    findIn(fullRows,'получили сертификат'));
@@ -2177,18 +2595,18 @@ async function applyLiveData(svodRows, fullRows){
     apply(SMM_INST,  findIn(fullRows,'Охват СММ'));
     apply(SMM_TG,    findIn(fullRows,'Охват ТГ'));
 
-    // Отдел открытий — помесячно
+    // Отдел открытий - помесячно
     apply(DEPT_MONTH_DATA.openings.count,    findIn(fullRows,'Кол-во открытий студий'));
     apply(DEPT_MONTH_DATA.openings.duration, findIn(fullRows,'Срок открытия студий'));
     apply(DEPT_MONTH_DATA.openings.expenses, findIn(fullRows,'Расходы на открытие студии'));
 
-    // ШМП — помесячная выручка (сумма по всем курсам)
+    // ШМП - помесячная выручка (сумма по всем курсам)
     const shmpPlanRow  = findAfterIn(fullRows,'Выручка отдела','План',3);
     const shmpFactRow  = findAfterIn(fullRows,'Выручка отдела','Факт',3);
     if(shmpPlanRow) apply(DEPT_MONTH_DATA.shmp.plan, shmpPlanRow);
     if(shmpFactRow) apply(DEPT_MONTH_DATA.shmp.fact, shmpFactRow);
 
-    // SHMP по курсам — итого за заполненные месяцы
+    // SHMP по курсам - итого за заполненные месяцы
     const shmpSections=[
       {label:'1 курс',pIdx:0,fIdx:0},
       {label:'2 курс',pIdx:1,fIdx:1},
@@ -2202,7 +2620,7 @@ async function applyLiveData(svodRows, fullRows){
       if(fr){const vals=rowMonths(fr).filter(nonZero);if(vals.length)SHMP_F2[c.fIdx]=vals.reduce((a,b)=>a+b,0);}
     });
 
-    // PIE — посещения, берём март (index 2) или последний ненулевой
+    // PIE - посещения, берём март (index 2) или последний ненулевой
     const pieMap=[
       ['Stretching ',0],['Pilates ',1],['Barre ',3],
       ['Балетная подкачка ',4],['Кл.хор',5],['Танцы народов',6],['Пластика и сила ',7]
@@ -2244,82 +2662,35 @@ function refreshData(){
 // AUTH SYSTEM
 // ══════════════════════════════════════════════════════════
 
-const AUTH_KEY = 'levita_users_v1';
 const SESSION_KEY = 'levita_session_v1';
-
-function hashPass(str) {
-  // Простой хеш (для production лучше использовать bcrypt на сервере)
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const c = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + c;
-    hash |= 0;
-  }
-  return 'h_' + Math.abs(hash).toString(36) + '_' + str.length;
-}
-
-function getUsers() {
-  try { return JSON.parse(localStorage.getItem(AUTH_KEY)) || []; } catch { return []; }
-}
-
-function saveUsers(users) {
-  localStorage.setItem(AUTH_KEY, JSON.stringify(users));
-}
-
-function initDefaultUsers() {
-  const users = getUsers();
-  if (users.length === 0) {
-    saveUsers([{ login: 'admin', passHash: hashPass('levita2026'), role: 'admin' }]);
-  }
-}
+const CORRECT_PASS = 'levita2026';
 
 function currentSession() {
-  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch { return null; }
-}
-
-function setSession(user) {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify({ login: user.login, role: user.role }));
-}
-
-function clearSession() {
-  sessionStorage.removeItem(SESSION_KEY);
-}
-
-function login(loginVal, passVal) {
-  const users = getUsers();
-  const user = users.find(u => u.login === loginVal.trim() && u.passHash === hashPass(passVal));
-  if (!user) return false;
-  setSession(user);
-  return true;
+  try { return sessionStorage.getItem(SESSION_KEY) === 'ok'; } catch { return false; }
 }
 
 function logout() {
-  clearSession();
+  sessionStorage.removeItem(SESSION_KEY);
   location.reload();
 }
 
-function showDashboard(session) {
+function showDashboard() {
   document.getElementById('auth-overlay').classList.add('hidden');
-  document.getElementById('hdr-username').textContent = '👤 ' + session.login;
-  if (session.role === 'admin') {
-    document.getElementById('hdr-users-btn').style.display = 'inline-block';
-  }
 }
 
 // ── Auth form ────────────────────────────────────────────
-document.getElementById('auth-submit').addEventListener('click', doLogin);
 document.getElementById('auth-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
 function doLogin() {
-  const loginVal = document.getElementById('auth-login').value;
   const passVal = document.getElementById('auth-pass').value;
   const err = document.getElementById('auth-err');
   err.textContent = '';
-  if (!loginVal || !passVal) { err.textContent = 'Введите логин и пароль'; return; }
-  if (login(loginVal, passVal)) {
-    showDashboard(currentSession());
+  if (!passVal) { err.textContent = 'Введите пароль'; return; }
+  if (passVal === CORRECT_PASS) {
+    sessionStorage.setItem(SESSION_KEY, 'ok');
+    showDashboard();
   } else {
-    err.textContent = 'Неверный логин или пароль';
+    err.textContent = 'Неверный пароль';
     document.getElementById('auth-pass').value = '';
     document.getElementById('auth-pass').focus();
   }
@@ -2388,7 +2759,7 @@ function changePass(idx) {
 function deleteUser(idx) {
   const users = getUsers();
   const sess = currentSession();
-  if (users[idx].login === sess.login) { document.getElementById('users-err').textContent = 'Нельзя удалить текущего пользователя'; return; }
+  if (!users[idx]) return;
   users.splice(idx, 1);
   saveUsers(users);
   renderUsersTable();
@@ -2463,7 +2834,7 @@ function saveMaterial(){
   mats.unshift({
     id: Date.now(),
     name, url, desc, cat,
-    author: sess ? sess.login : '—',
+    author: '-',
     date: new Date().toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'})
   });
   setMaterials(mats);
@@ -2482,7 +2853,7 @@ function renderMaterials(){
   if(!root) return;
   const mats = getMaterials();
   const sess = currentSession();
-  const canEdit = sess && (sess.role==='admin');
+  const canEdit = sess;
   const filtered = matActiveCat==='Все' ? mats : mats.filter(m=>m.cat===matActiveCat);
 
   const catsHtml = MAT_CATS.map(c=>`
@@ -2493,7 +2864,7 @@ function renderMaterials(){
 
   const cardsHtml = filtered.length===0
     ? `<div class="mat-empty" style="padding:60px 20px">
-        <div style="font-size:40px;margin-bottom:12px">📎</div>
+        <div style="margin-bottom:12px"><i data-lucide="paperclip" style="width:40px;height:40px;color:var(--muted)"></i></div>
         <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px">Материалов пока нет${matActiveCat!=='Все'?' в этой категории':''}</div>
         ${matActiveCat==='Все'&&canEdit?`<div style="font-size:13px;color:var(--muted)">Нажмите <b>+ Добавить</b> чтобы загрузить первый документ</div>`:''}
       </div>`
@@ -2504,7 +2875,7 @@ function renderMaterials(){
               <div class="mat-card-name">${escHtml(m.name)}</div>
               ${m.desc?`<div class="mat-card-desc">${escHtml(m.desc)}</div>`:''}
             </div>
-            <div class="mat-card-icon">${MAT_ICONS[m.cat]||'📎'}</div>
+            <div class="mat-card-icon">${MAT_ICONS[m.cat]||'<i data-lucide="paperclip" style="width:16px;height:16px"></i>'}</div>
           </div>
           <div><span class="mat-card-cat">${m.cat}</span></div>
           <div class="mat-card-footer">
@@ -2516,7 +2887,7 @@ function renderMaterials(){
 
   root.innerHTML = `
     <div class="mat-header">
-      <div class="mat-header-title">📎 Материалы и документы</div>
+      <div class="mat-header-title"><i data-lucide="paperclip" style="width:15px;height:15px;display:inline-block;vertical-align:middle;margin-right:6px"></i> Материалы и документы</div>
       ${addBtn}
     </div>
     <div class="mat-cats">${catsHtml}</div>
@@ -2568,9 +2939,7 @@ function getDeptStatus(deptIdx){
     2: ()=>{ const v=lastNonZero(SMM_INST).v; return v?{sub:v.toLocaleString('ru-RU')+' охват',pct:null}:{sub:'нет данных',pct:null}; },
     3: ()=>{ const v=lastNonZero(CLIENTS).v; return v?{sub:v.toLocaleString('ru-RU')+' клиентов',pct:null}:{sub:'нет данных',pct:null}; },
     4: ()=>{ return {sub:'нет данных',pct:null}; },
-    5: ()=>{ const v=lastNonZero(NPS_ZAN_F).v; return v?{sub:'NPS '+v+'%',pct:v}:{sub:'нет данных',pct:null}; },
-    6: ()=>{ const v=lastNonZero(ACAD_IN).v; return v?{sub:v+' зашли',pct:null}:{sub:'нет данных',pct:null}; },
-    7: ()=>{ return {sub:'нет данных',pct:null}; },
+    5: ()=>{ const v=lastNonZero(NPS_ZAN_F).v; const a=lastNonZero(ACAD_IN).v; return v?{sub:'NPS '+v+'%'+(a?' / '+a+' акад.':''),pct:v}:{sub:'нет данных',pct:null}; },
   };
   const d = dataMap[deptIdx] ? dataMap[deptIdx]() : {sub:'',pct:null};
   let status = 'yellow';
@@ -2595,11 +2964,11 @@ function getKFUTrafficStatus(){
     });
     const avg = pcts.length ? pcts.reduce((a,b)=>a+b,0)/pcts.length : null;
     let status = 'yellow';
-    if(avg === null) status = 'yellow'; // нет данных — не красим
+    if(avg === null) status = 'yellow'; // нет данных - не красим
     else if(avg >= 85) status = 'green';
     else if(avg >= 60) status = 'yellow';
     else status = 'red';
-    return { label: k.title, status, sub: avg !== null ? Math.round(avg)+'% плана' : '—' };
+    return { label: k.title, status, sub: avg !== null ? Math.round(avg)+'% плана' : '-' };
   });
 }
 
@@ -2621,7 +2990,7 @@ function renderTrafficGrid(){
   const grid = document.getElementById('traffic-grid');
   if(!grid) return;
   let html = '';
-  for(let i=0;i<8;i++){
+  for(let i=0;i<DEPTS.length;i++){
     const d = getDeptStatus(i);
     html += `<div class="traffic-card" onclick="goToDept(${i})">
       <div class="traffic-dot ${d.status}"></div>
@@ -2743,7 +3112,7 @@ function renderOwnerStatusPanel(){
   const deptNames=DEPTS.map(d=>d.name);
   const cards=deptNames.map((dname,i)=>{
     const name=owners[i]||null;
-    if(!name||name==='—')return null;
+    if(!name||name==='-')return null;
     const entry=statuses[i];
     const stale=isOwnerStale(entry);
     const dc=v=>v==='green'?'green':v==='yellow'?'yellow':v==='red'?'red':'gray';
@@ -2778,12 +3147,12 @@ let _ownerRateSt={energy:null,exec:null,load:null};
 
 function openOwnerRateModal(deptIdx){
   const owners=getDeptOwners();
-  const name=owners[deptIdx]||'—';
+  const name=owners[deptIdx]||'-';
   const statuses=getOwnerStatuses();
   const entry=statuses[deptIdx]||{};
   _ownerRateDeptIdx=deptIdx;
   _ownerRateSt={energy:entry.energy||null,exec:entry.exec||null,load:entry.load||null};
-  document.getElementById('owner-rate-name').textContent=name+' — '+DEPTS[deptIdx].name;
+  document.getElementById('owner-rate-name').textContent=name+' - '+DEPTS[deptIdx].name;
   document.getElementById('owner-rate-focus').value=entry.focus||'';
   document.getElementById('owner-rate-issues').value=entry.issues||'';
   ['energy','exec','load'].forEach(k=>hlOwnerSt(k,_ownerRateSt[k]));
@@ -2809,7 +3178,7 @@ function saveOwnerRate(){
   closeOwnerRateModal();
   renderOwnerStatusPanel();
   // обновить строку ответственного в отделе
-  restoreOwnerRow(_ownerRateDeptIdx, getDeptOwners()[_ownerRateDeptIdx]||'—');
+  restoreOwnerRow(_ownerRateDeptIdx, getDeptOwners()[_ownerRateDeptIdx]||'-');
 }
 
 // ══════════════════════════════════════════════════════════
@@ -2822,11 +3191,11 @@ function getTeamForDept(idx){return(getTeam()[idx]||[]);}
 function dotClass(v){return v==='green'?'green':v==='yellow'?'yellow':v==='red'?'red':'gray';}
 function dotEmoji(v){return v==='green'?'🟢':v==='yellow'?'🟡':v==='red'?'🔴':'⚪';}
 function isStale(p){const h=p.history||[];if(!h.length)return true;return(Date.now()-new Date(h[h.length-1].date).getTime())>7*24*60*60*1000;}
-const IND_TIPS={energy:'Энергия — текущая оценка состояния: хватает ли сил, интереса и вовлечённости тянуть роль без просадки.',exec:'Исполнение — насколько стабильно человек доводит задачи до результата и выполняет договорённости в срок.',load:'Нагрузка — текущий объём задач: справляется ли без перегруза и риска срывов.'};
+const IND_TIPS={energy:'Энергия - текущая оценка состояния: хватает ли сил, интереса и вовлечённости тянуть роль без просадки.',exec:'Исполнение - насколько стабильно человек доводит задачи до результата и выполняет договорённости в срок.',load:'Нагрузка - текущий объём задач: справляется ли без перегруза и риска срывов.'};
 function tipHtml(uid,key){return`<span class="team-tooltip-wrap" onclick="event.stopPropagation();this.classList.toggle('tip-open')"><span class="team-tooltip-icon">i</span><span class="team-tooltip-box">${IND_TIPS[key]}</span></span>`;}
 
 function renderTeamBlock(deptIdx){
-  const sess=currentSession();const isAdmin=sess&&sess.role==='admin';
+  const sess=currentSession();const isAdmin=sess;
   const people=getTeamForDept(deptIdx);
   const fk=`tf_${deptIdx}`,sk=`ts_${deptIdx}`,qk=`tq_${deptIdx}`;
   const af=sessionStorage.getItem(fk)||'all';
@@ -2836,7 +3205,7 @@ function renderTeamBlock(deptIdx){
   let eC={green:0,yellow:0,red:0},xC={green:0,yellow:0,red:0},lC={green:0,yellow:0,red:0},st=0;
   people.forEach(p=>{const h=p.history||[],last=h[h.length-1];if(!last||isStale(p)){st++;return;}if(eC[last.energy]!=null)eC[last.energy]++;if(xC[last.exec]!=null)xC[last.exec]++;if(lC[last.load]!=null)lC[last.load]++;});
   const sumHtml=people.length?`<div class="team-summary"><span class="team-summary-item"><b>${people.length}</b>&nbsp;чел.</span><span class="team-summary-item">Энергия:&nbsp;🟢<b>${eC.green}</b>&nbsp;🟡<b>${eC.yellow}</b>&nbsp;🔴<b>${eC.red}</b></span><span class="team-summary-item">Исполнение:&nbsp;🟢<b>${xC.green}</b>&nbsp;🟡<b>${xC.yellow}</b>&nbsp;🔴<b>${xC.red}</b></span><span class="team-summary-item">Нагрузка:&nbsp;🟢<b>${lC.green}</b>&nbsp;🟡<b>${lC.yellow}</b>&nbsp;🔴<b>${lC.red}</b></span>${st?`<span class="team-summary-item" style="color:#d97706;display:flex;align-items:center;gap:3px"><i data-lucide="alert-triangle" style="width:11px;height:11px;flex-shrink:0"></i>&nbsp;<b>${st}</b>&nbsp;без обновл.</span>`:''}</div>`:'';
-  const filtersHtml=people.length?`<div class="team-filters"><button class="team-filter-btn${af==='all'?' active':''}" onclick="setTF(${deptIdx},'all')">Все</button><button class="team-filter-btn${af==='red'?' active':''}" onclick="setTF(${deptIdx},'red')">🔴</button><button class="team-filter-btn${af==='yellow'?' active':''}" onclick="setTF(${deptIdx},'yellow')">🟡</button><button class="team-filter-btn${af==='green'?' active':''}" onclick="setTF(${deptIdx},'green')">🟢</button><button class="team-filter-btn${af==='stale'?' active':''}" onclick="setTF(${deptIdx},'stale')" style="display:flex;align-items:center;gap:3px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i></button><select style="margin-left:auto;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:6px;font-size:11px;font-family:inherit" onchange="setTS(${deptIdx},this.value)"><option value="date"${as==='date'?' selected':''}>По дате</option><option value="red"${as==='red'?' selected':''}>По красным</option><option value="name"${as==='name'?' selected':''}>По имени</option></select><input class="team-search" placeholder="Поиск…" value="${escHtml(sessionStorage.getItem(qk)||'')}" oninput="setTQ(${deptIdx},this.value)"></div>`:'';
+  const filtersHtml=people.length?`<div class="team-filters"><button class="team-filter-btn${af==='all'?' active':''}" onclick="setTF(${deptIdx},'all')">Все</button><button class="team-filter-btn${af==='red'?' active':''}" onclick="setTF(${deptIdx},'red')">🔴</button><button class="team-filter-btn${af==='yellow'?' active':''}" onclick="setTF(${deptIdx},'yellow')">🟡</button><button class="team-filter-btn${af==='green'?' active':''}" onclick="setTF(${deptIdx},'green')">🟢</button><button class="team-filter-btn${af==='stale'?' active':''}" onclick="setTF(${deptIdx},'stale')" style="display:flex;align-items:center;gap:3px"><i data-lucide="alert-triangle" style="width:11px;height:11px"></i></button><select style="margin-left:auto;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:3px 8px;border-radius:6px;font-size:11px;font-family:inherit" onchange="setTS(${deptIdx},this.value)"><option value="date"${as==='date'?' selected':''}>По дате</option><option value="red"${as==='red'?' selected':''}>По красным</option><option value="name"${as==='name'?' selected':''}>По имени</option></select><input class="team-search" placeholder="Поиск..." value="${escHtml(sessionStorage.getItem(qk)||'')}" oninput="setTQ(${deptIdx},this.value)"></div>`:'';
   // фильтр+сортировка
   let list=people.filter(p=>{if(aq&&!p.name.toLowerCase().includes(aq))return false;if(af==='stale')return isStale(p);if(af==='all')return true;const h=p.history||[],l=h[h.length-1];if(!l)return false;return l.energy===af||l.exec===af||l.load===af;});
   if(as==='date')list.sort((a,b)=>{const ah=a.history||[],bh=b.history||[];return new Date(bh[bh.length-1]?.date||0)-new Date(ah[ah.length-1]?.date||0);});
@@ -2944,7 +3313,7 @@ function togglePresent(){
 
 function exportPDF(){
   // Формируем период
-  const months=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const months=['Период 1','Период 2','Период 3','Период 4','Период 5','Период 6','Период 7','Период 8','Период 9','Период 10','Период 11','Период 12'];
   const selArr=[...selectedMonths].sort((a,b)=>a-b);
   const periodStr = selArr.length===0 ? 'Весь год' : selArr.length===1 ? months[selArr[0]] : selArr.map(i=>months[i]).join(', ');
 
@@ -2968,8 +3337,8 @@ function exportPDF(){
       return `<tr>
         <td style="padding:7px 12px;font-size:13px;color:#444">${m.l}</td>
         <td style="padding:7px 12px;font-size:13px;font-weight:600">${fmtNum(m.f,m.u)}</td>
-        <td style="padding:7px 12px;font-size:13px;color:#888">${m.p!=null?'план '+fmtNum(m.p,m.u):'—'}</td>
-        <td style="padding:7px 12px;font-size:13px;font-weight:700;color:${p!==null?statusColor(p):'#888'}">${p!==null?p+'% '+statusIcon(p):'—'}</td>
+        <td style="padding:7px 12px;font-size:13px;color:#888">${m.p!=null?'план '+fmtNum(m.p,m.u):'-'}</td>
+        <td style="padding:7px 12px;font-size:13px;font-weight:700;color:${p!==null?statusColor(p):'#888'}">${p!==null?p+'% '+statusIcon(p):'-'}</td>
       </tr>`;
     }).join('');
     const avgPcts = k.metrics.map(m=>{
@@ -3004,7 +3373,7 @@ function exportPDF(){
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>LEVITA CPO — Фокусные метрики — ${periodStr}</title>
+<title>LEVITA CPO - Фокусные метрики - ${periodStr}</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Georgia',serif;color:#101a25;background:#fff;padding:40px}
@@ -3019,7 +3388,7 @@ function exportPDF(){
   <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;padding-bottom:16px;border-bottom:2px solid #eec95c">
     <div>
       <div style="font-size:28px;letter-spacing:6px;font-weight:normal;color:#eec95c">LEVITA</div>
-      <div style="font-size:13px;color:#888;margin-top:4px">CPO Dashboard — Фокусные метрики</div>
+      <div style="font-size:13px;color:#888;margin-top:4px">CPO Dashboard - Фокусные метрики</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:15px;font-weight:600">Период: ${periodStr}</div>
@@ -3033,12 +3402,12 @@ function exportPDF(){
 </body>
 </html>`;
 
-  // Открываем через Blob URL — не блокируется браузером
+  // Открываем через Blob URL - не блокируется браузером
   const blob = new Blob([html], {type:'text/html;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const win = window.open(url, '_blank');
   if(!win){
-    // Если всё же заблокировано — скачиваем файл
+    // Если всё же заблокировано - скачиваем файл
     const a = document.createElement('a');
     a.href = url;
     a.download = `LEVITA_CPO_${periodStr.replace(/,\s*/g,'-')}_${new Date().toLocaleDateString('ru-RU').replace(/\./g,'-')}.html`;
@@ -3098,7 +3467,7 @@ function updateMobPeriodLabel(){
   const btn = document.getElementById('mob-period-label');
   if(!btn) return;
   if(selectedMonths.size === 0){
-    btn.textContent = 'Месяц';
+    btn.textContent = 'Период';
   } else if(selectedMonths.size === 1){
     btn.textContent = MONTH_LABELS[[...selectedMonths][0]];
   } else {
@@ -3129,7 +3498,7 @@ function mobNav(tabName, el){
 const QA_ZOOM_KEY = 'levita_zoom_summaries_v2';
 const QA_CHAT_KEY = 'levita_chat_summaries_v2';
 
-// Названия отделов — синхронизированы с массивом DEPTS
+// Названия отделов - синхронизированы с массивом DEPTS
 const QA_DEPTS = [
   'Отдел открытий',
   'Отдел ШМП',
@@ -3137,8 +3506,6 @@ const QA_DEPTS = [
   'Территориальные управляющие',
   'Комьюнити менеджер',
   'Обучение и контроль качества',
-  'Академия администраторов',
-  'Академия педагогов',
   'Руководители',
 ];
 
@@ -3328,8 +3695,8 @@ async function qaFetchAndRender(){
         source: 'api'
       }));
 
-      // API доступен — используем его данные (даже если пусто), очищаем localStorage от демо
-      qaApiData = merged; // может быть пустым массивом — это нормально
+      // API доступен - используем его данные (даже если пусто), очищаем localStorage от демо
+      qaApiData = merged; // может быть пустым массивом - это нормально
       localStorage.removeItem(QA_CHAT_KEY);
       localStorage.removeItem(QA_ZOOM_KEY);
       document.getElementById('qa-api-badge').style.display = '';
@@ -3339,7 +3706,7 @@ async function qaFetchAndRender(){
     }
   } catch(e){ /* API недоступен */ }
 
-  // Fallback: API недоступен — показываем пустой стейт
+  // Fallback: API недоступен - показываем пустой стейт
   document.getElementById('qa-api-badge').style.display = 'none';
   document.getElementById('qa-offline-badge').style.display = '';
   renderQAByDepts();
@@ -3368,8 +3735,8 @@ function renderQAByDepts(){
   const container = document.getElementById('qa-depts-list');
   if(!container) return;
 
-  // API режим: qaApiData !== null (даже если пустой массив — API доступен, localStorage игнорируем)
-  // Offline режим: qaApiData === null — используем localStorage
+  // API режим: qaApiData !== null (даже если пустой массив - API доступен, localStorage игнорируем)
+  // Offline режим: qaApiData === null - используем localStorage
   const apiAvailable = qaApiData !== null;
   const allZooms = apiAvailable ? [] : getQAZoom();
   const allChats = apiAvailable ? qaApiData : getQAChat();
@@ -3402,7 +3769,7 @@ function renderQAByDepts(){
       </div>`;
     }).join('');
 
-    // При неделе/месяце — группируем дневные саммери по chatName и аккумулируем
+    // При неделе/месяце - группируем дневные саммери по chatName и аккумулируем
     let chatCards = '';
     if(qaActivePeriod === 'day'){
       chatCards = chats.map(c => {
@@ -3426,7 +3793,7 @@ function renderQAByDepts(){
         </div>`;
       }).join('');
     } else {
-      // Неделя/месяц — группируем по chatName, внутри сортируем по дате, каждый день — отдельный блок
+      // Неделя/месяц - группируем по chatName, внутри сортируем по дате, каждый день - отдельный блок
       const grouped = {};
       chats.forEach(c => {
         if(!grouped[c.chatName]) grouped[c.chatName] = [];
@@ -3585,23 +3952,23 @@ function saveChatSummary(){
 });
 
 // ── BOOT ────────────────────────────────────────────────
-initDefaultUsers();
-const _sess = currentSession();
-if (_sess) {
-  showDashboard(_sess);
-}
-// (если нет сессии — оверлей остаётся видимым)
+if (currentSession()) { showDashboard(); }
+// (если нет сессии - оверлей остаётся видимым)
 
 // ── INIT ──────────────────────────────────────────────
 const now=new Date();
-document.getElementById('hdrDate').textContent=now.toLocaleDateString('ru',{month:'long',year:'numeric'});
+const _p=now.getMonth()+1; document.getElementById('hdrDate').textContent='Период '+_p+' · '+now.getFullYear()+' г.';
 initTheme();
 initPeriod();
-updateMobPeriodLabel(); // после initPeriod — теперь знает про март
+updateMobPeriodLabel(); // после initPeriod
 Chart.register(currentMonthPlugin);
 renderTrafficGrid();
 renderKFU();
 renderKFUSummaryBar();
+renderPersonalTasks();
+// Bind Enter on personal tasks
+const _ptInp = document.getElementById('pt-new-text');
+if(_ptInp) _ptInp.addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey) addPersonalTask(); });
 renderKFUTrafficGrid();
 renderOwnerStatusPanel();
 renderDepts();
@@ -3711,8 +4078,6 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
       <option>Территориальные управляющие</option>
       <option>Комьюнити менеджер</option>
       <option>Обучение и контроль качества</option>
-      <option>Академия администраторов</option>
-      <option>Академия педагогов</option>
     </select>
     <label class="team-modal-label">Саммери</label>
     <textarea class="team-modal-input" id="qa-z-summary" rows="4" placeholder="Что обсуждалось на встрече..."></textarea>
@@ -3739,8 +4104,6 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
       <option>Территориальные управляющие</option>
       <option>Комьюнити менеджер</option>
       <option>Обучение и контроль качества</option>
-      <option>Академия администраторов</option>
-      <option>Академия педагогов</option>
     </select>
     <label class="team-modal-label">Саммери</label>
     <textarea class="team-modal-input" id="qa-c-summary" rows="4" placeholder="Ключевые темы и решения из чата..."></textarea>
@@ -3751,6 +4114,35 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
   </div>
 </div>
 
+<!-- ARCHIVE SIDEBAR -->
+<div class="archive-sidebar-overlay" id="archive-overlay" onclick="closeArchiveSidebar()"></div>
+<div class="archive-sidebar" id="archive-sidebar">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+    <div class="archive-title"><i data-lucide="archive" style="width:16px;height:16px"></i> Архив задач</div>
+    <button class="archive-close" onclick="closeArchiveSidebar()">✕</button>
+  </div>
+  <div id="archive-dept-label" style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:12px"></div>
+  <div id="archive-list"></div>
+</div>
+<!-- PERSONAL TASKS ARCHIVE SIDEBAR -->
+<div class="archive-sidebar-overlay" id="pt-archive-overlay" onclick="closePTArchive()"></div>
+<div class="archive-sidebar" id="pt-archive-sidebar">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+    <div class="archive-title"><i data-lucide="archive" style="width:16px;height:16px"></i> Архив личных задач</div>
+    <button class="archive-close" onclick="closePTArchive()">✕</button>
+  </div>
+  <div id="pt-archive-list"></div>
+</div>
+<!-- KFU FOCUS ARCHIVE SIDEBAR -->
+<div class="archive-sidebar-overlay" id="kfu-focus-archive-overlay" onclick="closeKFUFocusArchive()"></div>
+<div class="archive-sidebar" id="kfu-focus-archive-sidebar">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+    <div class="archive-title"><i data-lucide="history" style="width:16px;height:16px"></i> История фокусов KFU</div>
+    <button class="archive-close" onclick="closeKFUFocusArchive()">✕</button>
+  </div>
+  <div id="kfu-focus-archive-label" style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:12px"></div>
+  <div id="kfu-focus-archive-list"></div>
+</div>
 <div class="team-modal-overlay" id="team-detail-modal">
   <div class="team-modal" style="max-width:540px">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">

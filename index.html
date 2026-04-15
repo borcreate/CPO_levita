@@ -698,7 +698,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
       </div>
     </div>
     <div class="card card-pad">
-      <div class="chart-title">NPS партнёров</div>
+      <div class="chart-title">NPS франчайзи</div>
       <div class="chart-sub">Лояльность франчайзи сети, цель >80%</div>
       <div class="chart-wrap"><canvas id="c-nps-p"></canvas></div>
       <div class="chart-legend">
@@ -731,8 +731,8 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
   </div>
   <div class="charts-row cols-3" style="margin-bottom:16px">
     <div class="card card-pad">
-      <div class="chart-title" id="chart-title-profit">% партнёров с ЧП ≥300К</div>
-      <div class="chart-sub">Цель: 80% партнёров с чистой прибылью от 300К</div>
+      <div class="chart-title" id="chart-title-profit">% франчайзи с ЧП ≥300К</div>
+      <div class="chart-sub">Цель: 80% франчайзи с чистой прибылью от 300К</div>
       <div class="chart-wrap"><canvas id="a-profit"></canvas></div>
     </div>
     <div class="card card-pad">
@@ -758,6 +758,41 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
       <div class="chart-wrap"><canvas id="a-shmp"></canvas></div>
     </div>
   </div>
+  <!-- Дополнительные графики аналитики года -->
+  <div class="charts-row cols-3" style="margin-bottom:16px">
+    <div class="card card-pad">
+      <div class="chart-title">План/факт выручки сети</div>
+      <div class="chart-sub">Выручка с постоянных клиентов по месяцам</div>
+      <div class="chart-wrap"><canvas id="a-const-rev"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Кол-во открытий студий</div>
+      <div class="chart-sub">Открытия по месяцам</div>
+      <div class="chart-wrap"><canvas id="a-openings"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Клиенты сети (динамика)</div>
+      <div class="chart-sub">Количество клиентов по месяцам</div>
+      <div class="chart-wrap"><canvas id="a-clients"></canvas></div>
+    </div>
+  </div>
+  <div class="charts-row cols-3" style="margin-bottom:16px">
+    <div class="card card-pad">
+      <div class="chart-title">NPS франчайзи</div>
+      <div class="chart-sub">Лояльность франчайзи сети</div>
+      <div class="chart-wrap"><canvas id="a-nps-fr"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Охват СММ (центральные каналы)</div>
+      <div class="chart-sub">Instagram + Telegram по месяцам</div>
+      <div class="chart-wrap"><canvas id="a-smm"></canvas></div>
+    </div>
+    <div class="card card-pad">
+      <div class="chart-title">Выручка ШМП (план/факт)</div>
+      <div class="chart-sub">Динамика по месяцам</div>
+      <div class="chart-wrap"><canvas id="a-shmp-dyn"></canvas></div>
+    </div>
+  </div>
   <div class="card">
     <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
       <div class="section-title" style="margin-bottom:0">Сводная таблица - ключевые метрики (март 2026)</div>
@@ -780,7 +815,7 @@ body.dark .team-card.stale{background:#2a2200;border-color:#d97706}
     <div class="loading-state">Загрузка карты франчайзи...</div>
   </div>
   <div style="margin-top:28px">
-    <div class="section-title">Поведенческие маркеры партнёра</div>
+    <div class="section-title">Поведенческие маркеры франчайзи</div>
     <div id="markers-section"></div>
   </div>
   <div style="margin-top:28px">
@@ -877,26 +912,27 @@ const SMM_TG   = N12(); // охват Telegram по месяцам
 // Специальный тип 'ratio': f > threshold => зелёный
 const KFU = [
   { _idx:0, title:'Бизнес-модель',
-    desc:'Оптимизация внутри модели, рычаги прибыли - сходится ли экономика у партнёра',
-    ckp:'Партнёр понимает как растут метрики, регламенты, как работать по бизнес-модели, как тратить финансы. При стагнации прибыли - пересборка: меняем что, как, кому продаём, устройство точки и канала прибыли.',
+    desc:'Оптимизация внутри модели, рычаги прибыли - сходится ли экономика у франчайзи',
+    ckp:'Франчайзи понимает как растут метрики, регламенты, как работать по бизнес-модели, как тратить финансы. При стагнации прибыли - пересборка: меняем что, как, кому продаём, устройство точки и канала прибыли.',
     // LTV сравниваем с CAC (не с планом) - если выше, хорошо
     metrics:[
       {l:'LTV vs CAC',f:null,cmp:null,u:'₽',hint:'',type:'gt'},
-      {l:'Партнёры с ЧП ≥300К',f:null,p:null,u:'%'},
+      {l:'Франчайзи с ЧП ≥300К',f:null,p:null,u:'%'},
     ] },
   { _idx:1, title:'Спрос / PR',
     desc:'Бренд даёт доверие и конверсию, есть стабильный "фундамент" входящего трафика',
     ckp:'Бренд даёт доверие и конверсию, стабильный "фон спроса". Центральные медиа продают и утепляют, единый бренд гайд, PR пакеты на сеть и локальные. Глубокое изучение ЦА, детальная работа с репутацией, партнёрские каналы по лидам на сеть.',
+    // NOTE: "партнёрские каналы" - внутреннее описание, оставляем как есть
     metrics:[
       {l:'Брендовый спрос',f:null,p:null,u:'',hint:''},
       {l:'Охват соц.сетей',f:null,hint:'суммарный охват центральных каналов'},
     ] },
   { _idx:2, title:'Стандарты управления',
-    desc:'Партнёр умеет делать плановые деньги по системе, а не вопреки ей',
-    ckp:'Партнёр делает плановые деньги по системе. Команда управляется по результативным регламентам, любая студия управляется по одинаковым метрикам и видно прозрачно что сломалось. Найдём партнёру выстроенный менеджмент, финансы прозрачны и нет перерасходов.',
+    desc:'Франчайзи умеет делать плановые деньги по системе, а не вопреки ей',
+    ckp:'Франчайзи делает плановые деньги по системе. Команда управляется по результативным регламентам, любая студия управляется по одинаковым метрикам и видно прозрачно что сломалось. Найдём франчайзи выстроенный менеджмент, финансы прозрачны и нет перерасходов.',
     metrics:[
       {l:'Конверсия лид→покупка',f:null,p:null,u:'%'},
-      {l:'Выручка с постоянных',f:null,p:null,u:'₽'},
+      {l:'План/факт выручки сети',f:null,p:null,u:'₽'},
     ] },
   { _idx:3, title:'Продукт и качество',
     desc:'Клиент реально получает ощущаемый результат и возвращается снова',
@@ -907,21 +943,21 @@ const KFU = [
     ] },
   { _idx:4, title:'IT + данные',
     desc:'В любой момент видно - где дырка, кто не выполняет, что делать прямо сейчас',
-    ckp:'В любой момент партнёру видно - где дырка, куда утекли деньги, по какому показателю нужно поднажать для увеличения прибыли. Все оцифровано по источникам лидов и метрикам бизнеса. УК видит все метрики партнёров и точно реагирует на спады компетентной помощью. Безопасность систем присутствует везде.',
+    ckp:'В любой момент франчайзи видно - где дырка, куда утекли деньги, по какому показателю нужно поднажать для увеличения прибыли. Все оцифровано по источникам лидов и метрикам бизнеса. УК видит все метрики франчайзи и точно реагирует на спады компетентной помощью. Безопасность систем присутствует везде.',
     metrics:[
       {l:'% студий в CRM',f:null,p:null,u:'%'},
       {l:'% сдачи отчётности',f:null,p:null,u:'%'},
     ] },
   { _idx:5, title:'Справедливость управления',
-    desc:'"Со мной честны, правила понятны, ко мне относятся уважительно" - так должен чувствовать партнёр',
-    ckp:'Партнёр чувствует "со мной честны, правила понятны, изменения предсказуемы и логичны". Нет ощущения что сеть просто собирает деньги. Конфликты решаются быстро и по процедуре, без эмоций и унижения. Хорошие партнёры получают больше возможностей, плохие не паразитируют.',
+    desc:'"Со мной честны, правила понятны, ко мне относятся уважительно" - так должен чувствовать франчайзи',
+    ckp:'Франчайзи чувствует "со мной честны, правила понятны, изменения предсказуемы и логичны". Нет ощущения что сеть просто собирает деньги. Конфликты решаются быстро и по процедуре, без эмоций и унижения. Хорошие франчайзи получают больше возможностей, плохие не паразитируют.',
     metrics:[
-      {l:'NPS партнёров',f:null,p:null,u:'%'},
+      {l:'NPS франчайзи',f:null,p:null,u:'%'},
       {l:'Индекс доверия',f:null,p:null,u:'%'},
     ] },
   { _idx:6, title:'Качественное сообщество',
-    desc:'Партнёр не один, есть обмен решениями, поддержка, принадлежность к чему-то большему',
-    ckp:'Партнёр не один - есть обмен решениями, поддержка, статус, энергия. Лучшие практики расходятся быстро, ошибки не повторяются. В кризис сообщество удерживает людей от паники и выхода.',
+    desc:'Франчайзи не один, есть обмен решениями, поддержка, принадлежность к чему-то большему',
+    ckp:'Франчайзи не один - есть обмен решениями, поддержка, статус, энергия. Лучшие практики расходятся быстро, ошибки не повторяются. В кризис сообщество удерживает людей от паники и выхода.',
     metrics:[
       {l:'% участия в мероп.',f:null,p:null,u:'%'},
       {l:'Достижений в сети',f:null,p:null,u:'шт'},
@@ -1220,7 +1256,7 @@ const DEPTS = [
     }}
   },
   {
-    name:'Маркетинг партнёров', num:3,
+    name:'Маркетинг франчайзи', num:3,
     stats:[
       {l:'Охват Instagram',v:'-',sub:'загрузка...'},
       {l:'Охват Telegram',v:'-',sub:'загрузка...'},
@@ -1245,7 +1281,7 @@ const DEPTS = [
       {l:'Клиентов сети',v:'-',sub:''},
       {l:'% аттестаций',v:'-',sub:'по управлению'},
       {l:'% сбора роялти',v:'-',sub:'нет данных'},
-      {l:'NPS партнёров',v:'-',sub:''},
+      {l:'NPS франчайзи',v:'-',sub:''},
     ],
     table:[
       {n:'Клиентов сети',f:'-',p:'-',pct:null},
@@ -1263,13 +1299,13 @@ const DEPTS = [
     name:'Комьюнити менеджер', num:5,
     stats:[
       {l:'Мероприятий',v:'-',sub:'план 6 в год'},
-      {l:'Амбасадоров',v:'-',sub:'из партнёров'},
+      {l:'Амбасадоров',v:'-',sub:'из франчайзи'},
       {l:'Достижений в сети',v:'-',sub:'цель >6'},
       {l:'NPS мероприятий',v:'-',sub:'нет данных'},
     ],
     table:[
       {n:'Мероприятий проведено',f:'-',p:'6 / год',pct:null},
-      {n:'% партнёров-амбасадоров',f:'-',p:'80%',pct:null},
+      {n:'% франчайзи-амбасадоров',f:'-',p:'80%',pct:null},
       {n:'Достижений в сети',f:'-',p:'6',pct:null},
     ],
     progBars:[
@@ -1685,15 +1721,15 @@ function renderKFUNotesBlock(kfuIdx){
     `<span class="kfu-chip">${escHtml(r)}<button class="kfu-chip-del" onclick="removeKFUResponsible(${kfuIdx},${ri})">×</button></span>`
   ).join('');
   return `<div class="kfu-notes-block" id="kfu-notes-${kfuIdx}">
-    <div class="kfu-notes-label"><i data-lucide="user" style="width:10px;height:10px"></i> Ответственный</div>
+    <div class="kfu-notes-label" style="font-weight:700;font-size:11px"><i data-lucide="user" style="width:10px;height:10px"></i> Ответственный</div>
     <div class="kfu-notes-responsible" id="kfu-resp-${kfuIdx}">
       ${chips}
       <button class="kfu-chip-add" onclick="addKFUResponsible(${kfuIdx})">+ Добавить</button>
     </div>
-    <div class="kfu-notes-label" style="margin-top:6px"><i data-lucide="crosshair" style="width:10px;height:10px"></i> Ключевой фокус:
+    <div class="kfu-notes-label" style="margin-top:6px;font-weight:700;font-size:11px"><i data-lucide="crosshair" style="width:10px;height:10px"></i> Ключевой фокус:
       <button class="kfu-focus-archive-btn" onclick="openKFUFocusArchive(${kfuIdx})" title="История"><i data-lucide="history" style="width:10px;height:10px"></i></button>
     </div>
-    <textarea class="kfu-focus-input" id="kfu-focus-inp-${kfuIdx}" rows="2" placeholder="Фокус этой недели..." oninput="saveKFUFocus(${kfuIdx})">${escHtml(n.focus||'')}</textarea>
+    <textarea class="kfu-focus-input" id="kfu-focus-inp-${kfuIdx}" rows="2" placeholder="Фокус..." oninput="saveKFUFocus(${kfuIdx})">${escHtml(n.focus||'')}</textarea>
   </div>`;
 }
 
@@ -1908,10 +1944,11 @@ function toggleDept(i){
 
 function chartDelta(arr, label){
   if(!arr||arr.length<2) return '';
-  const vals=arr.filter(v=>v!=null&&v!==0);
+  const vals=arr.filter(v=>v!=null&&v!==0&&v!==undefined);
   if(vals.length<2) return '';
   const last=vals[vals.length-1], prev=vals[vals.length-2];
-  if(!prev) return '';
+  // Показываем тренд только если оба значения > 0
+  if(!prev||prev===0||!last||last===0) return '';
   const pct=Math.round((last-prev)/Math.abs(prev)*100);
   const color=pct>=0?'#34d399':'#fb7185';
   const arrow=pct>=0?'↑':'↓';
@@ -1924,7 +1961,7 @@ function initAnalyticsCharts(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
   mkChart('a-conv',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',CONV_F,C.gold,true),lineDs('План',CONV_P,C.gray,false,[5,3])]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
-  mkChart('a-profit',{type:'line',data:{labels:MONTHS,datasets:[lineDs('% партнёров с ЧП ≥300К',PROFIT,C.green,true)]},
+  mkChart('a-profit',{type:'line',data:{labels:MONTHS,datasets:[lineDs('% франчайзи с ЧП ≥300К',PROFIT,C.green,true)]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
       scales:{...gridOpts(),y:{min:50,max:100,grid:{color:'#f0f0f5',drawBorder:false},ticks:{font:{size:10},callback:v=>v+'%'}}}}});
   mkChart('a-nps-zan',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',NPS_ZAN_F,C.green,true),lineDs('План',NPS_ZAN_P,C.gray,false,[5,3])]},
@@ -1936,6 +1973,19 @@ function initAnalyticsCharts(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
   mkChart('a-shmp',{type:'bar',data:{labels:SHMP_L,datasets:[barDs('План',SHMP_P,C.gray),barDs('Факт',SHMP_F2,C.gold)]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  // Дополнительные графики аналитики (полный год)
+  mkChart('a-const-rev',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',CONST_REV_F,C.gold,true),lineDs('План',CONST_REV_P,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-openings',{type:'bar',data:{labels:MONTHS,datasets:[barDs('Открытий',DEPT_MONTH_DATA.openings.count,C.gold)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('a-clients',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Клиентов',CLIENTS,C.blue,true)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('a-nps-fr',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',NPS_PF,C.green,true),lineDs('План',NPS_PP,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:{...gridOpts(),y:{min:50,max:100,ticks:{callback:v=>v+'%'}}}}});
+  mkChart('a-smm',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Instagram',SMM_INST,C.purple),lineDs('Telegram',SMM_TG,C.teal)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-shmp-dyn',{type:'line',data:{labels:MONTHS,datasets:[lineDs('Факт',DEPT_MONTH_DATA.shmp.fact,C.gold,true),lineDs('План',DEPT_MONTH_DATA.shmp.plan,C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
   // Summary table - данные из массивов (только из Sheets)
   const _ga=getAvgFor;
   const rows=[
@@ -1943,7 +1993,7 @@ function initAnalyticsCharts(){
     {m:'Конверсия лид→покупка',d:'Стандарты',p:_ga(CONV_P),f:_ga(CONV_F),u:'%'},
     {m:'NPS занятий',d:'Продукт',p:_ga(NPS_ZAN_P),f:_ga(NPS_ZAN_F),u:'%'},
     {m:'% студий в CRM',d:'IT+данные',p:_ga(CRM_P),f:_ga(CRM_F),u:'%'},
-    {m:'NPS партнёров',d:'Справедливость',p:_ga(NPS_PP),f:_ga(NPS_PF),u:'%'},
+    {m:'NPS франчайзи',d:'Справедливость',p:_ga(NPS_PP),f:_ga(NPS_PF),u:'%'},
     {m:'Брендовый спрос',d:'Спрос/PR',p:_ga(BRAND_P),f:_ga(BRAND_F),u:''},
     {m:'% участия в мероп.',d:'Сообщество',p:_ga(COMM_PART_P),f:null,u:'%'},
     {m:'Выручка ШМП',d:'Отдел ШМП',p:_ga(DEPT_MONTH_DATA.shmp.plan),f:_ga(DEPT_MONTH_DATA.shmp.fact),u:'₽'},
@@ -1960,7 +2010,7 @@ function initAnalyticsCharts(){
   const _convEl=document.getElementById('chart-title-conv');
   if(_convEl) _convEl.innerHTML='Конверсия лид → покупка'+chartDelta(CONV_F,'');
   const _profEl=document.getElementById('chart-title-profit');
-  if(_profEl) _profEl.innerHTML='% партнёров с ЧП ≥300К'+chartDelta(PROFIT,'');
+  if(_profEl) _profEl.innerHTML='% франчайзи с ЧП ≥300К'+chartDelta(PROFIT,'');
   const _nzEl=document.getElementById('chart-title-nps-zan');
   if(_nzEl) _nzEl.innerHTML='NPS занятий'+chartDelta(NPS_ZAN_F,'');
   const _brEl=document.getElementById('chart-title-brand');
@@ -2441,11 +2491,24 @@ function initAnalyticsChartsFiltered(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
   mkChart('a-conv',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(CONV_F),C.gold,true),lineDs('План',getFiltered(CONV_P),C.gray,false,[5,3])]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
-  mkChart('a-profit',{type:'line',data:{labels:lbl,datasets:[lineDs('% партнёров',getFiltered(PROFIT),C.green,true)]},
+  mkChart('a-profit',{type:'line',data:{labels:lbl,datasets:[lineDs('% франчайзи',getFiltered(PROFIT),C.green,true)]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{...gridOpts(),y:{min:50,max:100,ticks:{callback:v=>v+'%'}}}}});
   mkChart('a-nps-zan',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(NPS_ZAN_F),C.green,true),lineDs('План',getFiltered(NPS_ZAN_P),C.gray,false,[5,3])]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:{...gridOpts(),y:{min:70,max:100,ticks:{font:{size:10}}}}}});
   mkChart('a-brand2',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(BRAND_F),C.gold,true),lineDs('План',getFiltered(BRAND_P),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  // Дополнительные графики аналитики
+  mkChart('a-const-rev',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(CONST_REV_F),C.gold,true),lineDs('План',getFiltered(CONST_REV_P),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-openings',{type:'bar',data:{labels:lbl,datasets:[barDs('Открытий',getFiltered(DEPT_MONTH_DATA.openings.count),C.gold)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('a-clients',{type:'line',data:{labels:lbl,datasets:[lineDs('Клиентов',getFiltered(CLIENTS),C.blue,true)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:gridOpts()}});
+  mkChart('a-nps-fr',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(NPS_PF),C.green,true),lineDs('План',getFiltered(NPS_PP),C.gray,false,[5,3])]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:{...gridOpts(),y:{min:50,max:100,ticks:{callback:v=>v+'%'}}}}});
+  mkChart('a-smm',{type:'line',data:{labels:lbl,datasets:[lineDs('Instagram',getFiltered(SMM_INST),C.purple),lineDs('Telegram',getFiltered(SMM_TG),C.teal)]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
+  mkChart('a-shmp-dyn',{type:'line',data:{labels:lbl,datasets:[lineDs('Факт',getFiltered(DEPT_MONTH_DATA.shmp.fact),C.gold,true),lineDs('План',getFiltered(DEPT_MONTH_DATA.shmp.plan),C.gray,false,[5,3])]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
 }
 
@@ -3502,7 +3565,7 @@ const QA_CHAT_KEY = 'levita_chat_summaries_v2';
 const QA_DEPTS = [
   'Отдел открытий',
   'Отдел ШМП',
-  'Маркетинг партнёров',
+  'Маркетинг франчайзи',
   'Территориальные управляющие',
   'Комьюнити менеджер',
   'Обучение и контроль качества',
@@ -3512,7 +3575,7 @@ const QA_DEPTS = [
 const QA_DEPT_COLORS = {
   'Отдел открытий':                '#b8902a',
   'Отдел ШМП':                     '#2563eb',
-  'Маркетинг партнёров':           '#7c3aed',
+  'Маркетинг франчайзи':           '#7c3aed',
   'Территориальные управляющие':   '#0891b2',
   'Комьюнити менеджер':            '#059669',
   'Обучение и контроль качества':  '#dc2626',
@@ -3765,7 +3828,7 @@ function renderQAByDepts(){
           <i data-lucide="users" style="width:11px;height:11px;color:var(--muted);flex-shrink:0"></i>
           ${parts.map(p=>`<span style="font-size:10px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:2px 8px;color:var(--text)">${escHtml(p.trim())}</span>`).join('')}
         </div>` : ''}
-        <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(z.summary)}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;max-height:400px;overflow-y:auto">${escHtml(z.summary)}</div>
       </div>`;
     }).join('');
 
@@ -3789,7 +3852,7 @@ function renderQAByDepts(){
             </div>
             ${deleteBtn}
           </div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;max-height:400px;overflow-y:auto">${escHtml(c.summary)}</div>
         </div>`;
       }).join('');
     } else {
@@ -3806,7 +3869,7 @@ function renderQAByDepts(){
           const dateStr = isNaN(d) ? c.date : d.toLocaleDateString('ru-RU',{weekday:'short',day:'numeric',month:'short'});
           return `<div style="padding:10px 0;border-top:1px solid var(--border)">
             <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px">${escHtml(dateStr)}</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.6">${escHtml(c.summary)}</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;max-height:400px;overflow-y:auto">${escHtml(c.summary)}</div>
           </div>`;
         }).join('');
         const label = qaActivePeriod === 'week'
@@ -4074,7 +4137,7 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
     <select class="team-modal-input" id="qa-z-dept">
       <option>Отдел открытий</option>
       <option>Отдел ШМП</option>
-      <option>Маркетинг партнёров</option>
+      <option>Маркетинг франчайзи</option>
       <option>Территориальные управляющие</option>
       <option>Комьюнити менеджер</option>
       <option>Обучение и контроль качества</option>
@@ -4100,7 +4163,7 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
     <select class="team-modal-input" id="qa-c-dept">
       <option>Отдел открытий</option>
       <option>Отдел ШМП</option>
-      <option>Маркетинг партнёров</option>
+      <option>Маркетинг франчайзи</option>
       <option>Территориальные управляющие</option>
       <option>Комьюнити менеджер</option>
       <option>Обучение и контроль качества</option>
