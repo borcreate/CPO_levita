@@ -2390,7 +2390,7 @@ function updateDeptTables(){
   // Клиенты сети в таблице отдела 3
   const clientRows = document.querySelectorAll('#dept-3 .td-fact');
   const clients = getAvgFor(CLIENTS);
-  if(clientRows[0]) clientRows[0].textContent = clients.toLocaleString('ru-RU');
+  if(clientRows[0]) clientRows[0].textContent = clients!=null ? clients.toLocaleString('ru-RU') : '-';
 
   // Академия администраторов в таблице отдела 6
   { const el=document.getElementById('dstat-acad-adm-0'); if(el) el.textContent=getAvgFor(ACAD_IN)||'—'; }
