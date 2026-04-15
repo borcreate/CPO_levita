@@ -379,7 +379,7 @@ body.dark .task-status-btn.active-notdone{background:#4a0d0d;color:#fb7185;borde
 .kfu-focus-archive-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:10px;padding:2px 4px;border-radius:4px;transition:.1s;margin-left:4px}
 .kfu-focus-archive-btn:hover{color:var(--gold);background:var(--gold-dim)}
 /* Personal tasks block */
-.personal-tasks-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:20px;max-width:52%;min-width:280px;flex-shrink:0}
+.personal-tasks-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:20px;max-width:100%;width:100%;flex-shrink:0}
 @media(max-width:768px){.personal-tasks-block{max-width:100%}}
 .personal-tasks-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;margin-bottom:8px;padding-right:2px}
 .personal-task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--bg3);border-radius:7px;border:1px solid var(--border)}
@@ -1294,6 +1294,7 @@ const DEPTS = [
       {n:'Тайные покупатели',f:'-',p:'-',pct:null},
       {n:'Индекс групп',f:'-',p:'-',pct:null},
     ],
+    _merged: true,
     chart:{id:'d-qual',render:()=>{
       mkChart('d-nps-zan',{type:'line',data:{labels:MONTHS,
         datasets:[lineDs('Факт',NPS_ZAN_F,C.green,true),lineDs('План',NPS_ZAN_P,C.gray,false,[5,3])]},
@@ -1302,29 +1303,10 @@ const DEPTS = [
         }});
       mkChart('d-pie',{type:'doughnut',data:{labels:PIE_L,datasets:[{data:PIE_D,backgroundColor:[C.gold,C.blue,C.green,C.purple,C.teal,C.red,'#ff9f40','#888'],borderWidth:0,hoverOffset:4}]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:10,padding:6}}}}});
-    }, dualChart: true}
-  },
-  {
-    name:'Обучение и контроль качества - Академии', num:7,
-    _merged: true,
-    stats:[
-      {l:'Зашли (адм)',v:'-',sub:''},
-      {l:'Получили серт',v:'-',sub:''},
-      {l:'Зашли (пед)',v:'-',sub:''},
-      {l:'NPS академий',v:'-',sub:''},
-    ],
-    table:[
-      {n:'Адм. академия: Зашли',f:'-',p:'-',pct:null},
-      {n:'Адм. академия: Сертификат',f:'-',p:'-',pct:null},
-      {n:'NPS адм. академии',f:'-',p:'-',pct:null},
-      {n:'Пед. академия: Зашедших',f:'-',p:'-',pct:null},
-      {n:'Пед. академия: Договоров',f:'-',p:'-',pct:null},
-    ],
-    chart:{id:'d-acad',render:()=>{
       mkChart('d-acad',{type:'bar',data:{labels:MONTHS,
         datasets:[barDs('Адм. зашли',ACAD_IN,C.blue),barDs('Адм. сертификат',ACAD_C,C.gold)]},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10}}},scales:gridOpts()}});
-    }},
+    }, dualChart: true},
     mergedSection: {
       name:'Академия педагогов',
       stats:[
@@ -1566,9 +1548,10 @@ function renderPersonalTasks(){
           <button class="pt-toggle" onclick="togglePTCollapsed(${i})" title="${collapsed?'Развернуть':'Свернуть'}">${collapsed?'▼':'▲'}</button>
         </div>
         ${collapsed?'':`<div class="pt-text">${escHtml(t.text)}</div>`}
-        ${collapsed?'':`<div class="task-status-btns" style="margin-top:4px">
+        ${collapsed?'':`<div class="task-status-btns" style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
           <button class="task-status-btn${t.done?' active-done':''}" onclick="setPTDone(${i},true)">✓ Готово</button>
           <button class="task-status-btn${(!t.done)?' active-notdone':''}" onclick="setPTDone(${i},false)">✕ Не готово</button>
+          <button onclick="deletePTActive(${i})" style="margin-left:auto;font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid #ef444433;background:#ef444411;color:#ef4444;cursor:pointer">🗑 Удалить</button>
         </div>`}
       </div>
     </div>`;
@@ -1599,9 +1582,44 @@ function setPTDone(idx, done){
   const active = tasks.filter(t=>!t.archived);
   if(!active[idx]) return;
   active[idx].done = done;
-  if(done) active[idx].archived = true;
+  if(done){
+    active[idx].archived = true;
+    active[idx].doneDate = new Date().toLocaleDateString('ru',{day:'numeric',month:'short',year:'numeric'});
+  }
   savePersonalTasks(tasks);
   renderPersonalTasks();
+}
+
+function deletePTActive(idx){
+  const tasks = getPersonalTasks(true);
+  const active = tasks.filter(t=>!t.archived);
+  if(!active[idx]) return;
+  const tidx = tasks.indexOf(active[idx]);
+  if(tidx>-1) tasks.splice(tidx,1);
+  savePersonalTasks(tasks);
+  renderPersonalTasks();
+}
+
+function restorePTFromArchive(archiveIdx){
+  const tasks = getPersonalTasks(true);
+  const archived = tasks.filter(t=>t.archived);
+  if(!archived[archiveIdx]) return;
+  archived[archiveIdx].archived = false;
+  archived[archiveIdx].done = false;
+  archived[archiveIdx].doneDate = null;
+  savePersonalTasks(tasks);
+  renderPersonalTasks();
+  openPTArchive();
+}
+
+function deletePTFromArchive(archiveIdx){
+  const tasks = getPersonalTasks(true);
+  const archived = tasks.filter(t=>t.archived);
+  if(!archived[archiveIdx]) return;
+  const tidx = tasks.indexOf(archived[archiveIdx]);
+  if(tidx>-1) tasks.splice(tidx,1);
+  savePersonalTasks(tasks);
+  openPTArchive();
 }
 
 function setPTPriority(idx){
@@ -1631,12 +1649,18 @@ function openPTArchive(){
   if(!archived.length){
     list.innerHTML='<div style="color:var(--muted);font-size:13px;font-style:italic">Архив пуст</div>';
   } else {
-    list.innerHTML = archived.map(t=>{
+    list.innerHTML = archived.map((t,ai)=>{
       const pLabel = PRIORITY_LABEL[t.priority]||PRIORITY_LABEL.med;
-      return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;opacity:.8">
-        <div style="font-size:13px;text-decoration:line-through;color:var(--muted);margin-bottom:4px">${escHtml(t.text)}</div>
-        <div style="font-size:10px;color:var(--muted2);display:flex;gap:6px;flex-wrap:wrap">
-          <span>${pLabel}</span>${t.deadline?`<span>• ${t.deadline}</span>`:''}
+      const doneDate = t.doneDate || '';
+      return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+        <div style="font-size:13px;color:var(--text);margin-bottom:6px;line-height:1.4">${escHtml(t.text)}</div>
+        <div style="font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center">
+          <span>${pLabel}</span>${t.deadline?`<span>• дедлайн: ${t.deadline}</span>`:''}
+          ${doneDate?`<span style="color:var(--green,#16a34a)">✓ выполнено ${doneDate}</span>`:''}
+        </div>
+        <div style="display:flex;gap:6px">
+          <button onclick="restorePTFromArchive(${ai})" style="font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg4,var(--bg2));color:var(--text);cursor:pointer">↩ Вернуть</button>
+          <button onclick="deletePTFromArchive(${ai})" style="font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid #ef444433;background:#ef444411;color:#ef4444;cursor:pointer">✕ Удалить</button>
         </div>
       </div>`;
     }).join('');
@@ -1787,23 +1811,33 @@ function renderDepts(){
       return `<div class="prog-item"><div class="prog-head"><span class="prog-label">${pb.l}</span><span>${pb.f} / ${pb.p} (${p}%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(p,100)}%;background:${cc}"></div></div></div>`;
     }).join('')}</div>`:'';
     const chartHtml = d.chart?(d.chart.dualChart
-      ?`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`
-      :`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
+      ?(d._merged
+        ?`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`
+        :`<div class="charts-row cols-2"><div class="card card-pad"><div class="chart-title">NPS занятий</div><div class="chart-wrap-sm"><canvas id="d-nps-zan"></canvas></div></div><div class="card card-pad"><div class="chart-title">Посещения по направлениям</div><div class="chart-wrap-sm"><canvas id="d-pie"></canvas></div></div></div>`)`<div class="card card-pad"><div class="chart-wrap"><canvas id="${d.chart.id}"></canvas></div></div>`):'';
 
     const tasksHtml = renderTasksBlock(i);
     // No team block - removed
 
-    // For merged dept (Академии): add divider + second section
+    // For merged dept (Обучение + Академии): add admin academy block + pedagogy section
     let mergedHtml = '';
     if(d._merged && d.mergedSection){
       const ms = d.mergedSection;
+      const adminStatsHtml = `<div style="border-bottom:1px solid var(--border);margin:16px 0"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px"><i data-lucide="graduation-cap" style="width:13px;height:13px"></i>Академия администраторов</div>
+      <div class="stat-grid stat-grid-4" style="margin-bottom:16px">
+        <div class="stat-card"><div class="stat-label">Зашли</div><div class="stat-val" id="dstat-acad-adm-0">—</div><div class="stat-sub" id="dstat-acad-adm-sub-0"></div></div>
+        <div class="stat-card"><div class="stat-label">Сертификат</div><div class="stat-val" id="dstat-acad-adm-1">—</div><div class="stat-sub" id="dstat-acad-adm-sub-1"></div></div>
+        <div class="stat-card"><div class="stat-label">% выпуск</div><div class="stat-val" id="dstat-acad-adm-2">—</div><div class="stat-sub" id="dstat-acad-adm-sub-2"></div></div>
+        <div class="stat-card"><div class="stat-label">NPS</div><div class="stat-val" id="dstat-acad-adm-3">—</div><div class="stat-sub" id="dstat-acad-adm-sub-3"></div></div>
+      </div>
+      <div class="card card-pad" style="margin-bottom:12px"><div class="chart-title">Академия администраторов: зашли / сертификат</div><div class="chart-wrap-sm"><canvas id="d-acad"></canvas></div></div>`;
       const msStatsHtml = ms.stats?`<div class="stat-grid stat-grid-4" style="margin-bottom:16px">${ms.stats.map((s,si)=>`
         <div class="stat-card"><div class="stat-label">${s.l}</div><div class="stat-val">${s.v}</div><div class="stat-sub">${s.sub}</div></div>`).join('')}</div>`:'';
       const msProgHtml = ms.progBars?`<div class="prog-list">${ms.progBars.map(pb=>{
         const p=pb.f&&pb.p?Math.round(pb.f/pb.p*100):0; const cc=p>=85?C.green:p>=60?C.gold:C.red;
         return `<div class="prog-item"><div class="prog-head"><span class="prog-label">${pb.l}</span><span>${pb.f||'-'} / ${pb.p||'-'}</span></div><div class="prog-bar"><div class="prog-fill" style="width:${Math.min(p,100)}%;background:${cc}"></div></div></div>`;
       }).join('')}</div>`:'';
-      mergedHtml = `<div style="border-bottom:1px solid var(--border);margin:16px 0"></div>
+      mergedHtml = `${adminStatsHtml}<div style="border-bottom:1px solid var(--border);margin:16px 0"></div>
       <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px"><i data-lucide="book-open" style="width:13px;height:13px"></i>${ms.name}</div>
       ${msStatsHtml}${msProgHtml}`;
     }
@@ -2284,11 +2318,13 @@ function updateDeptsForPeriod(){
   // ── Отдел 5 (Обучение/КК): NPS занятий ──
   setDStat(5, 0, npsZan!==null ? npsZan+'%' : '-', 'цель ≥85%');
 
-  // ── Отдел 6 (Объединённые Академии, индекс 6): зашли ──
+  // ── Отдел 5 (Обучение/КК + Академии): зашли в академию ──
   const acadIn = getAvgFor(ACAD_IN);
   const acadC  = getAvgFor(ACAD_C);
-  setDStat(6, 0, acadIn!==null ? String(acadIn) : '—', lbl);
-  setDStat(6, 1, acadC!==null  ? String(acadC)  : '—', lbl);
+  { const el0=document.getElementById('dstat-acad-adm-0'); if(el0) el0.textContent=acadIn!==null?String(acadIn):'—'; }
+  { const el1=document.getElementById('dstat-acad-adm-sub-0'); if(el1) el1.textContent=lbl; }
+  { const el2=document.getElementById('dstat-acad-adm-1'); if(el2) el2.textContent=acadC!==null?String(acadC):'—'; }
+  { const el3=document.getElementById('dstat-acad-adm-sub-1'); if(el3) el3.textContent=lbl; }
 
   // ── CRM/отчётность → КФУ IT (обновляется через updateKFUCards) ──
   // Дополнительно обновляем таблицы отделов у тех кто имеет динамические данные
@@ -2310,9 +2346,8 @@ function updateDeptTables(){
   if(clientRows[0]) clientRows[0].textContent = clients.toLocaleString('ru-RU');
 
   // Академия администраторов в таблице отдела 6
-  const acadRows = document.querySelectorAll('#dept-6 .td-fact');
-  if(acadRows[0]) acadRows[0].textContent = getAvgFor(ACAD_IN);
-  if(acadRows[1]) acadRows[1].textContent = getAvgFor(ACAD_C);
+  { const el=document.getElementById('dstat-acad-adm-0'); if(el) el.textContent=getAvgFor(ACAD_IN)||'—'; }
+  { const el=document.getElementById('dstat-acad-adm-1'); if(el) el.textContent=getAvgFor(ACAD_C)||'—'; }
 }
 
 function updateKFUCards(){
@@ -2954,8 +2989,7 @@ function getDeptStatus(deptIdx){
     2: ()=>{ const v=lastNonZero(SMM_INST).v; return v?{sub:v.toLocaleString('ru-RU')+' охват',pct:null}:{sub:'нет данных',pct:null}; },
     3: ()=>{ const v=lastNonZero(CLIENTS).v; return v?{sub:v.toLocaleString('ru-RU')+' клиентов',pct:null}:{sub:'нет данных',pct:null}; },
     4: ()=>{ return {sub:'нет данных',pct:null}; },
-    5: ()=>{ const v=lastNonZero(NPS_ZAN_F).v; return v?{sub:'NPS '+v+'%',pct:v}:{sub:'нет данных',pct:null}; },
-    6: ()=>{ const v=lastNonZero(ACAD_IN).v; return v?{sub:v+' зашли (акад.)',pct:null}:{sub:'нет данных',pct:null}; },
+    5: ()=>{ const v=lastNonZero(NPS_ZAN_F).v; const a=lastNonZero(ACAD_IN).v; return v?{sub:'NPS '+v+'%'+(a?' / '+a+' акад.':''),pct:v}:{sub:'нет данных',pct:null}; },
   };
   const d = dataMap[deptIdx] ? dataMap[deptIdx]() : {sub:'',pct:null};
   let status = 'yellow';
@@ -3522,7 +3556,6 @@ const QA_DEPTS = [
   'Территориальные управляющие',
   'Комьюнити менеджер',
   'Обучение и контроль качества',
-  'Обучение и контроль качества — Академии',
   'Руководители',
 ];
 
@@ -4099,7 +4132,6 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
       <option>Территориальные управляющие</option>
       <option>Комьюнити менеджер</option>
       <option>Обучение и контроль качества</option>
-      <option>Обучение и контроль качества — Академии</option>
     </select>
     <label class="team-modal-label">Саммери</label>
     <textarea class="team-modal-input" id="qa-z-summary" rows="4" placeholder="Что обсуждалось на встрече..."></textarea>
@@ -4126,7 +4158,6 @@ setTimeout(()=>{checkAlerts(); runCountAnimations();}, 800);
       <option>Территориальные управляющие</option>
       <option>Комьюнити менеджер</option>
       <option>Обучение и контроль качества</option>
-      <option>Обучение и контроль качества — Академии</option>
     </select>
     <label class="team-modal-label">Саммери</label>
     <textarea class="team-modal-input" id="qa-c-summary" rows="4" placeholder="Ключевые темы и решения из чата..."></textarea>
