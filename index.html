@@ -2589,6 +2589,7 @@ async function applyLiveData(svodRows, fullRows){
     const nonZero=v=>v!==null&&v!==undefined&&v!==0&&v!=='';
     // Конвертация: если значение 0.14 → 14, если 14 → 14
     const toPct=v=>v===null||v===undefined?null:(Math.abs(v)<=1?Math.round(v*100):Math.round(v));
+    const toNum=v=>v===null||v===undefined?null:Math.round(v);
 
     const findIn=(rows,label)=>{
       for(let i=0;i<rows.length;i++){
@@ -2628,8 +2629,9 @@ async function applyLiveData(svodRows, fullRows){
     // Стандарты управления
     apply(CONV_F,       findIn(svodRows,'2. Конверсия лид-покупка'), toPct);
     apply(CONV_P,       findAfterIn(svodRows,'2. Конверсия лид-покупка','План'), toPct);
-    apply(CONST_REV_F,  findAfterIn(svodRows,'3. План/факт выручки с постоянных','Факт'));
-    apply(CONST_REV_P,  findAfterIn(svodRows,'3. План/факт выручки с постоянных','План'));
+    // Выручка сети — берём из fullRows (начало таблицы), не из svodRows
+    apply(CONST_REV_F,  findAfterIn(fullRows,'Выручка сети (периоды)','Факт'), toNum);
+    apply(CONST_REV_P,  findAfterIn(fullRows,'Выручка сети (периоды)','План'), toNum);
 
     // Продукт
     apply(NPS_ZAN_F, findAfterIn(svodRows,'1. NPS занятий не менее','Факт'));
