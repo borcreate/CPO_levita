@@ -891,7 +891,8 @@ const NPS_ZAN_P = N12(); // план из таблицы
 // Планы KFU - загружаются из таблицы (сводный раздел)
 const PROFIT_P    = N12(); // план % партнёров с ЧП ≥300К
 const AMB_P       = N12(); // план % амбасадорских направлений
-const IND_TRUST_P = N12(); // план индекс доверия партнёров
+const IND_TRUST_P = N12(); // план индекс доверия франчайзи
+const IND_TRUST_F = N12(); // факт индекс доверия франчайзи
 const COMM_PART_P = N12(); // план % участия в мероприятиях
 const ACHIEVEMENTS_P = N12(); // план кол-во достижений в сети
 const SHMP_L  = ['1 курс','2 курс','3.1 курс','3.2 курс'];
@@ -2528,6 +2529,8 @@ function updateKFUCards(){
   KFU[5].metrics[0].f=npsPf===null?null:(npsPf>1?npsPf:Math.round(npsPf*100));
   KFU[5].metrics[0].p=npsPp===null?null:(npsPp>1?npsPp:Math.round(npsPp*100));
   const indTrP=getAvg(IND_TRUST_P);
+  const indTrF=getAvg(IND_TRUST_F);
+  KFU[5].metrics[1].f=indTrF===null?null:(indTrF>1?indTrF:Math.round(indTrF*100));
   KFU[5].metrics[1].p=indTrP===null?null:(indTrP>1?indTrP:Math.round(indTrP*100));
 
   // Сообщество
@@ -2722,6 +2725,7 @@ async function applyLiveData(svodRows, fullRows){
     apply(NPS_PF,      findAfterIn(svodRows,'1. NPS партнеров','Факт'), toPct);
     apply(NPS_PP,      findAfterIn(svodRows,'1. NPS партнеров','План'), toPct);
     apply(IND_TRUST_P, findAfterIn(svodRows,'2. Индекс доверия партнеров','План'), toPct);
+    apply(IND_TRUST_F, findIn(svodRows,'2. Индекс доверия партнеров'), toPct);
 
     // Сообщество
     apply(COMM_PART_P, findIn(svodRows,'1. % партнеров участвующих'), toPct);
