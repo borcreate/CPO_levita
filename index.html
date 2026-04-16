@@ -1566,7 +1566,11 @@ function sortPersonalTasks(){
   active.sort((a,b)=>{
     const pa = PT_PRIORITY_ORDER[a.priority||'med'];
     const pb = PT_PRIORITY_ORDER[b.priority||'med'];
-    return pa - pb;
+    if(pa !== pb) return pa - pb; // сначала по приоритету
+    // потом по дате — чем раньше дедлайн, тем выше
+    const da = a.deadline ? new Date(a.deadline) : new Date('9999-12-31');
+    const db = b.deadline ? new Date(b.deadline) : new Date('9999-12-31');
+    return da - db;
   });
   // Сохраняем порядок в оригинальный массив (архив не трогаем)
   const archived = allTasks.filter(t=>t.archived);
