@@ -1173,9 +1173,11 @@ function getPaceInfo(plan, fact) {
   const pi = getCurrentPeriodInfo();
   if([...selectedMonths][0] !== pi.periodIdx) return null;
   if(!plan || plan === 0 || fact === null || fact === undefined) return null;
-  const expectedByNow = plan * pi.pct;
-  const pctVal = Math.round(fact / expectedByNow * 100);
-  return { expectedByNow: Math.round(expectedByNow), pct: pctVal };
+  // Сегодня: прошло dayInPeriod дней
+  const todayExpected = Math.round(plan * pi.dayInPeriod / pi.totalDays);
+  // Вчера: прошло (dayInPeriod-1) дней
+  const yesterdayExpected = pi.dayInPeriod > 1 ? Math.round(plan * (pi.dayInPeriod - 1) / pi.totalDays) : 0;
+  return { todayExpected, yesterdayExpected };
 }
 
 const KFU_CHART_IDS=['c-ltv','c-brand',null,null,null,'c-nps-p',null];
@@ -1209,7 +1211,7 @@ function renderKFU(){
         <div class="kfu-m-row" style="flex-direction:column;align-items:flex-start;gap:2px">
           <div class="kfu-m-val" style="color:${mc}">${valDisplay}</div>
           ${m.p!=null&&!m.type?`<div class="kfu-m-plan" style="font-size:11px;color:var(--muted)">план: ${fmtNum(m.p,m.u)} · ${p!==null?p+'%':'-'}</div>`:''}
-          ${(()=>{if(m.p==null||m.type) return ''; const _pace=getPaceInfo(m.p,m.f); if(!_pace) return ''; const _pc=_pace.pct; const _col=_pc>=100?'#16a34a':_pc>=70?'#ca8a04':'#dc2626'; return `<div class="kfu-m-pace" style="font-size:11px;margin-top:3px;font-weight:600;color:${_col}">По темпу: ${_pc}% (должно быть: ${fmtNum(_pace.expectedByNow,m.u)})</div>`;})()} 
+          ${(()=>{if(m.p==null||m.type) return ''; const _pace=getPaceInfo(m.p,m.f); if(!_pace) return ''; return `<div style="font-size:11px;margin-top:4px;color:var(--text);opacity:.85;line-height:1.6"><span style="font-weight:600">На сегодня должно быть:</span> ${fmtNum(_pace.todayExpected,m.u)}<br><span style="font-weight:600">На вчера должно быть:</span> ${fmtNum(_pace.yesterdayExpected,m.u)}</div>`;})()} 
         </div>
         ${hintHtml}
         ${p!==null?`<div class="kfu-prog"><div class="kfu-prog-fill" style="width:${fill}%;background:${mc}"></div></div>`:''}
