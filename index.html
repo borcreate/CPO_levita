@@ -870,6 +870,43 @@ Chart.defaults.font.family = 'Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sa
 Chart.defaults.font.size = 11;
 
 const MONTHS = ['П1','П2','П3','П4','П5','П6','П7','П8','П9','П10','П11','П12'];
+
+// ── ПЕРИОД СИСТЕМА (13-недельные периоды) ──────────────────────────
+const PERIOD_START = new Date('2026-01-01'); // начало 1-го периода
+const PERIOD_WEEKS = [4,4,5,4,4,5,4,4,5,4,4,5]; // кол-во недель в каждом периоде
+const PERIOD_DAYS = PERIOD_WEEKS.map(w => w * 7); // [28,28,35,28,28,35,28,28,35,28,28,35]
+
+// Возвращает {periodIdx:0-11, dayInPeriod:1..N, totalDays:N, pct:0..1}
+function getCurrentPeriodInfo() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const startMs = PERIOD_START.getTime();
+  const diffDays = Math.floor((today - startMs) / 86400000);
+  let cumDays = 0;
+  for(let i = 0; i < 12; i++) {
+    if(diffDays < cumDays + PERIOD_DAYS[i]) {
+      const dayInPeriod = diffDays - cumDays + 1;
+      return {
+        periodIdx: i,
+        dayInPeriod,
+        totalDays: PERIOD_DAYS[i],
+        pct: dayInPeriod / PERIOD_DAYS[i]
+      };
+    }
+    cumDays += PERIOD_DAYS[i];
+  }
+  return { periodIdx: 11, dayInPeriod: PERIOD_DAYS[11], totalDays: PERIOD_DAYS[11], pct: 1 };
+}
+
+// Возвращает дату начала периода (0-индекс)
+function getPeriodStartDate(periodIdx) {
+  let days = 0;
+  for(let i = 0; i < periodIdx; i++) days += PERIOD_DAYS[i];
+  const d = new Date(PERIOD_START);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
 const C = {gold:'#b8902a',blue:'#2563eb',green:'#16a34a',red:'#dc2626',yellow:'#ca8a04',purple:'#7c3aed',teal:'#0891b2',gray:'#9ca3af'};
 
 // ВСЕ МАССИВЫ - только из Google Sheets. До загрузки = null.
@@ -1130,6 +1167,17 @@ function sparkline(data, color, width=60, height=20){
 }
 
 // ── RENDER KFU ──────────────────────────────────────────────
+// ── PACE INFO (Темп по текущему периоду) ─────────────────────────────────────────────
+function getPaceInfo(plan, fact) {
+  if(selectedMonths.size !== 1) return null;
+  const pi = getCurrentPeriodInfo();
+  if([...selectedMonths][0] !== pi.periodIdx) return null;
+  if(!plan || plan === 0 || fact === null || fact === undefined) return null;
+  const expectedByNow = plan * pi.pct;
+  const pctVal = Math.round(fact / expectedByNow * 100);
+  return { expectedByNow: Math.round(expectedByNow), pct: pctVal };
+}
+
 const KFU_CHART_IDS=['c-ltv','c-brand',null,null,null,'c-nps-p',null];
 function renderKFU(){
   const rows = [document.getElementById('kfu-row1'), document.getElementById('kfu-row2')];
@@ -1161,6 +1209,7 @@ function renderKFU(){
         <div class="kfu-m-row" style="flex-direction:column;align-items:flex-start;gap:2px">
           <div class="kfu-m-val" style="color:${mc}">${valDisplay}</div>
           ${m.p!=null&&!m.type?`<div class="kfu-m-plan" style="font-size:11px;color:var(--muted)">план: ${fmtNum(m.p,m.u)} · ${p!==null?p+'%':'-'}</div>`:''}
+          ${(()=>{if(m.p==null||m.type) return ''; const _pace=getPaceInfo(m.p,m.f); if(!_pace) return ''; const _pc=_pace.pct; const _col=_pc>=100?'#16a34a':_pc>=70?'#ca8a04':'#dc2626'; return `<div class="kfu-m-pace" style="font-size:11px;margin-top:3px;font-weight:600;color:${_col}">По темпу: ${_pc}% (должно быть: ${fmtNum(_pace.expectedByNow,m.u)})</div>`;})()} 
         </div>
         ${hintHtml}
         ${p!==null?`<div class="kfu-prog"><div class="kfu-prog-fill" style="width:${fill}%;background:${mc}"></div></div>`:''}
@@ -1912,8 +1961,13 @@ function renderDepts(){
         <div class="stat-val ${s.color||''}" id="dstat-${i}-${si}">${s.v}</div>
         <div class="stat-sub" id="dstat-sub-${i}-${si}">${s.sub}</div>
       </div>`).join('')}</div>`:'';
-    const tableHtml = d.table?`<div class="dept-table-wrap"><table class="dept-table"><thead><tr><th>Метрика</th><th>Факт</th><th>План</th><th>%</th></tr></thead><tbody>${
-      d.table.map(r=>`<tr><td class="td-name">${r.n}</td><td class="td-fact">${r.f}</td><td class="td-plan">${r.p}</td><td>${badgeHtml(r.pct)}</td></tr>`).join('')
+    const _showPace = selectedMonths.size===1 && [...selectedMonths][0]===getCurrentPeriodInfo().periodIdx;
+    const tableHtml = d.table?`<div class="dept-table-wrap"><table class="dept-table"><thead><tr><th>Метрика</th><th>Факт</th><th>План</th><th>%</th>${_showPace?'<th>По темпу</th>':''}</tr></thead><tbody>${
+      d.table.map(r=>{
+        const _tp = (_showPace&&r.pRaw!=null&&r.fRaw!=null)?getPaceInfo(r.pRaw,r.fRaw):null;
+        const _tpCell = _showPace?`<td style="font-size:12px;font-weight:600;color:${_tp?(_tp.pct>=100?'#16a34a':_tp.pct>=70?'#ca8a04':'#dc2626'):'var(--muted)'}">${_tp?_tp.pct+'%':'—'}</td>`:'';
+        return `<tr><td class="td-name">${r.n}</td><td class="td-fact">${r.f}</td><td class="td-plan">${r.p}</td><td>${badgeHtml(r.pct)}</td>${_tpCell}</tr>`;
+      }).join('')
     }</tbody></table></div>`:'';
     const progHtml = d.progBars?`<div class="prog-list">${d.progBars.map(pb=>{
       const p=Math.round(pb.f/pb.p*100); const cc=p>=85?C.green:p>=60?C.gold:C.red;
@@ -2260,7 +2314,7 @@ const MONTH_LABELS = ['Период 1','Период 2','Период 3','Пер
 
 function initPeriod(){
   const c = document.getElementById('period-btns');
-  const currentMonth = new Date().getMonth(); // 0-indexed: П1=0 ... П12=11
+  const currentMonth = getCurrentPeriodInfo().periodIdx; // 0-indexed: текущий 13-недельный период
   MONTH_LABELS.forEach((m,i)=>{
     const btn=document.createElement('button');
     btn.textContent=m;
@@ -2268,7 +2322,7 @@ function initPeriod(){
     btn.style.cssText='background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 9px;border-radius:6px;cursor:pointer;font-size:11px;transition:.15s;font-weight:500;opacity:0.7';
     btn.onclick=()=>toggleMonth(i,btn);
     c.appendChild(btn);
-    // Автовыбор текущего месяца при загрузке
+    // Автовыбор текущего периода при загрузке
     if(i === currentMonth){
       selectedMonths.add(i);
       btn.style.background='rgba(201,162,39,0.12)';
@@ -2300,7 +2354,7 @@ function toggleMonth(i,btn){
 
 function clearPeriod(){
   selectedMonths.clear();
-  const currentMonth = new Date().getMonth();
+  const currentMonth = getCurrentPeriodInfo().periodIdx;
   document.querySelectorAll('#period-btns button').forEach(b=>{
     const i = parseInt(b.dataset.idx);
     if(i === currentMonth){
@@ -4099,7 +4153,8 @@ if (currentSession()) { showDashboard(); }
 
 // ── INIT ──────────────────────────────────────────────
 const now=new Date();
-const _p=now.getMonth()+1; document.getElementById('hdrDate').textContent='Период '+_p+' · '+now.getFullYear()+' г.';
+const _pi = getCurrentPeriodInfo();
+document.getElementById('hdrDate').textContent = 'Период ' + (_pi.periodIdx+1) + ' · ' + now.getFullYear() + ' г.';
 initTheme();
 initPeriod();
 updateMobPeriodLabel(); // после initPeriod
