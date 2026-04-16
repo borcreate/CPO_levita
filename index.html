@@ -2724,7 +2724,6 @@ async function applyLiveData(svodRows, fullRows){
     // Справедливость
     apply(NPS_PF,      findAfterIn(svodRows,'1. NPS партнеров','Факт'), toPct);
     apply(NPS_PP,      findAfterIn(svodRows,'1. NPS партнеров','План'), toPct);
-    apply(IND_TRUST_P, findAfterIn(svodRows,'2. Индекс доверия партнеров','План'), toPct);
     apply(IND_TRUST_F, findIn(svodRows,'2. Индекс доверия партнеров'), toPct);
 
     // Сообщество
