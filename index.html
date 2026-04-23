@@ -1670,7 +1670,13 @@ function renderPersonalTasks(){
         ${collapsed?'':`<div id="pt-text-${i}" class="pt-text">${escHtml(t.text)}</div>`}
         ${collapsed?'':`<div id="pt-edit-${i}" style="display:none;margin-bottom:4px">
           <textarea id="pt-edit-ta-${i}" style="width:100%;font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--gold);background:var(--bg3);color:var(--text);font-family:inherit;resize:vertical;min-height:60px">${escHtml(t.text)}</textarea>
-          <div style="display:flex;gap:6px;margin-top:4px">
+          <div style="display:flex;gap:8px;margin-top:6px;align-items:center;flex-wrap:wrap">
+            <select id="pt-edit-pri-${i}" style="font-size:11px;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer">
+              <option value="high" ${t.priority==='high'?'selected':''}>🔴 Высокий</option>
+              <option value="med" ${t.priority==='med'||!t.priority?'selected':''}>🟡 Средний</option>
+              <option value="low" ${t.priority==='low'?'selected':''}>🟢 Низкий</option>
+            </select>
+            <input type="date" id="pt-edit-dl-${i}" value="${t.deadline||''}" style="font-size:11px;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer">
             <button onclick="savePTEdit(${i})" style="font-size:11px;padding:3px 12px;border-radius:5px;border:none;background:var(--gold);color:#fff;cursor:pointer">Сохранить</button>
             <button onclick="cancelPTEdit(${i})" style="font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid var(--border);background:none;color:var(--text);cursor:pointer">Отмена</button>
           </div>
@@ -1789,7 +1795,12 @@ function savePTEdit(idx){
   const active = tasks.filter(t=>!t.archived);
   if(!active[idx]) return;
   active[idx].text = newText;
+  const priEl = document.getElementById(`pt-edit-pri-${idx}`);
+  if(priEl) active[idx].priority = priEl.value;
+  const dlEl = document.getElementById(`pt-edit-dl-${idx}`);
+  if(dlEl) active[idx].deadline = dlEl.value;
   savePersonalTasks(tasks);
+  sortPersonalTasks();
   renderPersonalTasks();
 }
 
